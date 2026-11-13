@@ -194,6 +194,12 @@ struct RootView: View {
         let phase = liveRoundsPhase
         let liveInk = phase.map { liveRoundsInk($0) }
         return VStack(spacing: idle ? 6 : 10) {
+            if liveRounds, let phase, let liveInk {
+                Text(roundsPhaseLabel(phase))
+                    .font(Palette.display(compact ? 28 : 32))
+                    .tracking(2)
+                    .foregroundStyle(liveInk)
+            }
             Text(display.text)
                 .font(Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96))))
                 .monospacedDigit()
@@ -293,6 +299,19 @@ struct RootView: View {
             return Color(red: 1, green: 0.97, blue: 0.95)
         default:
             return Palette.ink
+        }
+    }
+
+    private func roundsPhaseLabel(_ phase: String) -> String {
+        switch phase {
+        case "prepare":
+            return L10n.t("setting.prepare")
+        case "work":
+            return L10n.t("setting.work")
+        case "rest":
+            return L10n.t("setting.rest")
+        default:
+            return ""
         }
     }
 
