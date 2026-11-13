@@ -50,6 +50,7 @@ struct RootView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .scrollIndicators(.hidden)
+                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
             }
         }
         .sheet(isPresented: $showAppSettings) {
@@ -525,12 +526,15 @@ private struct PresetRow<Content: View>: View {
     }
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                content
+        GeometryReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    content
+                }
             }
+            .frame(width: proxy.size.width, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 48)
     }
 }
 
