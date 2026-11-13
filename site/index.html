@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0e0f12" />
+    <meta name="description" content="A gym clock for sparring rounds, a countdown, and a stopwatch. Dark face, a ring bell, no account. In the browser and on iPhone." />
+    <meta name="robots" content="index, follow" />
+    <title>Round Timer — gym clock for sparring</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="pl" href="/pl/" />
+    <link rel="alternate" hreflang="x-default" href="/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <div class="wrap top-bar">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>
+            <span class="brand-name">Round Timer</span>
+            <span class="brand-kicker">Gym clock</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Pages">
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="https://mma-clock.vercel.app/">Open the clock</a>
+        </nav>
+        <nav class="lang" aria-label="Language">
+          <a href="/" hreflang="en" lang="en" aria-current="page">English</a>
+          <a href="/pl/" hreflang="pl" lang="pl">Polski</a>
+        </nav>
+      </div>
+      <div class="ropes" aria-hidden="true"></div>
+    </header>
+    <main id="main">
+      <section class="hero wrap">
+        <div>
+          <p class="kicker">Sparring · Timer · Stopwatch</p>
+          <h1>Rounds, rest, and a ring bell.</h1>
+          <p class="lede">Sparring, a countdown, and a stopwatch. A dark face, a glow for each phase, and no account.</p>
+          <div class="actions">
+            <a class="ticket" href="https://mma-clock.vercel.app/">Open the clock</a>
+            <p class="fine">In the phone browser. The clock’s own screen is in Polish. On iPhone, English and Polish follow the phone.</p>
+          </div>
+        </div>
+        <figure class="clock">
+          <div class="clock-face">
+            <p class="clock-phase">Work</p>
+            <p class="clock-time">03:00</p>
+            <p class="clock-detail">Round 1 of 5</p>
+          </div>
+          <figcaption>Sparring preset, during the round. Ten seconds of prepare come first.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">The card</p>
+          <h2>Three modes.</h2>
+          <p class="intro">Same clock in the browser and on iPhone. Pick a mode, then start. Pause, resume, and reset are on the face. When a countdown or sparring session ends, Again runs it once more.</p>
+          <div class="modes">
+            <article class="card">
+              <p class="mode-no">01</p>
+              <h3>Sparring</h3>
+              <p>Prepare, work, rest, and rounds. The face shows the round, and the setup shows the full session length. Rest is skipped after the last round.</p>
+              <p>Your own times: prepare up to 2:00, work from 5 seconds to 60:00, rest up to 30:00, rounds from 1 to 30.</p>
+            </article>
+            <article class="card">
+              <p class="mode-no">02</p>
+              <h3>Timer</h3>
+              <p>Counts down. Presets run from 30 seconds to 10 minutes, or set minutes and seconds yourself.</p>
+              <p>It starts at 5 seconds or more, up to 24 hours.</p>
+            </article>
+            <article class="card">
+              <p class="mode-no">03</p>
+              <h3>Stopwatch</h3>
+              <p>Time counts up, to the hundredth of a second. Lap stores the split and the total.</p>
+              <p>Controls: Start, Pause, Resume, Reset, Again. On the stopwatch: Lap.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Presets</p>
+          <h2>Four sparring cards, five countdowns.</h2>
+          <ul class="bouts">
+            <li>
+              <p class="bout-name">Tabata</p>
+              <div>
+                <p class="bout-line">20/10 × 8</p>
+                <p>5 seconds to prepare, 20 seconds of work, 10 seconds of rest, 8 rounds.</p>
+              </div>
+            </li>
+            <li>
+              <p class="bout-name">Interval</p>
+              <div>
+                <p class="bout-line">30/15 × 10</p>
+                <p>5 seconds to prepare, 30 seconds of work, 15 seconds of rest, 10 rounds.</p>
+              </div>
+            </li>
+            <li>
+              <p class="bout-name">Sparring</p>
+              <div>
+                <p class="bout-line">3:00 / 1:00 × 5</p>
+                <p>10 seconds to prepare, 3:00 of work, 1:00 of rest, 5 rounds.</p>
+              </div>
+            </li>
+            <li>
+              <p class="bout-name">Round</p>
+              <div>
+                <p class="bout-line">5:00 / 1:00 × 3</p>
+                <p>10 seconds to prepare, 5:00 of work, 1:00 of rest, 3 rounds.</p>
+              </div>
+            </li>
+          </ul>
+          <p class="note">Countdown presets: 0:30, 1:00, 3:00, 5:00, and 10:00. Sound, volume, and these times stay on the device.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">The face</p>
+          <h2>The glow follows the phase.</h2>
+          <p class="intro">The labels on the clock are short and uppercase. The color behind them changes with the phase.</p>
+          <ul class="phases">
+            <li>
+              <span class="swatch prepare" aria-hidden="true"></span>
+              <div>
+                <h3>Prepare</h3>
+                <p>Gold. “Starting soon.”</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch work" aria-hidden="true"></span>
+              <div>
+                <h3>Work</h3>
+                <p>Red. The round itself.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch rest" aria-hidden="true"></span>
+              <div>
+                <h3>Rest</h3>
+                <p>Blue. Between rounds.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch end" aria-hidden="true"></span>
+              <div>
+                <h3>End</h3>
+                <p>Green. “Session complete,” or “Time’s up” on a countdown.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch pause" aria-hidden="true"></span>
+              <div>
+                <h3>Pause</h3>
+                <p>The face reads Pause until you resume or reset.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch stop" aria-hidden="true"></span>
+              <div>
+                <h3>Stopwatch</h3>
+                <p>A light face. “Counting up,” or the lap number.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">The bell</p>
+          <h2>A cue you can hear with the gloves on.</h2>
+          <p>In the browser, work, rest, and the end use a ring bell. Prepare, the start of a countdown, and the last three seconds are short tones. Those ticks play when a segment lasts at least five seconds, and not during prepare. A lap plays a tick if sound is on. Sound and volume can be turned down or off, and that choice is remembered.</p>
+          <p>On iPhone, each cue is a short sound that ducks other music for a moment, then the mix comes back. YouTube keeps playing. With the screen off, the round cue arrives as a notification if you allow it. A short haptic plays with the cue. The screen stays on while a session is running. The phase and time can sit on the Lock Screen and in the Dynamic Island when Live Activities are on.</p>
+          <p>In the browser, while a session is running, the page asks the browser to keep the screen awake.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Where it runs</p>
+          <h2>Browser, and iPhone.</h2>
+          <div class="places">
+            <article class="card split">
+              <h3>Browser</h3>
+              <ul>
+                <li>Opens in the phone browser. No account.</li>
+                <li>You can add it to the home screen.</li>
+                <li>After it has loaded once, it keeps a copy of its files for a later visit.</li>
+                <li>The clock’s own interface is in Polish.</li>
+                <li>Settings stay on that device.</li>
+              </ul>
+            </article>
+            <article class="card split">
+              <h3>iPhone</h3>
+              <ul>
+                <li>iOS 17 or later. No account.</li>
+                <li>English and Polish follow the system language.</li>
+                <li>Lock Screen and Dynamic Island, when Live Activities are on.</li>
+                <li>Notifications are the backup cue if the system suspends the app.</li>
+                <li>Share a link to the clock from Settings. About links to privacy, terms, and support.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="foot">
+      <div class="wrap">
+        <p>Formerly MMA Clock and Train Clock — the same product.</p>
+        <p>The ring bell in the browser clock is <a href="https://freesound.org/s/66952/">Benboncan</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Support: <a href="mailto:hello@pawel.dev">hello@pawel.dev</a>.</p>
+        <p class="foot-links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="https://mma-clock.vercel.app/">Open the clock</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

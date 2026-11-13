@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0e0f12" />
+    <meta name="description" content="Privacy policy for Round Timer: the website, the browser clock, and the iPhone app. No account." />
+    <meta name="robots" content="index, follow" />
+    <title>Privacy policy — Round Timer</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" hreflang="en" href="/privacy/" />
+    <link rel="alternate" hreflang="pl" href="/pl/privacy/" />
+    <link rel="alternate" hreflang="x-default" href="/privacy/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <div class="wrap top-bar">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>
+            <span class="brand-name">Round Timer</span>
+            <span class="brand-kicker">Gym clock</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Pages">
+          <a href="/privacy/" aria-current="page">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="https://mma-clock.vercel.app/">Open the clock</a>
+        </nav>
+        <nav class="lang" aria-label="Language">
+          <a href="/privacy/" hreflang="en" lang="en" aria-current="page">English</a>
+          <a href="/pl/privacy/" hreflang="pl" lang="pl">Polski</a>
+        </nav>
+      </div>
+      <div class="ropes" aria-hidden="true"></div>
+    </header>
+    <main id="main" class="doc wrap">
+      <p class="kicker">Publication</p>
+      <h1>Privacy policy</h1>
+      <p class="updated">Updated 13 November 2026.</p>
+      <p>Round Timer is a gym clock: sparring rounds, a countdown, and a stopwatch. This policy covers this website, the browser clock at <a href="https://mma-clock.vercel.app/">mma-clock.vercel.app</a>, and the Round Timer app for iPhone. There is no account. Questions go to <a href="mailto:hello@pawel.dev">hello@pawel.dev</a>.</p>
+
+      <h2>What stays on the device</h2>
+      <p>The clock remembers its setup on the device you are using: prepare, work, rest, and rounds, the countdown length, whether sound is on, and the volume.</p>
+      <p>In the browser that sits in the page’s local storage. On iPhone it sits in the app’s local storage. The iPhone app also keeps a count of finished sessions, and whether it has already asked Apple to show a review prompt. After several finished sessions it may ask Apple to show the system review dialog. Round Timer does not receive the rating or the review.</p>
+      <p>The iPhone app writes a few session notes to the log on the phone. It does not upload them.</p>
+
+      <h2>iPhone</h2>
+      <p>The app plays sound. It does not use the microphone, the camera, or your location.</p>
+      <p>If you allow notifications, the app schedules local alerts so a round cue can still sound when iOS suspends the app. Those alerts are created on the phone. There is no remote push.</p>
+      <p>If Live Activities are on, the phase and the time can show on the Lock Screen and in the Dynamic Island. That stays on the device.</p>
+      <p>While a session is running, the app keeps the screen awake and plays a quiet loop so the clock can keep time with the screen locked. Other music is ducked only for the short cue, then the mix returns.</p>
+
+      <h2>Browser clock</h2>
+      <p>The browser clock loads Vercel Web Analytics. That script records a page view. When you start a session, and when a sparring session or a countdown finishes, the page also sends an event named <code>timer_start</code> or <code>timer_finish</code> with one detail: the mode (<code>sparring</code>, <code>countdown</code>, or <code>stopwatch</code>). It does not send the times you set, your laps, or a name.</p>
+      <p>Vercel describes what that product records in its <a href="https://vercel.com/docs/analytics/privacy-policy">analytics privacy policy</a>.</p>
+      <p>During a running session the page can ask the browser to keep the screen awake. After a visit, the clock can keep a copy of its own files on the device so it can open again later. That copy stays on your device.</p>
+
+      <h2>This website</h2>
+      <p>These marketing, privacy, and terms pages do not load the analytics script used by the clock. The language switch only opens the English page or the Polish page. The site is hosted on Vercel. The host may keep ordinary server logs, such as an IP address and the page requested, to operate the service. Round Timer does not add an account or its own tracker on these pages.</p>
+
+      <h2>Children</h2>
+      <p>Round Timer is not directed at children under 13. It does not ask for a name or a date of birth.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes, the date at the top changes with it.</p>
+
+      <h2>Contact</h2>
+      <p><a href="mailto:hello@pawel.dev">hello@pawel.dev</a></p>
+    </main>
+    <footer class="foot">
+      <div class="wrap">
+        <p>Formerly MMA Clock and Train Clock — the same product.</p>
+        <p class="foot-links">
+          <a href="/">Home</a>
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="https://mma-clock.vercel.app/">Open the clock</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

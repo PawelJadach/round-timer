@@ -10,6 +10,7 @@ Formerly MMA Clock / Train Clock — same product.
 
 ```
 round-timer/
+  site/                → marketing site (EN + PL), separate from the clock
   web/                 → static PWA (engine.js + app.js)
   ios/
     MMAClock.xcodeproj → open this in Xcode
@@ -29,6 +30,16 @@ python3 -m http.server 8080
 ```
 
 Or deploy `web/` as a static site (e.g. Vercel).
+
+## Marketing site
+
+`site/` is only the public page: product, privacy, and terms, in English and Polish. It does not change the clock in `web/`.
+
+```bash
+cd site
+python3 -m http.server 8090
+# open http://127.0.0.1:8090
+```
 
 ## iOS
 
