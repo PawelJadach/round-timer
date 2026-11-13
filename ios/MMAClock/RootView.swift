@@ -13,6 +13,7 @@ struct RootView: View {
 
     private var showSettings: Bool { clock.runState == .idle }
     private var showSessionChrome: Bool { clock.runState == .idle }
+    private var sessionActive: Bool { clock.runState != .idle }
 
     private var compactLayout: Bool { horizontalSizeClass == .compact }
 
@@ -22,23 +23,35 @@ struct RootView: View {
 
             ScrollView(.vertical) {
                 LazyVStack(spacing: compactLayout ? 12 : 16) {
-                    topBar(compact: compactLayout)
-                    Spacer(minLength: compactLayout ? 20 : 28)
+                    if showSessionChrome {
+                        topBar(compact: compactLayout)
+                    }
+                    if sessionActive {
+                        Spacer(minLength: compactLayout ? 48 : 64)
+                    } else {
+                        Spacer(minLength: compactLayout ? 20 : 28)
+                    }
                     timerBlock(compact: compactLayout)
-                    if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
+                    if sessionActive {
+                        Spacer(minLength: compactLayout ? 48 : 64)
+                    }
+                    if !sessionActive, clock.mode == .stopwatch, !clock.laps.isEmpty {
                         lapsList
                     }
                     if showSettings, selected != .stopwatch {
                         settings(compact: compactLayout)
                     }
-                    Spacer(minLength: compactLayout ? 8 : 16)
-                    if !(showSettings && compactLayout) {
-                        hints
+                    if !sessionActive {
+                        Spacer(minLength: compactLayout ? 8 : 16)
+                        if !(showSettings && compactLayout) {
+                            hints
+                        }
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 8)
+                .padding(.top, sessionActive ? 0 : 8)
                 .padding(.bottom, 4)
+                .frame(maxWidth: .infinity, minHeight: sessionActive ? scrollMinHeight(compact: compactLayout) : nil, alignment: .center)
             }
             .scrollIndicators(.hidden)
             .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
@@ -53,12 +66,14 @@ struct RootView: View {
             }
         }
         .overlay {
-            Circle()
-                .fill(Palette.color(display.tint).opacity(0.42))
-                .frame(width: 460, height: 460)
-                .blur(radius: 90)
-                .offset(y: -80)
-                .allowsHitTesting(false)
+            if !sessionActive {
+                Circle()
+                    .fill(Palette.color(display.tint).opacity(0.42))
+                    .frame(width: 460, height: 460)
+                    .blur(radius: 90)
+                    .offset(y: -80)
+                    .allowsHitTesting(false)
+            }
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
@@ -167,9 +182,9 @@ struct RootView: View {
         let stopwatchSession = previewMode == .stopwatch && idle
         let showDetail = shouldShowTimerDetail(for: previewMode)
         return VStack(spacing: idle ? 6 : 10) {
-            if !stopwatchSession || clock.runState != .idle {
+            if idle, !stopwatchSession {
                 Text(display.phaseName)
-                    .font(Palette.display(idle ? 18 : 22))
+                    .font(Palette.display(18))
                     .tracking(3)
                     .foregroundStyle(Palette.color(display.tint))
             }
@@ -194,11 +209,19 @@ struct RootView: View {
 
     private func shouldShowTimerDetail(for mode: TrainingMode) -> Bool {
         guard !display.detail.isEmpty else { return false }
+        if sessionActive {
+            guard mode == .sparring, clock.runState != .finished else { return false }
+            return display.tint == "work" || display.tint == "rest"
+        }
         if mode == .stopwatch { return false }
         if mode == .countdown {
             return !(showSettings && clock.countdownSeconds >= 5)
         }
         return true
+    }
+
+    private func scrollMinHeight(compact: Bool) -> CGFloat {
+        compact ? 520 : 600
     }
 
     private var lapsList: some View {
