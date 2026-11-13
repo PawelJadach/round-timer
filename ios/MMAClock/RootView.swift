@@ -63,6 +63,7 @@ struct RootView: View {
             }
             .scrollIndicators(.hidden)
             .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+            .simultaneousGesture(modeSwipeGesture)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 controls(compact: compactLayout)
                     .padding(.horizontal, 16)
@@ -122,6 +123,38 @@ struct RootView: View {
         }
     }
 
+    private var modeSwipeGesture: some Gesture {
+        DragGesture(minimumDistance: 50, coordinateSpace: .local)
+            .onEnded { value in
+                guard showSessionChrome else { return }
+                let horizontal = value.translation.width
+                let vertical = value.translation.height
+                guard abs(horizontal) > abs(vertical), abs(horizontal) > 60 else { return }
+                if horizontal < 0 {
+                    shiftSelectedMode(by: 1)
+                } else {
+                    shiftSelectedMode(by: -1)
+                }
+            }
+    }
+
+    private func selectMode(_ mode: TrainingMode) {
+        guard clock.runState == .idle || clock.runState == .finished else { return }
+        if clock.runState == .finished, mode != selected {
+            clock.reset()
+        }
+        guard mode != selected else { return }
+        selected = mode
+        HapticFeedback.selection()
+    }
+
+    private func shiftSelectedMode(by offset: Int) {
+        let modes = TrainingMode.allCases
+        guard let index = modes.firstIndex(of: selected) else { return }
+        let next = (index + offset % modes.count + modes.count) % modes.count
+        selectMode(modes[next])
+    }
+
     private func topBar(compact: Bool) -> some View {
         HStack(spacing: 8) {
             if showSessionChrome {
@@ -138,12 +171,7 @@ struct RootView: View {
         HStack(spacing: 4) {
             ForEach(TrainingMode.allCases) { mode in
                 Button {
-                    guard clock.runState == .idle || clock.runState == .finished else { return }
-                    if clock.runState == .finished, mode != selected {
-                        clock.reset()
-                    }
-                    selected = mode
-                    HapticFeedback.selection()
+                    selectMode(mode)
                 } label: {
                     Text(mode.title)
                         .font(Palette.display(compact ? 13 : 14))
