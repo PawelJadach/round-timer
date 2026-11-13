@@ -20,14 +20,10 @@
     <string name="detail_prepare">Zaraz start</string>
     <string name="detail_time_up">Czas minął</string>
     <string name="detail_done">Sesja zakończona</string>
-    <string name="preset_tabata">Tabata</string>
     <string name="preset_interval">Interwał</string>
     <string name="preset_sparring">Sparing</string>
-    <string name="preset_round">Runda</string>
-    <string name="preset_tabata_detail">20/10 × 8</string>
     <string name="preset_interval_detail">30/15 × 10</string>
     <string name="preset_sparring_detail">3:00 / 1:00 × 5</string>
-    <string name="preset_round_detail">5:00 / 1:00 × 3</string>
     <string name="countdown_half">pół minuty</string>
     <string name="countdown_one">minuta</string>
     <string name="countdown_three">trzy minuty</string>

@@ -16,10 +16,8 @@ import { getLocale, setLocale, t, totalLine } from "./i18n.js"
 const MODES = ["sparring", "countdown", "stopwatch"]
 
 const SPARRING_PRESETS = [
-  ["presetTabata", "20/10 × 8", { prepare: 5, work: 20, rest: 10, rounds: 8 }],
   ["presetInterval", "30/15 × 10", { prepare: 5, work: 30, rest: 15, rounds: 10 }],
   ["presetSparring", "3:00 / 1:00 × 5", { prepare: 10, work: 180, rest: 60, rounds: 5 }],
-  ["presetRound", "5:00 / 1:00 × 3", { prepare: 10, work: 300, rest: 60, rounds: 3 }],
 ]
 
 const COUNTDOWN_PRESETS = [

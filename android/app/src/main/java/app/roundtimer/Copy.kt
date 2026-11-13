@@ -29,10 +29,8 @@ fun Context.detailText(detail: Detail): String = when (detail) {
 }
 
 fun Context.presetTitle(title: PresetTitle): String = when (title) {
-    PresetTitle.TABATA -> getString(R.string.preset_tabata)
     PresetTitle.INTERVAL -> getString(R.string.preset_interval)
     PresetTitle.SPARRING -> getString(R.string.preset_sparring)
-    PresetTitle.ROUND -> getString(R.string.preset_round)
 }
 
 fun Context.countdownSubtitle(subtitle: CountdownSubtitle): String = when (subtitle) {

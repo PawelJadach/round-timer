@@ -14,7 +14,7 @@ enum class Tint { PREPARE, WORK, REST, END, STOPWATCH }
 
 enum class PhaseLabel { PREPARE, WORK, REST, COUNTDOWN, STOPWATCH, END, PAUSE }
 
-enum class PresetTitle { TABATA, INTERVAL, SPARRING, ROUND }
+enum class PresetTitle { INTERVAL, SPARRING }
 
 enum class CountdownSubtitle { HALF, ONE, THREE, FIVE, TEN }
 
@@ -54,10 +54,8 @@ data class CountdownPreset(
 )
 
 val SPARRING_PRESETS = listOf(
-    SparringPreset(PresetTitle.TABATA, "20/10 × 8", 5, 20, 10, 8),
     SparringPreset(PresetTitle.INTERVAL, "30/15 × 10", 5, 30, 15, 10),
     SparringPreset(PresetTitle.SPARRING, "3:00 / 1:00 × 5", 10, 180, 60, 5),
-    SparringPreset(PresetTitle.ROUND, "5:00 / 1:00 × 3", 10, 300, 60, 3),
 )
 
 val COUNTDOWN_PRESETS = listOf(
