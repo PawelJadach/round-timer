@@ -103,6 +103,7 @@ struct RootView: View {
             }
             .environmentObject(clock)
             .environmentObject(language)
+            .environment(\.locale, language.locale)
             .preferredColorScheme(.dark)
         }
         .onAppear {

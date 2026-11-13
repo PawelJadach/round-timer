@@ -18,9 +18,11 @@ final class AppLanguage: ObservableObject {
     }
 
     nonisolated private static func resolvedLanguageCode() -> String {
-        if UserDefaults.standard.bool(forKey: overrideKey),
-           let stored = UserDefaults.standard.string(forKey: storageKey),
+        if let stored = UserDefaults.standard.string(forKey: storageKey),
            stored == "en" || stored == "pl" {
+            if !UserDefaults.standard.bool(forKey: overrideKey) {
+                UserDefaults.standard.set(true, forKey: overrideKey)
+            }
             return stored
         }
         let system = Locale.current.language.languageCode?.identifier ?? "en"
@@ -29,9 +31,9 @@ final class AppLanguage: ObservableObject {
 
     func select(_ next: String) {
         guard next == "en" || next == "pl", next != code else { return }
-        code = next
         UserDefaults.standard.set(next, forKey: Self.storageKey)
         UserDefaults.standard.set(true, forKey: Self.overrideKey)
+        code = next
     }
 
     func followSystemLanguage() {
