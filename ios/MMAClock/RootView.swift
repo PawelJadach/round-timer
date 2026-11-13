@@ -17,6 +17,7 @@ struct RootView: View {
 
     var body: some View {
         GeometryReader { geo in
+            let compact = geo.size.height < 820
             ZStack {
                 Palette.background.ignoresSafeArea()
                 Circle()
@@ -27,24 +28,23 @@ struct RootView: View {
                     .allowsHitTesting(false)
 
                 ScrollView(.vertical) {
-                    VStack(spacing: 18) {
-                        topBar
-                        if showSessionChrome {
-                            volumeRow
-                        }
-                        timerBlock
+                    VStack(spacing: compact ? 10 : 16) {
+                        topBar(compact: compact)
+                        timerBlock(compact: compact)
                         if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
                             lapsList
                         }
                         if showSettings {
-                            settings
+                            settings(compact: compact)
                         }
-                        controls
-                        hints
+                        controls(compact: compact)
+                        if !(showSettings && compact) {
+                            hints
+                        }
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 18)
+                    .padding(.top, 6)
+                    .padding(.bottom, 12)
                     .frame(maxWidth: 560)
                     .frame(minHeight: geo.size.height, alignment: .top)
                     .frame(maxWidth: .infinity)
@@ -86,13 +86,29 @@ struct RootView: View {
         }
     }
 
-    private var topBar: some View {
-        VStack(spacing: 8) {
+    private func topBar(compact: Bool) -> some View {
+        VStack(spacing: compact ? 6 : 8) {
             if showSessionChrome {
-                modePicker
-                HStack(spacing: 10) {
+                modePicker(compact: compact)
+                HStack(spacing: 6) {
                     languagePicker
-                    Spacer(minLength: 0)
+                    Slider(value: $clock.cueVolume, in: 0...100, step: 1) { editing in
+                        if editing {
+                            volumePreviewArmed = true
+                        } else if volumePreviewArmed {
+                            volumePreviewArmed = false
+                            clock.previewVolume()
+                        }
+                    }
+                    .tint(Palette.gold)
+                    .frame(minWidth: compact ? 56 : 72, maxWidth: .infinity)
+                    .disabled(!clock.soundEnabled)
+                    .opacity(clock.soundEnabled ? 1 : 0.4)
+                    .accessibilityLabel(L10n.t("settings.volume"))
+                    Text("\(Int(clock.cueVolume))")
+                        .font(Palette.ui(12).monospacedDigit())
+                        .foregroundStyle(Palette.ink.opacity(0.64))
+                        .frame(width: 26, alignment: .trailing)
                     soundToggleButton
                     settingsButton
                 }
@@ -106,7 +122,7 @@ struct RootView: View {
         .frame(maxWidth: .infinity)
     }
 
-    private var modePicker: some View {
+    private func modePicker(compact: Bool) -> some View {
         HStack(spacing: 4) {
             ForEach(TrainingMode.allCases) { mode in
                 Button {
@@ -118,11 +134,11 @@ struct RootView: View {
                     HapticFeedback.selection()
                 } label: {
                     Text(mode.title)
-                        .font(Palette.display(14))
+                        .font(Palette.display(compact ? 13 : 14))
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, compact ? 8 : 10)
                         .background(
                             selected == mode ? Palette.gold.opacity(0.18) : Color.clear,
                             in: Capsule()
@@ -195,51 +211,26 @@ struct RootView: View {
         .accessibilityLabel(L10n.t("settings.language"))
     }
 
-    private var volumeRow: some View {
-        HStack(spacing: 8) {
-            Text(L10n.t("settings.volume"))
-                .font(Palette.display(14))
-                .foregroundStyle(Palette.ink.opacity(0.64))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-            Slider(value: $clock.cueVolume, in: 0...100, step: 1) { editing in
-                if editing {
-                    volumePreviewArmed = true
-                } else if volumePreviewArmed {
-                    volumePreviewArmed = false
-                    clock.previewVolume()
-                }
-            }
-            .tint(Palette.gold)
-            .frame(minWidth: 0, maxWidth: .infinity)
-            .disabled(!clock.soundEnabled)
-            .opacity(clock.soundEnabled ? 1 : 0.4)
-            Text("\(Int(clock.cueVolume))")
-                .font(Palette.ui(14).monospacedDigit())
-                .foregroundStyle(Palette.ink.opacity(0.64))
-                .frame(width: 30, alignment: .trailing)
-        }
-    }
-
-    private var timerBlock: some View {
-        VStack(spacing: 8) {
+    private func timerBlock(compact: Bool) -> some View {
+        let settingsIdle = showSettings && compact
+        return VStack(spacing: settingsIdle ? 4 : 8) {
             Text(display.phaseName)
-                .font(Palette.display(showSettings ? 18 : 22))
+                .font(Palette.display(settingsIdle ? 16 : (showSettings ? 18 : 22)))
                 .tracking(3)
                 .foregroundStyle(Palette.color(display.tint))
             Text(display.text)
-                .font(Palette.display(showSettings ? 76 : 96))
+                .font(Palette.display(settingsIdle ? 60 : (showSettings ? 76 : 96)))
                 .monospacedDigit()
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
                 .foregroundStyle(Palette.ink)
                 .accessibilityLabel("\(display.phaseName) \(display.text)")
             Text(display.detail)
-                .font(Palette.ui(20))
+                .font(Palette.ui(settingsIdle ? 17 : 20))
                 .foregroundStyle(Palette.ink.opacity(0.72))
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
+        .padding(.vertical, settingsIdle ? 2 : 8)
         .overlay(ringCorners.allowsHitTesting(false))
         .clipped()
         .animation(.easeInOut(duration: 0.25), value: display.tint)
@@ -294,12 +285,12 @@ struct RootView: View {
     }
 
     @ViewBuilder
-    private var settings: some View {
+    private func settings(compact: Bool) -> some View {
         switch selected {
         case .sparring:
-            sparringSettings
+            sparringSettings(compact: compact)
         case .countdown:
-            countdownSettings
+            countdownSettings(compact: compact)
         case .stopwatch:
             Text(L10n.t("stopwatch.hint"))
                 .font(Palette.ui(15))
@@ -308,54 +299,50 @@ struct RootView: View {
         }
     }
 
-    private var presetColumns: [GridItem] {
-        [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
-    }
-
-    private var sparringSettings: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            LazyVGrid(columns: presetColumns, spacing: 8) {
-                preset(L10n.t("preset.tabata"), "20/10 × 8") {
+    private func sparringSettings(compact: Bool) -> some View {
+        VStack(alignment: .leading, spacing: compact ? 8 : 12) {
+            PresetRow {
+                preset(L10n.t("preset.tabata"), "20/10 × 8", compact: compact) {
                     clock.prepareSeconds = 5
                     clock.workSeconds = 20
                     clock.restSeconds = 10
                     clock.rounds = 8
                 }
-                preset(L10n.t("preset.interval"), "30/15 × 10") {
+                preset(L10n.t("preset.interval"), "30/15 × 10", compact: compact) {
                     clock.prepareSeconds = 5
                     clock.workSeconds = 30
                     clock.restSeconds = 15
                     clock.rounds = 10
                 }
-                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5") {
+                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5", compact: compact) {
                     clock.prepareSeconds = 10
                     clock.workSeconds = 180
                     clock.restSeconds = 60
                     clock.rounds = 5
                 }
-                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3") {
+                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3", compact: compact) {
                     clock.prepareSeconds = 10
                     clock.workSeconds = 300
                     clock.restSeconds = 60
                     clock.rounds = 3
                 }
             }
-            stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds)) {
+            stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds + 5))
             }
-            stepRow(L10n.t("setting.work"), text: ClockFormat.clock(seconds: clock.workSeconds)) {
+            stepRow(L10n.t("setting.work"), text: ClockFormat.clock(seconds: clock.workSeconds), compact: compact) {
                 clock.workSeconds = min(3600, max(5, clock.workSeconds - 5))
             } increment: {
                 clock.workSeconds = min(3600, max(5, clock.workSeconds + 5))
             }
-            stepRow(L10n.t("setting.rest"), text: ClockFormat.clock(seconds: clock.restSeconds)) {
+            stepRow(L10n.t("setting.rest"), text: ClockFormat.clock(seconds: clock.restSeconds), compact: compact) {
                 clock.restSeconds = min(1800, max(0, clock.restSeconds - 5))
             } increment: {
                 clock.restSeconds = min(1800, max(0, clock.restSeconds + 5))
             }
-            stepRow(L10n.t("setting.rounds"), text: "\(clock.rounds)") {
+            stepRow(L10n.t("setting.rounds"), text: "\(clock.rounds)", compact: compact) {
                 clock.rounds = min(30, max(1, clock.rounds - 1))
             } increment: {
                 clock.rounds = min(30, max(1, clock.rounds + 1))
@@ -368,21 +355,21 @@ struct RootView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var countdownSettings: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            LazyVGrid(columns: presetColumns, spacing: 8) {
-                preset("0:30", L10n.t("preset.countdown_half")) { clock.countdownSeconds = 30 }
-                preset("1:00", L10n.t("preset.countdown_minute")) { clock.countdownSeconds = 60 }
-                preset("3:00", L10n.t("preset.countdown_three")) { clock.countdownSeconds = 180 }
-                preset("5:00", L10n.t("preset.countdown_five")) { clock.countdownSeconds = 300 }
-                preset("10:00", L10n.t("preset.countdown_ten")) { clock.countdownSeconds = 600 }
+    private func countdownSettings(compact: Bool) -> some View {
+        VStack(alignment: .leading, spacing: compact ? 8 : 12) {
+            PresetRow {
+                preset("0:30", L10n.t("preset.countdown_half"), compact: compact) { clock.countdownSeconds = 30 }
+                preset("1:00", L10n.t("preset.countdown_minute"), compact: compact) { clock.countdownSeconds = 60 }
+                preset("3:00", L10n.t("preset.countdown_three"), compact: compact) { clock.countdownSeconds = 180 }
+                preset("5:00", L10n.t("preset.countdown_five"), compact: compact) { clock.countdownSeconds = 300 }
+                preset("10:00", L10n.t("preset.countdown_ten"), compact: compact) { clock.countdownSeconds = 600 }
             }
-            stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)") {
+            stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)", compact: compact) {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 60))
             } increment: {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds + 60))
             }
-            stepRow(L10n.t("setting.countdown_seconds"), text: String(format: "%02d", clock.countdownSeconds % 60)) {
+            stepRow(L10n.t("setting.countdown_seconds"), text: String(format: "%02d", clock.countdownSeconds % 60), compact: compact) {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 5))
             } increment: {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds + 5))
@@ -390,25 +377,24 @@ struct RootView: View {
         }
     }
 
-    private func preset(_ title: String, _ subtitle: String, apply: @escaping () -> Void) -> some View {
+    private func preset(_ title: String, _ subtitle: String, compact: Bool = false, apply: @escaping () -> Void) -> some View {
         Button {
             apply()
             HapticFeedback.selection()
         } label: {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(Palette.display(15))
+                    .font(Palette.display(compact ? 13 : 15))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
                 Text(subtitle)
-                    .font(Palette.ui(12))
+                    .font(Palette.ui(compact ? 11 : 12))
                     .foregroundStyle(Palette.ink.opacity(0.64))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, compact ? 10 : 12)
+            .padding(.vertical, compact ? 6 : 8)
             .background(Palette.canvas.opacity(0.9), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -420,18 +406,19 @@ struct RootView: View {
         .buttonStyle(.plain)
     }
 
-    private func stepRow(_ title: String, text: String, decrement: @escaping () -> Void, increment: @escaping () -> Void) -> some View {
-        HStack(spacing: 6) {
+    private func stepRow(_ title: String, text: String, compact: Bool = false, decrement: @escaping () -> Void, increment: @escaping () -> Void) -> some View {
+        let controlSize: CGFloat = compact ? 36 : 40
+        return HStack(spacing: 6) {
             Text(title)
-                .font(Palette.ui(16))
+                .font(Palette.ui(compact ? 15 : 16))
                 .lineLimit(1)
                 .minimumScaleFactor(0.85)
             Spacer(minLength: 4)
-            stepButton("minus", label: L10n.t("step.less"), action: decrement)
+            stepButton("minus", label: L10n.t("step.less"), size: controlSize, action: decrement)
             Text(text)
-                .font(Palette.ui(16).monospacedDigit())
-                .frame(width: 72)
-            stepButton("plus", label: L10n.t("step.more"), action: increment)
+                .font(Palette.ui(compact ? 15 : 16).monospacedDigit())
+                .frame(width: compact ? 64 : 72)
+            stepButton("plus", label: L10n.t("step.more"), size: controlSize, action: increment)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
@@ -439,14 +426,14 @@ struct RootView: View {
         .accessibilityValue(text)
     }
 
-    private func stepButton(_ systemName: String, label: String, action: @escaping () -> Void) -> some View {
+    private func stepButton(_ systemName: String, label: String, size: CGFloat = 40, action: @escaping () -> Void) -> some View {
         Button {
             action()
             HapticFeedback.light()
         } label: {
             Image(systemName: systemName)
                 .font(.headline.weight(.semibold))
-                .frame(width: 40, height: 40)
+                .frame(width: size, height: size)
                 .background(Palette.canvas.opacity(0.9), in: Circle())
                 .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
         }
@@ -455,11 +442,11 @@ struct RootView: View {
     }
 
     @ViewBuilder
-    private var controls: some View {
+    private func controls(compact: Bool) -> some View {
         switch clock.runState {
         case .idle:
             Button(L10n.t("control.start")) { clock.start(mode: selected) }
-                .buttonStyle(PrimaryButton(fill: Palette.color(display.tint), foreground: Palette.ink(on: display.tint)))
+                .buttonStyle(PrimaryButton(fill: Palette.color(display.tint), foreground: Palette.ink(on: display.tint), height: compact ? 52 : 60))
                 .disabled(!clock.canStart(selected))
                 .opacity(clock.canStart(selected) ? 1 : 0.4)
         case .running where clock.mode == .stopwatch:
@@ -530,16 +517,34 @@ struct RootView: View {
     }
 }
 
+private struct PresetRow<Content: View>: View {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                content
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
 private struct PrimaryButton: ButtonStyle {
     var fill: Color
     var foreground: Color = Palette.ink
+    var height: CGFloat = 60
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(Palette.display(20))
             .foregroundStyle(foreground)
             .frame(maxWidth: .infinity)
-            .frame(height: 60)
+            .frame(height: height)
             .background(fill.opacity(configuration.isPressed ? 0.78 : 1), in: Capsule())
     }
 }
