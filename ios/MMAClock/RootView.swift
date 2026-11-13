@@ -17,7 +17,6 @@ struct RootView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let columnWidth = min(560, max(0, geo.size.width - 32))
             ZStack {
                 Palette.background.ignoresSafeArea()
                 Circle()
@@ -47,12 +46,12 @@ struct RootView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 18)
-                    .frame(width: columnWidth, alignment: .center)
+                    .frame(maxWidth: min(560, geo.size.width))
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: geo.size.height, alignment: .top)
                 }
                 .scrollIndicators(.hidden)
-                .frame(width: geo.size.width)
+                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
             }
         }
         .sheet(isPresented: $showAppSettings) {
@@ -312,7 +311,7 @@ struct RootView: View {
 
     private var sparringSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            ScrollView(.horizontal, showsIndicators: false) {
+            clippedHorizontalScroll(height: 58) {
                 HStack(spacing: 8) {
                     preset(L10n.t("preset.tabata"), "20/10 × 8") {
                         clock.prepareSeconds = 5
@@ -339,9 +338,7 @@ struct RootView: View {
                         clock.rounds = 3
                     }
                 }
-                .padding(.trailing, 1)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds)) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
@@ -371,7 +368,7 @@ struct RootView: View {
 
     private var countdownSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            ScrollView(.horizontal, showsIndicators: false) {
+            clippedHorizontalScroll(height: 58) {
                 HStack(spacing: 8) {
                     preset("0:30", L10n.t("preset.countdown_half")) { clock.countdownSeconds = 30 }
                     preset("1:00", L10n.t("preset.countdown_minute")) { clock.countdownSeconds = 60 }
@@ -379,9 +376,7 @@ struct RootView: View {
                     preset("5:00", L10n.t("preset.countdown_five")) { clock.countdownSeconds = 300 }
                     preset("10:00", L10n.t("preset.countdown_ten")) { clock.countdownSeconds = 600 }
                 }
-                .padding(.trailing, 1)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)") {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 60))
             } increment: {
@@ -437,6 +432,16 @@ struct RootView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(title)
         .accessibilityValue(text)
+    }
+
+    private func clippedHorizontalScroll<Content: View>(height: CGFloat, @ViewBuilder content: () -> Content) -> some View {
+        GeometryReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                content()
+            }
+            .frame(width: proxy.size.width, alignment: .leading)
+        }
+        .frame(height: height)
     }
 
     private func stepButton(_ systemName: String, label: String, action: @escaping () -> Void) -> some View {
