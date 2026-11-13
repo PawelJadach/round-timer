@@ -259,8 +259,38 @@ struct RootView: View {
         }
     }
 
+    private var presetColumns: [GridItem] {
+        [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)]
+    }
+
     private func sparringSettings(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 12) {
+            LazyVGrid(columns: presetColumns, spacing: 6) {
+                preset(L10n.t("preset.tabata"), "20/10 × 8", compact: compact) {
+                    clock.prepareSeconds = 5
+                    clock.workSeconds = 20
+                    clock.restSeconds = 10
+                    clock.rounds = 8
+                }
+                preset(L10n.t("preset.interval"), "30/15 × 10", compact: compact) {
+                    clock.prepareSeconds = 5
+                    clock.workSeconds = 30
+                    clock.restSeconds = 15
+                    clock.rounds = 10
+                }
+                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5", compact: compact) {
+                    clock.prepareSeconds = 10
+                    clock.workSeconds = 180
+                    clock.restSeconds = 60
+                    clock.rounds = 5
+                }
+                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3", compact: compact) {
+                    clock.prepareSeconds = 10
+                    clock.workSeconds = 300
+                    clock.restSeconds = 60
+                    clock.rounds = 3
+                }
+            }
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
@@ -286,6 +316,36 @@ struct RootView: View {
                 .foregroundStyle(Palette.ink.opacity(0.64))
                 .frame(maxWidth: .infinity, alignment: .center)
         }
+    }
+
+    private func preset(_ title: String, _ subtitle: String, compact: Bool = false, apply: @escaping () -> Void) -> some View {
+        Button {
+            apply()
+            HapticFeedback.selection()
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(Palette.display(compact ? 13 : 15))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+                Text(subtitle)
+                    .font(Palette.ui(compact ? 11 : 12))
+                    .foregroundStyle(Palette.ink.opacity(0.64))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, compact ? 8 : 12)
+            .padding(.vertical, compact ? 5 : 8)
+            .background(Palette.canvas.opacity(0.9), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Palette.gold)
+                    .frame(width: 3)
+            }
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
     }
 
     private func countdownSettings(compact: Bool) -> some View {
