@@ -62,7 +62,7 @@ EN + PL via `Localizable.xcstrings` (system language).
 
 ### Product notes
 
-- Modes: Sparring/Tabata, Countdown, Stopwatch (laps).
+- Modes: Rounds, countdown, stopwatch (laps). Presets: Interval and Sparring.
 - Settings: prepare / work / rest / rounds, presets, sound + volume, About / share.
 - Lean App Store shell: `AppConfig`, Privacy Manifest, review prompt, haptics — no heavy SDKs.
 

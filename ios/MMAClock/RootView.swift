@@ -266,12 +266,6 @@ struct RootView: View {
     private func sparringSettings(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 12) {
             LazyVGrid(columns: presetColumns, spacing: 6) {
-                preset(L10n.t("preset.tabata"), "20/10 × 8", compact: compact) {
-                    clock.prepareSeconds = 5
-                    clock.workSeconds = 20
-                    clock.restSeconds = 10
-                    clock.rounds = 8
-                }
                 preset(L10n.t("preset.interval"), "30/15 × 10", compact: compact) {
                     clock.prepareSeconds = 5
                     clock.workSeconds = 30
@@ -283,12 +277,6 @@ struct RootView: View {
                     clock.workSeconds = 180
                     clock.restSeconds = 60
                     clock.rounds = 5
-                }
-                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3", compact: compact) {
-                    clock.prepareSeconds = 10
-                    clock.workSeconds = 300
-                    clock.restSeconds = 60
-                    clock.rounds = 3
                 }
             }
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {

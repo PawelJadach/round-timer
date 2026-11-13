@@ -229,22 +229,10 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Interwał" } }
       }
     },
-    "preset.round" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Runda" } }
-      }
-    },
     "preset.sparring" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Sparring" } },
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sparing" } }
-      }
-    },
-    "preset.tabata" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tabata" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tabata" } }
       }
     },
     "setting.countdown_minutes" : {
