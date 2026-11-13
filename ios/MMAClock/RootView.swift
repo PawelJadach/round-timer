@@ -62,8 +62,8 @@ struct RootView: View {
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 controls(compact: compactLayout)
                     .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 4)
+                    .padding(.top, 12)
+                    .padding(.bottom, 12)
                     .frame(maxWidth: 560)
                     .frame(maxWidth: .infinity)
                     .background(Palette.background.opacity(0.94))
