@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0e0f12" />
+    <meta name="description" content="Darmowy timer do treningu: sparing z rundami, minutnik i stoper. Dzwonek jak z ringu, działa w przeglądarce na telefonie." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Train Clock" />
+    <link rel="canonical" href="https://mma-clock.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="Train Clock" />
+    <meta property="og:title" content="Train Clock — timer do sparingu" />
+    <meta property="og:description" content="Sparing z rundami, minutnik i stoper. Dzwonek jak z ringu, prosto w przeglądarce." />
+    <meta property="og:url" content="https://mma-clock.vercel.app/" />
+    <meta property="og:image" content="https://mma-clock.vercel.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Train Clock, ciemny timer z czasem 03:00" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Train Clock — timer do sparingu" />
+    <meta name="twitter:description" content="Sparing z rundami, minutnik i stoper. Dzwonek jak z ringu, prosto w przeglądarce." />
+    <meta name="twitter:image" content="https://mma-clock.vercel.app/og.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Train Clock" />
+    <title>Train Clock — timer do sparingu</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icon-180.png" />
+    <link rel="icon" href="icon-192.png" />
+    <link rel="stylesheet" href="app.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Train Clock",
+        "url": "https://mma-clock.vercel.app/",
+        "image": "https://mma-clock.vercel.app/og.png",
+        "applicationCategory": "SportsApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "pl",
+        "description": "Darmowy timer do treningu: sparing z rundami, minutnik i stoper.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+  </head>
+  <body>
+    <div class="glow" id="glow"></div>
+    <main>
+      <header>
+        <div class="modes" id="modes" role="tablist"></div>
+        <button class="icon-button" id="sound" type="button" aria-label="Wyłącz dźwięk"></button>
+      </header>
+      <label class="volume">
+        <span>Głośność</span>
+        <input id="volume" type="range" min="0" max="100" value="80" aria-label="Głośność dźwięku" />
+        <span id="volume-value">80</span>
+      </label>
+      <section class="face" id="face">
+        <p class="phase" id="phase"></p>
+        <p class="time" id="time"></p>
+        <p class="detail" id="detail"></p>
+      </section>
+      <section class="laps" id="laps" hidden></section>
+      <section class="settings" id="settings"></section>
+      <section class="controls" id="controls"></section>
+      <p class="hint" id="hint"></p>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

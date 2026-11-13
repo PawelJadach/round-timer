@@ -1,0 +1,519 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B10000000000000000000001 /* MMAClockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* MMAClockApp.swift */; };
+		B10000000000000000000002 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* RootView.swift */; };
+		B10000000000000000000003 /* TrainingClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000003 /* TrainingClock.swift */; };
+		B10000000000000000000004 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* Timeline.swift */; };
+		B10000000000000000000005 /* CuePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000005 /* CuePlayer.swift */; };
+		B10000000000000000000006 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* NotificationScheduler.swift */; };
+		B10000000000000000000007 /* LiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000007 /* LiveActivityController.swift */; };
+		B10000000000000000000008 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* Theme.swift */; };
+
+		B10000000000000000000040 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000040 /* AppConfig.swift */; };
+		B10000000000000000000041 /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000041 /* AppStorageKeys.swift */; };
+		B10000000000000000000042 /* PersistenceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000042 /* PersistenceHelpers.swift */; };
+		B10000000000000000000043 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000043 /* HapticFeedback.swift */; };
+		B10000000000000000000044 /* AnalyticsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000044 /* AnalyticsClient.swift */; };
+		B10000000000000000000045 /* ReviewPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000045 /* ReviewPrompt.swift */; };
+		B10000000000000000000046 /* ShareHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000046 /* ShareHelper.swift */; };
+		B10000000000000000000047 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000047 /* SettingsView.swift */; };
+		B10000000000000000000048 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000048 /* AboutView.swift */; };
+		B10000000000000000000049 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000049 /* Localizable.xcstrings */; };
+		B1000000000000000000004A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000004A /* PrivacyInfo.xcprivacy */; };
+		B10000000000000000000009 /* TrainingAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* TrainingAttributes.swift */; };
+		B1000000000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* Assets.xcassets */; };
+		B1000000000000000000000B /* cue_prepare.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000B /* cue_prepare.wav */; };
+		B1000000000000000000000C /* cue_work.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000C /* cue_work.wav */; };
+		B1000000000000000000000D /* cue_rest.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000D /* cue_rest.wav */; };
+		B1000000000000000000000E /* cue_tick.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000E /* cue_tick.wav */; };
+		B1000000000000000000000F /* cue_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000F /* cue_end.wav */; };
+		B10000000000000000000010 /* cue_keepalive.wav in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000010 /* cue_keepalive.wav */; };
+		B10000000000000000000021 /* MMAClockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* MMAClockWidget.swift */; };
+		B10000000000000000000022 /* TrainingAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* TrainingAttributes.swift */; };
+		B10000000000000000000030 /* MMAClockWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F10000000000000000000031 /* MMAClockWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D10000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A10000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = T10000000000000000000002;
+			remoteInfo = MMAClockWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		P10000000000000000000004 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B10000000000000000000030 /* MMAClockWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F10000000000000000000001 /* MMAClockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMAClockApp.swift; sourceTree = "<group>"; };
+		F10000000000000000000002 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		F10000000000000000000003 /* TrainingClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingClock.swift; sourceTree = "<group>"; };
+		F10000000000000000000004 /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
+		F10000000000000000000005 /* CuePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuePlayer.swift; sourceTree = "<group>"; };
+		F10000000000000000000006 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
+		F10000000000000000000007 /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
+		F10000000000000000000008 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F10000000000000000000009 /* TrainingAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingAttributes.swift; sourceTree = "<group>"; };
+		F1000000000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F1000000000000000000000B /* cue_prepare.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cue_prepare.wav; sourceTree = "<group>"; };
+		F1000000000000000000000C /* cue_work.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cue_work.wav; sourceTree = "<group>"; };
+		F1000000000000000000000D /* cue_rest.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cue_rest.wav; sourceTree = "<group>"; };
+		F1000000000000000000000E /* cue_tick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cue_tick.wav; sourceTree = "<group>"; };
+		F1000000000000000000000F /* cue_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cue_end.wav; sourceTree = "<group>"; };
+		F10000000000000000000010 /* cue_keepalive.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cue_keepalive.wav; sourceTree = "<group>"; };
+		F10000000000000000000011 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F10000000000000000000021 /* MMAClockWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMAClockWidget.swift; sourceTree = "<group>"; };
+		F10000000000000000000022 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F10000000000000000000030 /* MMAClock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMAClock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F10000000000000000000031 /* MMAClockWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MMAClockWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		P10000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		P10000000000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000004 /* MMAClock */,
+				A10000000000000000000005 /* MMAClockWidget */,
+				A10000000000000000000006 /* Shared */,
+				A10000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000030 /* MMAClock.app */,
+				F10000000000000000000031 /* MMAClockWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000004 /* MMAClock */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000010 /* Core */,
+				A10000000000000000000011 /* Settings */,
+				F10000000000000000000001 /* MMAClockApp.swift */,
+				F10000000000000000000002 /* RootView.swift */,
+				F10000000000000000000003 /* TrainingClock.swift */,
+				F10000000000000000000004 /* Timeline.swift */,
+				F10000000000000000000005 /* CuePlayer.swift */,
+				F10000000000000000000006 /* NotificationScheduler.swift */,
+				F10000000000000000000007 /* LiveActivityController.swift */,
+				F10000000000000000000008 /* Theme.swift */,
+				F1000000000000000000000A /* Assets.xcassets */,
+				F10000000000000000000049 /* Localizable.xcstrings */,
+				F1000000000000000000004A /* PrivacyInfo.xcprivacy */,
+				F1000000000000000000000B /* cue_prepare.wav */,
+				F1000000000000000000000C /* cue_work.wav */,
+				F1000000000000000000000D /* cue_rest.wav */,
+				F1000000000000000000000E /* cue_tick.wav */,
+				F1000000000000000000000F /* cue_end.wav */,
+				F10000000000000000000010 /* cue_keepalive.wav */,
+				F10000000000000000000011 /* Info.plist */,
+			);
+			path = MMAClock;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000010 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000040 /* AppConfig.swift */,
+				F10000000000000000000041 /* AppStorageKeys.swift */,
+				F10000000000000000000042 /* PersistenceHelpers.swift */,
+				F10000000000000000000043 /* HapticFeedback.swift */,
+				F10000000000000000000044 /* AnalyticsClient.swift */,
+				F10000000000000000000045 /* ReviewPrompt.swift */,
+				F10000000000000000000046 /* ShareHelper.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000011 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000047 /* SettingsView.swift */,
+				F10000000000000000000048 /* AboutView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000005 /* MMAClockWidget */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000021 /* MMAClockWidget.swift */,
+				F10000000000000000000022 /* Info.plist */,
+			);
+			path = MMAClockWidget;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000006 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000009 /* TrainingAttributes.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		T10000000000000000000001 /* MMAClock */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C10000000000000000000004 /* Build configuration list for PBXNativeTarget "MMAClock" */;
+			buildPhases = (
+				P10000000000000000000001 /* Sources */,
+				P10000000000000000000002 /* Frameworks */,
+				P10000000000000000000003 /* Resources */,
+				P10000000000000000000004 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D10000000000000000000002 /* PBXTargetDependency */,
+			);
+			name = MMAClock;
+			productName = MMAClock;
+			productReference = F10000000000000000000030 /* MMAClock.app */;
+			productType = "com.apple.product-type.application";
+		};
+		T10000000000000000000002 /* MMAClockWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C10000000000000000000007 /* Build configuration list for PBXNativeTarget "MMAClockWidget" */;
+			buildPhases = (
+				P10000000000000000000005 /* Sources */,
+				P10000000000000000000006 /* Frameworks */,
+				P10000000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MMAClockWidget;
+			productName = MMAClockWidget;
+			productReference = F10000000000000000000031 /* MMAClockWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					T10000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					T10000000000000000000002 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = C10000000000000000000001 /* Build configuration list for PBXProject "MMAClock" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				pl,
+			);
+			mainGroup = A10000000000000000000002;
+			productRefGroup = A10000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				T10000000000000000000001 /* MMAClock */,
+				T10000000000000000000002 /* MMAClockWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		P10000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000000000000000000000A /* Assets.xcassets in Resources */,
+				B1000000000000000000000B /* cue_prepare.wav in Resources */,
+				B1000000000000000000000C /* cue_work.wav in Resources */,
+				B1000000000000000000000D /* cue_rest.wav in Resources */,
+				B1000000000000000000000E /* cue_tick.wav in Resources */,
+				B1000000000000000000000F /* cue_end.wav in Resources */,
+				B10000000000000000000010 /* cue_keepalive.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		P10000000000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		P10000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* MMAClockApp.swift in Sources */,
+				B10000000000000000000002 /* RootView.swift in Sources */,
+				B10000000000000000000003 /* TrainingClock.swift in Sources */,
+				B10000000000000000000004 /* Timeline.swift in Sources */,
+				B10000000000000000000005 /* CuePlayer.swift in Sources */,
+				B10000000000000000000006 /* NotificationScheduler.swift in Sources */,
+				B10000000000000000000007 /* LiveActivityController.swift in Sources */,
+				B10000000000000000000008 /* Theme.swift in Sources */,
+				B10000000000000000000040 /* AppConfig.swift in Sources */,
+				B10000000000000000000041 /* AppStorageKeys.swift in Sources */,
+				B10000000000000000000042 /* PersistenceHelpers.swift in Sources */,
+				B10000000000000000000043 /* HapticFeedback.swift in Sources */,
+				B10000000000000000000044 /* AnalyticsClient.swift in Sources */,
+				B10000000000000000000045 /* ReviewPrompt.swift in Sources */,
+				B10000000000000000000046 /* ShareHelper.swift in Sources */,
+				B10000000000000000000047 /* SettingsView.swift in Sources */,
+				B10000000000000000000048 /* AboutView.swift in Sources */,
+				B10000000000000000000009 /* TrainingAttributes.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		P10000000000000000000005 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000021 /* MMAClockWidget.swift in Sources */,
+				B10000000000000000000022 /* TrainingAttributes.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D10000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = T10000000000000000000002 /* MMAClockWidget */;
+			targetProxy = D10000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C10000000000000000000002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C10000000000000000000003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C10000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MMAClock/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Train Clock";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.pawel.trainclock;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C10000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MMAClock/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Train Clock";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.pawel.trainclock;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C10000000000000000000008 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MMAClockWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.pawel.trainclock.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C10000000000000000000009 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MMAClockWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.pawel.trainclock.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C10000000000000000000001 /* Build configuration list for PBXProject "MMAClock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C10000000000000000000002 /* Debug */,
+				C10000000000000000000003 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C10000000000000000000004 /* Build configuration list for PBXNativeTarget "MMAClock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C10000000000000000000005 /* Debug */,
+				C10000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C10000000000000000000007 /* Build configuration list for PBXNativeTarget "MMAClockWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C10000000000000000000008 /* Debug */,
+				C10000000000000000000009 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A10000000000000000000001 /* Project object */;
+}

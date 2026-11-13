@@ -1,0 +1,354 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "about.app" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "App" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Aplikacja" } }
+      }
+    },
+    "about.build" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Build" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Build" } }
+      }
+    },
+    "about.privacy" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Privacy Policy" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Polityka prywatności" } }
+      }
+    },
+    "about.support" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Contact support" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kontakt" } }
+      }
+    },
+    "about.terms" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Terms of Use" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Regulamin" } }
+      }
+    },
+    "about.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "About" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "O aplikacji" } }
+      }
+    },
+    "about.version" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Version" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wersja" } }
+      }
+    },
+    "about.website" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Website" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Strona WWW" } }
+      }
+    },
+    "control.lap" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lap" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Okrążenie" } }
+      }
+    },
+    "control.pause" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pause" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Pauza" } }
+      }
+    },
+    "control.reset" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reset" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Reset" } }
+      }
+    },
+    "control.resume" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Resume" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wznów" } }
+      }
+    },
+    "control.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Again" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jeszcze raz" } }
+      }
+    },
+    "control.start" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Start" } }
+      }
+    },
+    "detail.countdown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Countdown" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Odliczanie" } }
+      }
+    },
+    "detail.finished_countdown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time’s up" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Czas minął" } }
+      }
+    },
+    "detail.finished_session" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Session complete" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sesja zakończona" } }
+      }
+    },
+    "detail.lap_count %lld" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lap %lld" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Okrążenie %lld" } }
+      }
+    },
+    "detail.prepare" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Starting soon" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Zaraz start" } }
+      }
+    },
+    "detail.round %lld of %lld" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round %1$lld of %2$lld" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Runda %1$lld z %2$lld" } }
+      }
+    },
+    "detail.stopwatch_idle" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Counting up" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Czas w górę" } }
+      }
+    },
+    "detail.stopwatch_ready" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ready" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Gotowy" } }
+      }
+    },
+    "hint.background" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "YouTube keeps playing. With the screen off, round cues arrive as notifications." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "YouTube w tle gra dalej. Przy zgaszonym ekranie sygnał rundy przychodzi jako powiadomienie." } }
+      }
+    },
+    "hint.live_activities" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Turn on Live Activities to see the time on the Lock Screen" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Włącz Aktywności na żywo, żeby widzieć czas na zablokowanym ekranie" } }
+      }
+    },
+    "hint.notifications_denied" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enable notifications in Settings" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Włącz powiadomienia w Ustawieniach" } }
+      }
+    },
+    "hint.notifications_prompt" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Allow sounds when the screen is off" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Pozwól na dźwięki przy zgaszonym ekranie" } }
+      }
+    },
+    "mode.countdown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Timer" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Minutnik" } }
+      }
+    },
+    "mode.sparring" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sparring" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sparing" } }
+      }
+    },
+    "mode.stopwatch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stopwatch" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Stoper" } }
+      }
+    },
+    "phase.countdown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "TIMER" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "MINUTNIK" } }
+      }
+    },
+    "phase.end" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "END" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "KONIEC" } }
+      }
+    },
+    "phase.pause" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PAUSE" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "PAUZA" } }
+      }
+    },
+    "phase.prepare" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PREPARE" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "PRZYGOTOWANIE" } }
+      }
+    },
+    "phase.rest" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "REST" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "PRZERWA" } }
+      }
+    },
+    "phase.stopwatch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "STOPWATCH" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "STOPER" } }
+      }
+    },
+    "phase.work" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "WORK" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "PRACA" } }
+      }
+    },
+    "preset.interval" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Interval" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Interwał" } }
+      }
+    },
+    "preset.round" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Runda" } }
+      }
+    },
+    "preset.sparring" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sparring" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sparing" } }
+      }
+    },
+    "preset.tabata" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tabata" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tabata" } }
+      }
+    },
+    "setting.countdown_minutes" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Minutes" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Minuty" } }
+      }
+    },
+    "setting.countdown_seconds" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Seconds" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sekundy" } }
+      }
+    },
+    "setting.prepare" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Prepare" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przygotowanie" } }
+      }
+    },
+    "setting.rest" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rest" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przerwa" } }
+      }
+    },
+    "setting.rounds" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rounds" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Rundy" } }
+      }
+    },
+    "setting.total %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Total %@" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Całość %@" } }
+      }
+    },
+    "setting.work" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Work" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Praca" } }
+      }
+    },
+    "settings.audio_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cues duck other music briefly, then mix continues." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sygnały na chwilę przyciszają inną muzykę, potem mix wraca." } }
+      }
+    },
+    "settings.debug_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Debug only — not shown in Release." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tylko debug — niewidoczne w Release." } }
+      }
+    },
+    "settings.reset_review" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reset review counters" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Resetuj licznik ocen" } }
+      }
+    },
+    "settings.screenshot_preview" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Screenshot preview mode" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tryb podglądu zrzutów" } }
+      }
+    },
+    "settings.sound" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sound" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dźwięk" } }
+      }
+    },
+    "settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ustawienia" } }
+      }
+    },
+    "settings.volume" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Volume" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Głośność" } }
+      }
+    },
+    "share.button" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Share" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Udostępnij" } }
+      }
+    },
+    "sound.off" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mute" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wyłącz dźwięk" } }
+      }
+    },
+    "sound.on" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unmute" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Włącz dźwięk" } }
+      }
+    },
+    "stopwatch.hint" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time counts up. Lap stores a split." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Czas leci w górę. Okrążenie zapisuje międzyczas." } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
