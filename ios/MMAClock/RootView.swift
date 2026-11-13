@@ -44,12 +44,13 @@ struct RootView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
                 .padding(.bottom, 18)
+                .containerRelativeFrame(.horizontal, count: 1, spacing: 0, alignment: .center)
                 .frame(maxWidth: 560)
-                .frame(maxWidth: .infinity)
             }
             .scrollIndicators(.hidden)
             .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
             .contentMargins(.horizontal, 0, for: .scrollContent)
+            .scrollClipDisabled(false)
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
@@ -308,7 +309,7 @@ struct RootView: View {
 
     private var sparringSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            ClippedHorizontalScroll(height: 58) {
+            ClippedHorizontalScroll(height: 58, alignment: .leading) {
                 HStack(spacing: 8) {
                     preset(L10n.t("preset.tabata"), "20/10 × 8") {
                         clock.prepareSeconds = 5
@@ -361,6 +362,7 @@ struct RootView: View {
                 .foregroundStyle(Palette.ink.opacity(0.64))
                 .frame(maxWidth: .infinity, alignment: .center)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var countdownSettings: some View {
@@ -524,21 +526,20 @@ struct RootView: View {
 
 private struct ClippedHorizontalScroll<Content: View>: View {
     let height: CGFloat
+    let alignment: Alignment
     let content: Content
 
-    init(height: CGFloat, @ViewBuilder content: () -> Content) {
+    init(height: CGFloat, alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
         self.height = height
+        self.alignment = alignment
         self.content = content()
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
-                content
-            }
-            .frame(width: proxy.size.width, alignment: .leading)
+        ScrollView(.horizontal, showsIndicators: false) {
+            content
         }
-        .frame(maxWidth: .infinity)
+        .containerRelativeFrame(.horizontal, count: 1, spacing: 0, alignment: alignment)
         .frame(height: height)
     }
 }
