@@ -23,14 +23,13 @@ python3 ios/app-store/generate-assets.py
 
 ## Signing and distribution (Paweł only)
 
-1. **Apple Developer Program** (paid membership). A free **Personal Team** (e.g. Pawel Jadach, `TNVMVJQJL6`) can run on device but **cannot** upload to App Store Connect.
+1. **Team in Xcode**: On your Mac at `~/repos/round-timer`, choose your **paid Apple Developer Program** team under **Signing & Capabilities** for **MMAClock** and **MMAClockWidget**. Automatic signing is configured; do not commit `DEVELOPMENT_TEAM` to the repo.
 2. **Bundle ID** in Xcode: `dev.pawel.roundtimer` (main) and `dev.pawel.roundtimer.widget` (widget). Create matching IDs in the developer portal if needed.
-3. **Signing**: Automatic signing is configured; set your **paid** team in Xcode on your Mac (`~/repos/round-timer`). Do not commit machine-specific `DEVELOPMENT_TEAM` values from CI.
-4. **Archive & upload**: Xcode → Product → Archive → Distribute App (Release, scheme **MMAClock**).
-5. Paste store text from `listing-en.md` / `listing-pl.md`; use live URLs on `round-timer-marketing.vercel.app` (see `AppConfig` for locale paths).
-6. **Privacy** questionnaire: `privacy-app-store.md`; `PrivacyInfo.xcprivacy` is in the app target.
-7. **Age rating**: `age-rating.md`.
-8. **Export compliance**: `ITSAppUsesNonExemptEncryption` = false in `Info.plist` (HTTPS links only).
+3. **Archive & upload**: Xcode → Product → Archive → Distribute App (Release, scheme **MMAClock**).
+4. Paste store text from `listing-en.md` / `listing-pl.md`; use live URLs on `round-timer-marketing.vercel.app` (see `AppConfig` for locale paths).
+5. **Privacy** questionnaire: `privacy-app-store.md`; `PrivacyInfo.xcprivacy` is in the app target.
+6. **Age rating**: `age-rating.md`.
+7. **Export compliance**: `ITSAppUsesNonExemptEncryption` = false in `Info.plist` (HTTPS links only).
 
 ## Screenshot gaps (first submission)
 
