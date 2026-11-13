@@ -20,6 +20,10 @@ struct RootView: View {
     var body: some View {
         ZStack {
             Palette.background.ignoresSafeArea()
+            if let phase = liveRoundsPhase {
+                Palette.color(phase).opacity(0.48).ignoresSafeArea().allowsHitTesting(false)
+                    .animation(.easeInOut(duration: 0.25), value: phase)
+            }
 
             ScrollView(.vertical) {
                 LazyVStack(spacing: compactLayout ? 12 : 16) {
@@ -30,9 +34,6 @@ struct RootView: View {
                         Spacer(minLength: compactLayout ? 48 : 64)
                     } else {
                         Spacer(minLength: compactLayout ? 20 : 28)
-                    }
-                    if let phase = roundsHighlightPhase, sessionActive, clock.mode == .sparring {
-                        roundsPhaseIndicator(current: phase, compact: compactLayout)
                     }
                     timerBlock(compact: compactLayout)
                     if sessionActive {
@@ -69,16 +70,7 @@ struct RootView: View {
             }
         }
         .overlay {
-            if sessionActive, clock.mode == .sparring, clock.runState != .finished,
-               ["prepare", "work", "rest"].contains(display.tint) {
-                Circle()
-                    .fill(Palette.color(display.tint).opacity(0.38))
-                    .frame(width: 460, height: 460)
-                    .blur(radius: 90)
-                    .offset(y: -80)
-                    .allowsHitTesting(false)
-                    .animation(.easeInOut(duration: 0.25), value: display.tint)
-            } else if !sessionActive {
+            if !sessionActive {
                 Circle()
                     .fill(Palette.color(display.tint).opacity(0.42))
                     .frame(width: 460, height: 460)
@@ -193,20 +185,30 @@ struct RootView: View {
         let previewMode = idle ? selected : clock.mode
         let stopwatchSession = previewMode == .stopwatch && idle
         let showDetail = shouldShowTimerDetail(for: previewMode)
-        let showPhaseTitle = !stopwatchSession && (idle || (previewMode == .sparring && clock.runState != .finished))
-        return VStack(spacing: idle ? 6 : 10) {
-            if showPhaseTitle {
+        let liveRounds = !idle && previewMode == .sparring && clock.runState != .finished
+        let phase = liveRoundsPhase
+        return VStack(spacing: liveRounds ? 14 : (idle ? 6 : 10)) {
+            if liveRounds, let phase {
+                roundsPhaseIndicator(current: phase, compact: compact, prominent: true)
+            }
+            if idle, !stopwatchSession {
                 Text(display.phaseName)
-                    .font(Palette.display(idle ? 18 : 22))
+                    .font(Palette.display(18))
                     .tracking(3)
                     .foregroundStyle(Palette.color(display.tint))
+            } else if liveRounds {
+                Text(display.phaseName)
+                    .font(Palette.display(compact ? 34 : 40))
+                    .tracking(4)
+                    .foregroundStyle(Palette.ink(on: display.tint))
+                    .shadow(color: .black.opacity(0.35), radius: 6, y: 2)
             }
             Text(display.text)
-                .font(Palette.display(stopwatchSession ? 96 : (idle ? 84 : 96)))
+                .font(Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96))))
                 .monospacedDigit()
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
-                .foregroundStyle(Palette.ink)
+                .foregroundStyle(liveRounds && phase != nil ? Palette.ink(on: display.tint) : Palette.ink)
                 .accessibilityLabel("\(display.phaseName) \(display.text)")
             if showDetail {
                 Text(display.detail)
@@ -237,42 +239,36 @@ struct RootView: View {
         compact ? 520 : 600
     }
 
-    private var roundsHighlightPhase: String? {
-        if showSettings, selected == .sparring {
-            let tint = clock.previewFace(for: .sparring).tint
-            return ["prepare", "work", "rest"].contains(tint) ? tint : nil
-        }
-        if sessionActive, clock.mode == .sparring, clock.runState != .finished {
-            let tint = display.tint
-            return ["prepare", "work", "rest"].contains(tint) ? tint : nil
-        }
-        return nil
+    private var liveRoundsPhase: String? {
+        guard sessionActive, clock.mode == .sparring, clock.runState != .finished else { return nil }
+        let tint = display.tint
+        return ["prepare", "work", "rest"].contains(tint) ? tint : nil
     }
 
-    private func roundsPhaseIndicator(current: String, compact: Bool) -> some View {
-        HStack(spacing: 6) {
-            roundsPhaseChip("prepare", title: L10n.t("setting.prepare"), current: current, compact: compact)
-            roundsPhaseChip("work", title: L10n.t("setting.work"), current: current, compact: compact)
-            roundsPhaseChip("rest", title: L10n.t("setting.rest"), current: current, compact: compact)
+    private func roundsPhaseIndicator(current: String, compact: Bool, prominent: Bool = false) -> some View {
+        HStack(spacing: prominent ? 8 : 6) {
+            roundsPhaseChip("prepare", title: L10n.t("setting.prepare"), current: current, compact: compact, prominent: prominent)
+            roundsPhaseChip("work", title: L10n.t("setting.work"), current: current, compact: compact, prominent: prominent)
+            roundsPhaseChip("rest", title: L10n.t("setting.rest"), current: current, compact: compact, prominent: prominent)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(L10n.t(current == "prepare" ? "phase.prepare" : current == "work" ? "phase.work" : "phase.rest"))
     }
 
-    private func roundsPhaseChip(_ phase: String, title: String, current: String, compact: Bool) -> some View {
+    private func roundsPhaseChip(_ phase: String, title: String, current: String, compact: Bool, prominent: Bool) -> some View {
         let isCurrent = phase == current
         return Text(title)
-            .font(Palette.ui(compact ? 12 : 13))
+            .font(prominent ? Palette.display(compact ? 17 : 19) : Palette.ui(compact ? 12 : 13))
             .lineLimit(1)
             .minimumScaleFactor(0.75)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, compact ? 7 : 8)
-            .foregroundStyle(isCurrent ? Palette.ink(on: phase) : Palette.ink.opacity(0.55))
-            .background(Palette.color(phase).opacity(isCurrent ? 0.92 : 0.2), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .padding(.vertical, prominent ? (compact ? 11 : 13) : (compact ? 7 : 8))
+            .foregroundStyle(isCurrent ? Palette.ink(on: phase) : Palette.ink.opacity(prominent ? 0.7 : 0.55))
+            .background(Palette.color(phase).opacity(isCurrent ? 1 : (prominent ? 0.22 : 0.2)), in: RoundedRectangle(cornerRadius: prominent ? 12 : 10, style: .continuous))
             .overlay {
                 if isCurrent {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Palette.ink.opacity(0.35), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: prominent ? 12 : 10, style: .continuous)
+                        .stroke(Palette.ink.opacity(prominent ? 0.45 : 0.35), lineWidth: prominent ? 2 : 1)
                 }
             }
     }
@@ -333,21 +329,17 @@ struct RootView: View {
                 }
             }
             .padding(.bottom, compact ? 10 : 14)
-            if let phase = roundsHighlightPhase {
-                roundsPhaseIndicator(current: phase, compact: compact)
-                    .padding(.bottom, compact ? 4 : 6)
-            }
-            sparringStepRow(phase: "prepare", title: L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {
+            stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds + 5))
             }
-            sparringStepRow(phase: "work", title: L10n.t("setting.work"), text: ClockFormat.clock(seconds: clock.workSeconds), compact: compact) {
+            stepRow(L10n.t("setting.work"), text: ClockFormat.clock(seconds: clock.workSeconds), compact: compact) {
                 clock.workSeconds = min(3600, max(5, clock.workSeconds - 5))
             } increment: {
                 clock.workSeconds = min(3600, max(5, clock.workSeconds + 5))
             }
-            sparringStepRow(phase: "rest", title: L10n.t("setting.rest"), text: ClockFormat.clock(seconds: clock.restSeconds), compact: compact) {
+            stepRow(L10n.t("setting.rest"), text: ClockFormat.clock(seconds: clock.restSeconds), compact: compact) {
                 clock.restSeconds = min(1800, max(0, clock.restSeconds - 5))
             } increment: {
                 clock.restSeconds = min(1800, max(0, clock.restSeconds + 5))
@@ -400,25 +392,6 @@ struct RootView: View {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds + 5))
             }
         }
-    }
-
-    private func sparringStepRow(
-        phase: String,
-        title: String,
-        text: String,
-        compact: Bool = false,
-        decrement: @escaping () -> Void,
-        increment: @escaping () -> Void
-    ) -> some View {
-        let isCurrent = roundsHighlightPhase == phase
-        return stepRow(title, text: text, compact: compact, decrement: decrement, increment: increment)
-            .padding(.horizontal, 6)
-            .padding(.vertical, compact ? 4 : 6)
-            .background(Palette.color(phase).opacity(isCurrent ? 0.26 : 0.14), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Palette.color(phase).opacity(isCurrent ? 0.75 : 0.28), lineWidth: isCurrent ? 1.5 : 1)
-            }
     }
 
     private func stepRow(_ title: String, text: String, compact: Bool = false, decrement: @escaping () -> Void, increment: @escaping () -> Void) -> some View {
