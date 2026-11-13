@@ -74,13 +74,14 @@ struct RootView: View {
             }
         }
         .overlay {
-            if !sessionActive {
+            if let tint = decorativeGlowTint {
                 Circle()
-                    .fill(Palette.color(display.tint).opacity(0.42))
+                    .fill(glowColor(tint))
                     .frame(width: 460, height: 460)
                     .blur(radius: 90)
                     .offset(y: -80)
                     .allowsHitTesting(false)
+                    .animation(.easeInOut(duration: 0.25), value: tint)
             }
         }
         .sheet(isPresented: $showAppSettings) {
@@ -151,15 +152,15 @@ struct RootView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, compact ? 8 : 10)
                         .background(
-                            selected == mode ? Palette.gold.opacity(0.18) : Color.clear,
+                            selected == mode ? modeAccent(mode).opacity(0.2) : Color.clear,
                             in: Capsule()
                         )
                         .overlay {
                             if selected == mode {
-                                Capsule().stroke(Palette.gold.opacity(0.45), lineWidth: 1)
+                                Capsule().stroke(modeAccent(mode).opacity(0.55), lineWidth: 1)
                             }
                         }
-                        .foregroundStyle(selected == mode ? Palette.gold : Palette.ink.opacity(0.48))
+                        .foregroundStyle(selected == mode ? modeAccent(mode) : Palette.ink.opacity(0.48))
                 }
                 .buttonStyle(.plain)
             }
@@ -233,6 +234,40 @@ struct RootView: View {
         guard sessionActive, clock.mode == .sparring, clock.runState != .finished else { return nil }
         let tint = display.tint
         return ["prepare", "work", "rest"].contains(tint) ? tint : nil
+    }
+
+    private var decorativeGlowTint: String? {
+        if liveRoundsPhase != nil { return nil }
+        if sessionActive {
+            guard clock.runState != .finished else { return nil }
+            switch clock.mode {
+            case .sparring:
+                return nil
+            case .countdown:
+                return display.tint
+            case .stopwatch:
+                return "stopwatch"
+            }
+        }
+        return display.tint
+    }
+
+    private func modeAccent(_ mode: TrainingMode) -> Color {
+        switch mode {
+        case .sparring:
+            return Palette.gold
+        case .countdown:
+            return Palette.color("work")
+        case .stopwatch:
+            return Color(red: 0.48, green: 0.76, blue: 0.95)
+        }
+    }
+
+    private func glowColor(_ tint: String) -> Color {
+        if tint == "stopwatch" {
+            return Color(red: 0.48, green: 0.76, blue: 0.95).opacity(0.42)
+        }
+        return Palette.color(tint).opacity(0.42)
     }
 
     private func liveRoundsBackdrop(_ phase: String) -> Color {
