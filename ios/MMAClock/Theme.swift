@@ -1,22 +1,37 @@
 import SwiftUI
 
 enum Palette {
-    static let background = Color(red: 0.055, green: 0.059, blue: 0.071)
+    static let background = Color(red: 0.063, green: 0.047, blue: 0.039)
+    static let ink = Color(red: 0.957, green: 0.937, blue: 0.902)
+    static let gold = Color(red: 0.894, green: 0.694, blue: 0.353)
+    static let canvas = Color(red: 0.102, green: 0.071, blue: 0.055)
 
     static func color(_ tint: String) -> Color {
         switch tint {
         case "work":
-            return Color(red: 1.0, green: 0.306, blue: 0.180)
+            return Color(red: 0.886, green: 0.227, blue: 0.169)
         case "rest":
-            return Color(red: 0.18, green: 0.74, blue: 0.98)
+            return Color(red: 0.247, green: 0.525, blue: 0.839)
         case "prepare":
-            return Color(red: 1.0, green: 0.74, blue: 0.30)
+            return gold
         case "end":
-            return Color(red: 0.49, green: 0.86, blue: 0.45)
+            return Color(red: 0.839, green: 0.890, blue: 0.416)
         case "stopwatch":
-            return Color(red: 0.95, green: 0.95, blue: 0.97)
+            return ink
         default:
-            return Color(red: 0.55, green: 0.55, blue: 0.58)
+            return gold
         }
+    }
+
+    static func ink(on tint: String) -> Color {
+        tint == "work" || tint == "rest" ? Color(red: 1, green: 0.973, blue: 0.949) : Color(red: 0.102, green: 0.063, blue: 0.047)
+    }
+
+    static func display(_ size: CGFloat) -> Font {
+        .custom("BarlowCondensed-Bold", size: size)
+    }
+
+    static func ui(_ size: CGFloat, weight: Font.Weight = .semibold) -> Font {
+        .custom(weight == .regular || weight == .medium ? "Barlow-Medium" : "Barlow-SemiBold", size: size)
     }
 }

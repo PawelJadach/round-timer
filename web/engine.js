@@ -1,3 +1,5 @@
+import { lapDetail, roundDetail, t } from "./i18n.js"
+
 export function formatClock(totalSeconds) {
   const value = Math.max(0, Math.floor(totalSeconds))
   const hours = Math.floor(value / 3600)
@@ -55,8 +57,8 @@ export function snapshot(session, now) {
       totalRounds: 0,
       finished: false,
       text: formatStopwatch(elapsed),
-      phaseName: session.pauseBegan ? "PAUZA" : "STOPER",
-      detail: session.stopwatch.laps.length ? `Okrążenie ${session.stopwatch.laps.length}` : "Czas w górę",
+      phaseName: session.pauseBegan ? t("phasePause") : t("phaseStopwatch"),
+      detail: session.stopwatch.laps.length ? lapDetail(session.stopwatch.laps.length) : t("detailStopwatch"),
       tint: "stopwatch",
     }
   }
@@ -71,8 +73,8 @@ export function snapshot(session, now) {
       totalRounds: last?.totalRounds ?? 0,
       finished: true,
       text: "00:00",
-      phaseName: "KONIEC",
-      detail: session.kind === "countdown" ? "Czas minął" : "Sesja zakończona",
+      phaseName: t("phaseEnd"),
+      detail: session.kind === "countdown" ? t("detailFinishedCountdown") : t("detailFinishedSession"),
       tint: "end",
     }
   }
@@ -140,21 +142,21 @@ export function dueCues(session, after, now) {
 
 export function preview(kind, settings) {
   if (kind === "stopwatch") {
-    return { text: "00:00.00", phaseName: "STOPER", detail: "Gotowy", tint: "stopwatch" }
+    return { text: "00:00.00", phaseName: t("phaseStopwatch"), detail: t("detailReady"), tint: "stopwatch" }
   }
   if (kind === "countdown") {
     return {
       text: formatClock(Math.max(0, settings.countdown)),
-      phaseName: "MINUTNIK",
-      detail: settings.countdown < 5 ? "Minimum 5 sekund" : "Odliczanie",
+      phaseName: t("phaseCountdown"),
+      detail: settings.countdown < 5 ? t("detailMinimum") : t("detailCountdown"),
       tint: "work",
     }
   }
   const opening = settings.prepare > 0 ? settings.prepare : settings.work
   return {
     text: formatClock(opening),
-    phaseName: settings.prepare > 0 ? "PRZYGOTOWANIE" : "PRACA",
-    detail: `Runda 1 z ${settings.rounds}`,
+    phaseName: settings.prepare > 0 ? t("phasePrepare") : t("phaseWork"),
+    detail: roundDetail(1, settings.rounds),
     tint: settings.prepare > 0 ? "prepare" : "work",
   }
 }
@@ -230,17 +232,17 @@ function startSound(kind) {
 }
 
 function phaseName(kind) {
-  if (kind === "prepare") return "PRZYGOTOWANIE"
-  if (kind === "work") return "PRACA"
-  if (kind === "rest") return "PRZERWA"
-  if (kind === "countdown") return "MINUTNIK"
-  return "KONIEC"
+  if (kind === "prepare") return t("phasePrepare")
+  if (kind === "work") return t("phaseWork")
+  if (kind === "rest") return t("phaseRest")
+  if (kind === "countdown") return t("phaseCountdown")
+  return t("phaseEnd")
 }
 
 function detail(segment) {
-  if (segment.kind === "prepare") return "Zaraz start"
-  if (segment.kind === "countdown") return "Odliczanie"
-  return `Runda ${segment.round} z ${segment.totalRounds}`
+  if (segment.kind === "prepare") return t("detailPrepare")
+  if (segment.kind === "countdown") return t("detailCountdown")
+  return roundDetail(segment.round, segment.totalRounds)
 }
 
 function tint(kind) {

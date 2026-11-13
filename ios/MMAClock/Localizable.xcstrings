@@ -85,6 +85,12 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Start" } }
       }
     },
+    "detail.countdown_minimum" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Minimum 5 seconds" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Minimum 5 sekund" } }
+      }
+    },
     "detail.countdown" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Countdown" } },

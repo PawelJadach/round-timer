@@ -1,10 +1,15 @@
-const CACHE = "mma-clock-v20"
+const CACHE = "mma-clock-v21"
 const FILES = [
   "./",
   "./index.html",
   "./app.css",
   "./app.js",
   "./engine.js",
+  "./i18n.js",
+  "./fonts/BarlowCondensed-Bold.ttf",
+  "./fonts/BarlowCondensed-SemiBold.ttf",
+  "./fonts/Barlow-Medium.ttf",
+  "./fonts/Barlow-SemiBold.ttf",
   "./manifest.webmanifest",
   "./bell.m4a",
   "./icon-180.png",

@@ -46,24 +46,24 @@ struct ClockSnapshot: Equatable {
 
     var phaseName: String {
         switch phase {
-        case .prepare: return String(localized: "phase.prepare")
-        case .work: return String(localized: "phase.work")
-        case .rest: return String(localized: "phase.rest")
-        case .countdown: return String(localized: "phase.countdown")
-        case .finished: return String(localized: "phase.end")
+        case .prepare: return AppLanguage.shared.text("phase.prepare")
+        case .work: return AppLanguage.shared.text("phase.work")
+        case .rest: return AppLanguage.shared.text("phase.rest")
+        case .countdown: return AppLanguage.shared.text("phase.countdown")
+        case .finished: return AppLanguage.shared.text("phase.end")
         }
     }
 
     var detail: String {
         switch phase {
         case .prepare:
-            return String(localized: "detail.prepare")
+            return AppLanguage.shared.text("detail.prepare")
         case .work, .rest:
-            return String(localized: "detail.round \(max(round, 1)) of \(max(totalRounds, 1))")
+            return AppLanguage.shared.text("detail.round \(max(round, 1)) of \(max(totalRounds, 1))")
         case .countdown:
-            return String(localized: "detail.countdown")
+            return AppLanguage.shared.text("detail.countdown")
         case .finished:
-            return String(localized: "detail.finished_session")
+            return AppLanguage.shared.text("detail.finished_session")
         }
     }
 
@@ -180,6 +180,10 @@ struct SessionTimeline {
         cues.filter { $0.date > after && $0.date <= now }.sorted { $0.date < $1.date }
     }
 
+    mutating func refreshLocalizedCopy() {
+        cues = Self.makeCues(segments: segments)
+    }
+
     func futureBoundaryCues(after now: Date) -> [Cue] {
         cues.filter { $0.sound != .tick && $0.date > now }.sorted { $0.date < $1.date }
     }
@@ -220,10 +224,10 @@ struct SessionTimeline {
                 id: "session-end",
                 date: last.end,
                 sound: .end,
-                title: String(localized: "phase.end"),
+                title: AppLanguage.shared.text("phase.end"),
                 body: last.kind == .countdown
-                    ? String(localized: "detail.finished_countdown")
-                    : String(localized: "detail.finished_session")
+                    ? AppLanguage.shared.text("detail.finished_countdown")
+                    : AppLanguage.shared.text("detail.finished_session")
             ))
         }
         return cues
@@ -240,20 +244,20 @@ struct SessionTimeline {
 
     private static func title(_ kind: PhaseKind) -> String {
         switch kind {
-        case .prepare: return String(localized: "setting.prepare")
-        case .work: return String(localized: "setting.work")
-        case .rest: return String(localized: "setting.rest")
-        case .countdown: return String(localized: "mode.countdown")
-        case .finished: return String(localized: "phase.end")
+        case .prepare: return AppLanguage.shared.text("setting.prepare")
+        case .work: return AppLanguage.shared.text("setting.work")
+        case .rest: return AppLanguage.shared.text("setting.rest")
+        case .countdown: return AppLanguage.shared.text("mode.countdown")
+        case .finished: return AppLanguage.shared.text("phase.end")
         }
     }
 
     private static func body(_ segment: Segment) -> String {
         switch segment.kind {
-        case .prepare: return String(localized: "detail.prepare")
-        case .work, .rest: return String(localized: "detail.round \(segment.round) of \(segment.totalRounds)")
-        case .countdown: return String(localized: "detail.countdown")
-        case .finished: return String(localized: "detail.finished_session")
+        case .prepare: return AppLanguage.shared.text("detail.prepare")
+        case .work, .rest: return AppLanguage.shared.text("detail.round \(segment.round) of \(segment.totalRounds)")
+        case .countdown: return AppLanguage.shared.text("detail.countdown")
+        case .finished: return AppLanguage.shared.text("detail.finished_session")
         }
     }
 }

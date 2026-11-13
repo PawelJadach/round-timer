@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0e0f12" />
+    <meta name="theme-color" content="#100c0a" />
     <meta name="description" content="Darmowy timer do treningu: sparing z rundami, minutnik i stoper. Dzwonek jak z ringu, działa w przeglądarce na telefonie." />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Round Timer" />
@@ -54,11 +54,12 @@
     <main>
       <header>
         <div class="modes" id="modes" role="tablist"></div>
-        <button class="icon-button" id="sound" type="button" aria-label="Wyłącz dźwięk"></button>
+        <div class="lang" id="lang" role="group"></div>
+        <button class="icon-button" id="sound" type="button"></button>
       </header>
       <label class="volume">
-        <span>Głośność</span>
-        <input id="volume" type="range" min="0" max="100" value="80" aria-label="Głośność dźwięku" />
+        <span id="volume-label"></span>
+        <input id="volume" type="range" min="0" max="100" value="80" />
         <span id="volume-value">80</span>
       </label>
       <section class="face" id="face">

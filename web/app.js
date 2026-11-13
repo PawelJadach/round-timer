@@ -11,27 +11,30 @@ import {
   snapshot,
   sparringTotalSeconds,
 } from "./engine.js"
+import { getLocale, setLocale, t, totalLine } from "./i18n.js"
 
-const MODES = [
-  ["sparring", "Sparing"],
-  ["countdown", "Minutnik"],
-  ["stopwatch", "Stoper"],
-]
+const MODES = ["sparring", "countdown", "stopwatch"]
 
 const SPARRING_PRESETS = [
-  ["Tabata", "20/10 × 8", { prepare: 5, work: 20, rest: 10, rounds: 8 }],
-  ["Interwał", "30/15 × 10", { prepare: 5, work: 30, rest: 15, rounds: 10 }],
-  ["Sparing", "3:00 / 1:00 × 5", { prepare: 10, work: 180, rest: 60, rounds: 5 }],
-  ["Runda", "5:00 / 1:00 × 3", { prepare: 10, work: 300, rest: 60, rounds: 3 }],
+  ["presetTabata", "20/10 × 8", { prepare: 5, work: 20, rest: 10, rounds: 8 }],
+  ["presetInterval", "30/15 × 10", { prepare: 5, work: 30, rest: 15, rounds: 10 }],
+  ["presetSparring", "3:00 / 1:00 × 5", { prepare: 10, work: 180, rest: 60, rounds: 5 }],
+  ["presetRound", "5:00 / 1:00 × 3", { prepare: 10, work: 300, rest: 60, rounds: 3 }],
 ]
 
 const COUNTDOWN_PRESETS = [
-  ["0:30", "pół minuty", 30],
-  ["1:00", "minuta", 60],
-  ["3:00", "trzy minuty", 180],
-  ["5:00", "pięć minut", 300],
-  ["10:00", "dziesięć minut", 600],
+  ["0:30", "presetHalf", 30],
+  ["1:00", "presetMinute", 60],
+  ["3:00", "presetThree", 180],
+  ["5:00", "presetFive", 300],
+  ["10:00", "presetTen", 600],
 ]
+
+const MODE_LABEL = {
+  sparring: "modeSparring",
+  countdown: "modeCountdown",
+  stopwatch: "modeStopwatch",
+}
 
 const defaults = { prepare: 10, work: 180, rest: 60, rounds: 5, countdown: 180 }
 const settings = loadSettings()
@@ -50,8 +53,13 @@ const ui = {
   bellLive: false,
   wakeLock: null,
   renderedKey: "",
+  scheduledIds: new Set(),
+  scheduledNodes: [],
+  keepalive: null,
 }
 
+const langEl = document.querySelector("#lang")
+const volumeLabelEl = document.querySelector("#volume-label")
 const phaseEl = document.querySelector("#phase")
 const timeEl = document.querySelector("#time")
 const detailEl = document.querySelector("#detail")
@@ -97,12 +105,19 @@ volumeEl.addEventListener("change", () => {
 document.addEventListener("pointerdown", armAudio)
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible" && ui.runState === "running") {
+  if (ui.runState !== "running") return
+  if (document.visibilityState === "hidden") {
+    holdSessionAudio()
+    scheduleUpcoming(Date.now())
+  } else {
     catchUp()
     keepAwake()
   }
 })
 
+setLocale(loadLocale())
+applyDocumentLocale()
+renderLanguage()
 renderSound()
 renderModes()
 renderFace(currentFace())
@@ -117,13 +132,18 @@ if ("serviceWorker" in navigator) {
 }
 
 function tick() {
-  if (ui.runState === "running" && ui.session) {
-    const now = Date.now()
-    const face = advance(now)
-    renderFace(face)
-    if (face.finished) finish()
-  }
+  stepSession()
   requestAnimationFrame(tick)
+}
+
+setInterval(stepSession, 100)
+
+function stepSession() {
+  if (ui.runState !== "running" || !ui.session) return
+  if (document.visibilityState === "hidden") holdSessionAudio()
+  const face = advance(Date.now())
+  renderFace(face)
+  if (face.finished) finish()
 }
 
 function advance(now) {
@@ -131,9 +151,17 @@ function advance(now) {
   ui.lastCueAt = now
   for (const cue of cues) {
     const late = now - cue.at
-    if (late < 1500 && cue.sound !== "end") play(cue.sound)
+    if (ui.scheduledIds.has(cue.id) && (!ui.audio || ui.audio.state !== "running")) releaseScheduled(cue.id)
+    const owned = ui.scheduledIds.has(cue.id)
+    if (!owned && late < 1500 && cue.sound !== "end") {
+      play(cue.sound)
+      ui.scheduledIds.add(cue.id)
+    }
     if (cue.sound === "end") {
-      if (late < 1500) play("end")
+      if (!owned && late < 1500) {
+        play("end")
+        ui.scheduledIds.add(cue.id)
+      }
       return snapshot(ui.session, now)
     }
   }
@@ -158,6 +186,8 @@ function start() {
   ui.session = createSession(ui.mode, settings, now)
   ui.lastCueAt = now - 1
   ui.runState = "running"
+  holdSessionAudio()
+  scheduleUpcoming(now)
   const face = advance(now)
   renderModes()
   renderFace(face)
@@ -180,9 +210,11 @@ function pause() {
     }
   }
   pauseSession(ui.session, now)
+  cancelScheduled(true)
+  stopSessionAudio()
   ui.runState = "paused"
   const face = snapshot(ui.session, now)
-  face.phaseName = "PAUZA"
+  face.phaseName = t("phasePause")
   renderFace(face)
   renderControls()
   releaseAwake()
@@ -195,12 +227,16 @@ function resume() {
   resumeSession(ui.session, now)
   ui.lastCueAt = now
   ui.runState = "running"
+  holdSessionAudio()
+  scheduleUpcoming(now)
   renderFace(snapshot(ui.session, now))
   renderControls()
   keepAwake()
 }
 
 function reset() {
+  cancelScheduled(true)
+  stopSessionAudio()
   ui.runState = "idle"
   ui.session = null
   ui.runMode = null
@@ -216,6 +252,8 @@ function finish() {
   if (ui.runState !== "running") return
   track("timer_finish", { mode: ui.runMode || ui.mode })
   ui.runState = "finished"
+  cancelScheduled(false)
+  stopSessionAudio()
   renderFace(snapshot(ui.session, Date.now()))
   renderModes()
   renderControls()
@@ -234,7 +272,7 @@ function markLap() {
 function currentFace() {
   if (ui.runState === "idle" || !ui.session) return preview(ui.mode, settings)
   const face = snapshot(ui.session, Date.now())
-  if (ui.runState === "paused") face.phaseName = "PAUZA"
+  if (ui.runState === "paused") face.phaseName = t("phasePause")
   return face
 }
 
@@ -273,8 +311,8 @@ function renderFace(face) {
 function renderModes() {
   const locked = ui.runState === "running" || ui.runState === "paused"
   modesEl.dataset.locked = String(locked)
-  modesEl.innerHTML = MODES.map(([id, label]) => `
-    <button type="button" role="tab" data-mode="${id}" aria-selected="${ui.mode === id}">${label}</button>
+  modesEl.innerHTML = MODES.map((id) => `
+    <button type="button" role="tab" data-mode="${id}" aria-selected="${ui.mode === id}">${t(MODE_LABEL[id])}</button>
   `).join("")
   modesEl.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
@@ -301,18 +339,18 @@ function renderSettings() {
   }
   if (ui.mode === "countdown") {
     settingsEl.innerHTML = `
-      <div class="presets">${COUNTDOWN_PRESETS.map(([title, detail, seconds]) => chip(title, detail, `data-countdown="${seconds}"`)).join("")}</div>
-      ${row("Minuty", String(Math.floor(settings.countdown / 60)), "countdown-minutes")}
-      ${row("Sekundy", String(settings.countdown % 60).padStart(2, "0"), "countdown-seconds")}
+      <div class="presets">${COUNTDOWN_PRESETS.map(([title, detail, seconds]) => chip(title, t(detail), `data-countdown="${seconds}"`)).join("")}</div>
+      ${row(t("minutes"), String(Math.floor(settings.countdown / 60)), "countdown-minutes")}
+      ${row(t("seconds"), String(settings.countdown % 60).padStart(2, "0"), "countdown-seconds")}
     `
   } else {
     settingsEl.innerHTML = `
-      <div class="presets">${SPARRING_PRESETS.map(([title, detail], index) => chip(title, detail, `data-preset="${index}"`)).join("")}</div>
-      ${row("Przygotowanie", formatClock(settings.prepare), "prepare")}
-      ${row("Praca", formatClock(settings.work), "work")}
-      ${row("Przerwa", formatClock(settings.rest), "rest")}
-      ${row("Rundy", String(settings.rounds), "rounds")}
-      <p class="total">Całość ${formatClock(sparringTotalSeconds(settings))}</p>
+      <div class="presets">${SPARRING_PRESETS.map(([title, detail], index) => chip(t(title), detail, `data-preset="${index}"`)).join("")}</div>
+      ${row(t("prepare"), formatClock(settings.prepare), "prepare")}
+      ${row(t("work"), formatClock(settings.work), "work")}
+      ${row(t("rest"), formatClock(settings.rest), "rest")}
+      ${row(t("rounds"), String(settings.rounds), "rounds")}
+      <p class="total">${totalLine(formatClock(sparringTotalSeconds(settings)))}</p>
     `
   }
   settingsEl.querySelectorAll("[data-preset]").forEach((button) => {
@@ -339,19 +377,19 @@ function renderSettings() {
 
 function renderControls() {
   const face = currentFace()
-  const key = `${ui.runState}:${ui.runMode}:${ui.mode}:${canStart(ui.mode, settings)}:${face.tint}`
+  const key = `${getLocale()}:${ui.runState}:${ui.runMode}:${ui.mode}:${canStart(ui.mode, settings)}:${face.tint}`
   if (controlsEl.dataset.key === key && controlsEl.childElementCount) return
   controlsEl.dataset.key = key
   const tint = face.tint
   if (ui.runState === "idle") {
-    controlsEl.innerHTML = `<button class="primary" id="start" style="background:${color(tint)};color:${ink(tint)}" ${canStart(ui.mode, settings) ? "" : "disabled"}>Start</button>`
+    controlsEl.innerHTML = `<button class="primary" id="start" style="background:${color(tint)};color:${ink(tint)}" ${canStart(ui.mode, settings) ? "" : "disabled"}>${t("start")}</button>`
     controlsEl.querySelector("#start").addEventListener("click", start)
     return
   }
   if (ui.runState === "running" && ui.runMode === "stopwatch") {
     controlsEl.innerHTML = `
-      <button class="secondary" id="lap">Okrążenie</button>
-      <button class="primary" id="pause">Pauza</button>
+      <button class="secondary" id="lap">${t("lap")}</button>
+      <button class="primary" id="pause">${t("pause")}</button>
     `
     controlsEl.querySelector("#lap").addEventListener("click", markLap)
     controlsEl.querySelector("#pause").addEventListener("click", pause)
@@ -359,18 +397,18 @@ function renderControls() {
   }
   if (ui.runState === "running") {
     controlsEl.innerHTML = `
-      <button class="secondary" id="reset">Reset</button>
-      <button class="primary" id="pause">Pauza</button>
+      <button class="secondary" id="reset">${t("reset")}</button>
+      <button class="primary" id="pause">${t("pause")}</button>
     `
   } else if (ui.runState === "paused") {
     controlsEl.innerHTML = `
-      <button class="secondary" id="reset">Reset</button>
-      <button class="primary" id="resume" style="background:${color(tint)};color:${ink(tint)}">Wznów</button>
+      <button class="secondary" id="reset">${t("reset")}</button>
+      <button class="primary" id="resume" style="background:${color(tint)};color:${ink(tint)}">${t("resume")}</button>
     `
   } else {
     controlsEl.innerHTML = `
-      <button class="secondary" id="reset">Reset</button>
-      <button class="primary" id="again" style="background:${color("end")};color:${ink("end")}">Jeszcze raz</button>
+      <button class="secondary" id="reset">${t("reset")}</button>
+      <button class="primary" id="again" style="background:${color("end")};color:${ink("end")}">${t("again")}</button>
     `
   }
   controlsEl.querySelector("#reset")?.addEventListener("click", reset)
@@ -397,12 +435,47 @@ function renderLaps() {
 }
 
 function renderHint() {
-  hintEl.innerHTML = `Dzwonek: <a href="https://freesound.org/s/66952/">Benboncan</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.`
+  hintEl.innerHTML = `${t("hintBell")} <a href="https://freesound.org/s/66952/">Benboncan</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.`
+}
+
+function renderLanguage() {
+  langEl.setAttribute("aria-label", t("language"))
+  langEl.innerHTML = ["en", "pl"].map((code) => `
+    <button type="button" data-lang="${code}" aria-pressed="${getLocale() === code}">${code.toUpperCase()}</button>
+  `).join("")
+  langEl.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.dataset.lang === getLocale()) return
+      localStorage.setItem("mmaclock.lang", button.dataset.lang)
+      setLocale(button.dataset.lang)
+      applyDocumentLocale()
+      controlsEl.dataset.key = ""
+      renderLanguage()
+      renderSound()
+      renderModes()
+      renderFace(currentFace())
+      renderSettings()
+      renderControls()
+      renderHint()
+    })
+  })
+}
+
+function applyDocumentLocale() {
+  document.documentElement.lang = getLocale()
+}
+
+function loadLocale() {
+  const saved = localStorage.getItem("mmaclock.lang")
+  if (saved === "en" || saved === "pl") return saved
+  return (navigator.language || "").toLowerCase().startsWith("pl") ? "pl" : "en"
 }
 
 function renderSound() {
   soundEl.innerHTML = ui.sound ? speakerOn() : speakerOff()
-  soundEl.setAttribute("aria-label", ui.sound ? "Wyłącz dźwięk" : "Włącz dźwięk")
+  soundEl.setAttribute("aria-label", ui.sound ? t("soundOff") : t("soundOn"))
+  volumeLabelEl.textContent = t("volume")
+  volumeEl.setAttribute("aria-label", t("volumeAria"))
   volumeEl.value = String(ui.volume)
   volumeValueEl.textContent = String(ui.volume)
   volumeRow.classList.toggle("is-muted", !ui.sound)
@@ -420,6 +493,147 @@ function nudge(key, delta) {
   renderFace(currentFace())
   controlsEl.dataset.key = ""
   renderControls()
+}
+
+function holdSessionAudio() {
+  if (ui.runMode === "stopwatch") return
+  preferPlayback()
+  unlockAudio()
+  if (!ui.keepalive) {
+    const audio = new Audio(keepaliveWavUrl())
+    audio.loop = true
+    audio.preload = "auto"
+    audio.volume = 0.02
+    ui.keepalive = audio
+  }
+  ui.keepalive.play().catch(() => {})
+  publishPlaybackSession(true)
+}
+
+function stopSessionAudio() {
+  ui.keepalive?.pause()
+  publishPlaybackSession(false)
+}
+
+function publishPlaybackSession(active) {
+  const session = navigator.mediaSession
+  if (!session) return
+  try {
+    session.playbackState = active ? "playing" : "none"
+    if (active) {
+      session.metadata = new MediaMetadata({ title: "Round Timer", artist: "Round Timer" })
+      session.setActionHandler("pause", () => {
+        if (ui.runState === "running") holdSessionAudio()
+      })
+      session.setActionHandler("play", () => {
+        if (ui.runState === "running") holdSessionAudio()
+      })
+    }
+  } catch {}
+}
+
+function keepaliveWavUrl() {
+  if (ui.keepaliveUrl) return ui.keepaliveUrl
+  const sampleRate = 8000
+  const samples = sampleRate
+  const dataBytes = samples * 2
+  const buffer = new ArrayBuffer(44 + dataBytes)
+  const view = new DataView(buffer)
+  const write = (offset, text) => {
+    for (let index = 0; index < text.length; index += 1) view.setUint8(offset + index, text.charCodeAt(index))
+  }
+  write(0, "RIFF")
+  view.setUint32(4, 36 + dataBytes, true)
+  write(8, "WAVE")
+  write(12, "fmt ")
+  view.setUint32(16, 16, true)
+  view.setUint16(20, 1, true)
+  view.setUint16(22, 1, true)
+  view.setUint32(24, sampleRate, true)
+  view.setUint32(28, sampleRate * 2, true)
+  view.setUint16(32, 2, true)
+  view.setUint16(34, 16, true)
+  write(36, "data")
+  view.setUint32(40, dataBytes, true)
+  let seed = 1
+  for (let index = 0; index < samples; index += 1) {
+    seed = (seed * 16807) % 2147483647
+    view.setInt16(44 + index * 2, (seed % 1300) - 650, true)
+  }
+  ui.keepaliveUrl = URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }))
+  return ui.keepaliveUrl
+}
+
+function scheduleUpcoming(now) {
+  if (!ui.session || ui.runMode === "stopwatch" || !ui.audio) return
+  if (ui.audio.state !== "running") {
+    ui.audio.resume()
+    return
+  }
+  const audioNow = ui.audio.currentTime
+  const kept = []
+  for (const item of ui.scheduledNodes) {
+    if (item.when > audioNow + 0.03) {
+      try { item.node.stop() } catch {}
+    } else {
+      kept.push(item)
+    }
+  }
+  ui.scheduledNodes = kept
+  ui.scheduledIds = new Set(kept.map((item) => item.id))
+  for (const cue of ui.session.cues) {
+    if (ui.scheduledIds.has(cue.id)) continue
+    const delay = (cue.at - now) / 1000
+    if (delay < -0.03) continue
+    const when = audioNow + Math.max(0, delay)
+    if (queueCue(cue, when)) ui.scheduledIds.add(cue.id)
+  }
+}
+
+function queueCue(cue, when) {
+  if (cue.sound === "prepare" || cue.sound === "tick") {
+    queueTone(cue, when)
+    return true
+  }
+  if (!ui.bellBuffer) return false
+  const source = ui.audio.createBufferSource()
+  source.buffer = ui.bellBuffer
+  source.connect(output())
+  try { source.start(when) } catch { return false }
+  ui.scheduledNodes.push({ node: source, when, id: cue.id })
+  return true
+}
+
+function queueTone(cue, when) {
+  if (cue.sound === "prepare") {
+    ui.scheduledNodes.push({ node: tone(660, 0.11, when, 0.35), when, id: cue.id })
+    ui.scheduledNodes.push({ node: tone(880, 0.14, when + 0.16, 0.35), when: when + 0.16, id: cue.id })
+  } else {
+    ui.scheduledNodes.push({ node: tone(1480, 0.05, when, 0.16), when, id: cue.id })
+  }
+}
+
+function releaseScheduled(id) {
+  for (const item of ui.scheduledNodes) {
+    if (item.id !== id) continue
+    try { item.node.stop() } catch {}
+  }
+  ui.scheduledNodes = ui.scheduledNodes.filter((item) => item.id !== id)
+  ui.scheduledIds.delete(id)
+}
+
+function cancelScheduled(cutPlaying) {
+  const audioNow = ui.audio ? ui.audio.currentTime : 0
+  const kept = []
+  for (const item of ui.scheduledNodes) {
+    if (!cutPlaying && item.when <= audioNow) {
+      kept.push(item)
+      continue
+    }
+    try { item.node.stop() } catch {}
+  }
+  ui.scheduledNodes = kept
+  ui.scheduledIds = new Set(kept.map((item) => item.id))
 }
 
 function play(sound) {
@@ -497,6 +711,7 @@ function tone(freq, duration, when, amp) {
   gain.connect(output())
   osc.start(when)
   osc.stop(when + duration + 0.02)
+  return osc
 }
 
 function output() {
@@ -531,6 +746,7 @@ function ensureBellBuffer() {
     })
     .then((buffer) => {
       ui.bellBuffer = buffer
+      if (ui.runState === "running") scheduleUpcoming(Date.now())
     })
     .catch(() => {})
     .finally(() => {
@@ -548,7 +764,12 @@ function unlockAudio() {
   preferPlayback()
   const Context = window.AudioContext || window.webkitAudioContext
   if (!Context) return
-  if (!ui.audio) ui.audio = new Context()
+  if (!ui.audio) {
+    ui.audio = new Context()
+    ui.audio.onstatechange = () => {
+      if (ui.runState === "running" && ui.audio.state === "running") scheduleUpcoming(Date.now())
+    }
+  }
   if (ui.audio.state === "suspended") ui.audio.resume()
 }
 
@@ -589,9 +810,9 @@ function row(title, value, key) {
     <div class="row">
       <p>${title}</p>
       <span style="flex:1"></span>
-      <button class="step" type="button" data-key="${key}" data-delta="-${delta}" aria-label="Mniej">−</button>
+      <button class="step" type="button" data-key="${key}" data-delta="-${delta}" aria-label="${t("less")}">−</button>
       <span class="value">${value}</span>
-      <button class="step" type="button" data-key="${key}" data-delta="${delta}" aria-label="Więcej">+</button>
+      <button class="step" type="button" data-key="${key}" data-delta="${delta}" aria-label="${t("more")}">+</button>
     </div>
   `
 }
@@ -601,17 +822,17 @@ function chip(title, detail, attrs) {
 }
 
 function ink(tint) {
-  return tint === "work" || tint === "rest" ? "white" : "#141414"
+  return tint === "work" || tint === "rest" ? "#fff8f2" : "#1a100c"
 }
 
 function color(tint) {
   return {
-    work: "#ff4e2e",
-    rest: "#2ebdf8",
-    prepare: "#ffbc4d",
-    end: "#7ddb73",
-    stopwatch: "#f2f2f5",
-  }[tint] ?? "#ff4e2e"
+    work: "#e23a2b",
+    rest: "#3f86d6",
+    prepare: "#e4b15a",
+    end: "#d6e36a",
+    stopwatch: "#f4efe6",
+  }[tint] ?? "#e23a2b"
 }
 
 function loadSettings() {

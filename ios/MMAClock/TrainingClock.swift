@@ -12,9 +12,9 @@ enum TrainingMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .sparring: return String(localized: "mode.sparring")
-        case .countdown: return String(localized: "mode.countdown")
-        case .stopwatch: return String(localized: "mode.stopwatch")
+        case .sparring: return AppLanguage.shared.text("mode.sparring")
+        case .countdown: return AppLanguage.shared.text("mode.countdown")
+        case .stopwatch: return AppLanguage.shared.text("mode.stopwatch")
         }
     }
 }
@@ -61,8 +61,8 @@ final class TrainingClock: ObservableObject {
         }
     }
 
-    /// 0...100 — matches web volume slider.
-    @Published var cueVolume: Double = 100 {
+    /// 0...100. Default 80 matches the web slider.
+    @Published var cueVolume: Double = 80 {
         didSet {
             let clamped = min(100, max(0, cueVolume))
             if clamped != cueVolume {
@@ -118,6 +118,46 @@ final class TrainingClock: ObservableObject {
         prepareSeconds + rounds * workSeconds + max(0, rounds - 1) * restSeconds
     }
 
+    /// Plays the ring bell once when the idle volume slider is released.
+    func previewVolume() {
+        guard runState == .idle, soundEnabled, cueVolume > 0 else { return }
+        player.playBell()
+    }
+
+    func relocalize() {
+        timeline?.refreshLocalizedCopy()
+        let now = Date()
+        switch runState {
+        case .idle:
+            break
+        case .running, .paused:
+            if mode == .stopwatch {
+                publishStopwatch(at: now)
+            } else if let snap = timeline?.snapshot(at: now) {
+                if runState == .paused {
+                    publish(Face(
+                        text: ClockFormat.remaining(snap.remaining),
+                        phaseName: AppLanguage.shared.text("phase.pause"),
+                        detail: snap.detail,
+                        tint: snap.tint
+                    ))
+                } else {
+                    publish(face(from: snap))
+                }
+            }
+            showActivity(at: now, force: true)
+            if runState == .running, mode != .stopwatch, soundEnabled {
+                enqueueBoundaryNotifications()
+            }
+        case .finished:
+            let detail = mode == .countdown
+                ? AppLanguage.shared.text("detail.finished_countdown")
+                : AppLanguage.shared.text("detail.finished_session")
+            publish(Face(text: "00:00", phaseName: AppLanguage.shared.text("phase.end"), detail: detail, tint: "end"))
+            showActivity(at: now, force: true)
+        }
+    }
+
     func canStart(_ mode: TrainingMode) -> Bool {
         switch mode {
         case .sparring: return workSeconds >= 5 && rounds >= 1
@@ -132,24 +172,24 @@ final class TrainingClock: ObservableObject {
             let opening = prepareSeconds > 0 ? prepareSeconds : workSeconds
             return Face(
                 text: ClockFormat.clock(seconds: opening),
-                phaseName: prepareSeconds > 0 ? String(localized: "phase.prepare") : String(localized: "phase.work"),
-                detail: String(localized: "detail.round \(1) of \(rounds)"),
+                phaseName: prepareSeconds > 0 ? AppLanguage.shared.text("phase.prepare") : AppLanguage.shared.text("phase.work"),
+                detail: AppLanguage.shared.text("detail.round \(1) of \(rounds)"),
                 tint: prepareSeconds > 0 ? "prepare" : "work"
             )
         case .countdown:
             return Face(
                 text: ClockFormat.clock(seconds: max(countdownSeconds, 0)),
-                phaseName: String(localized: "phase.countdown"),
+                phaseName: AppLanguage.shared.text("phase.countdown"),
                 detail: countdownSeconds < 5
-                    ? String(localized: "detail.countdown")
-                    : String(localized: "detail.countdown"),
+                    ? AppLanguage.shared.text("detail.countdown_minimum")
+                    : AppLanguage.shared.text("detail.countdown"),
                 tint: "work"
             )
         case .stopwatch:
             return Face(
                 text: "00:00.00",
-                phaseName: String(localized: "phase.stopwatch"),
-                detail: String(localized: "detail.stopwatch_ready"),
+                phaseName: AppLanguage.shared.text("phase.stopwatch"),
+                detail: AppLanguage.shared.text("detail.stopwatch_ready"),
                 tint: "stopwatch"
             )
         }
@@ -207,7 +247,7 @@ final class TrainingClock: ObservableObject {
             if let snap = timeline?.snapshot(at: now) {
                 publish(Face(
                     text: ClockFormat.remaining(snap.remaining),
-                    phaseName: String(localized: "phase.pause"),
+                    phaseName: AppLanguage.shared.text("phase.pause"),
                     detail: snap.detail,
                     tint: snap.tint
                 ))
@@ -268,6 +308,7 @@ final class TrainingClock: ObservableObject {
 
     func catchUp() {
         guard runState == .running else { return }
+        player.cancelScheduled(after: Date().addingTimeInterval(0.05))
         let now = Date()
         if mode == .stopwatch {
             publishStopwatch(at: now)
@@ -330,11 +371,19 @@ final class TrainingClock: ObservableObject {
         }
     }
 
-    /// Refreshes the notification backup. The quiet audio loop is what actually
-    /// keeps the clock alive; these alerts cover the case where iOS suspends us.
+    /// Keeps the playback session alive and arms cue sounds on the audio clock.
+    /// Notifications stay the backup only when that session could not be armed.
     func prepareForBackground() {
-        guard runState == .running, mode != .stopwatch, soundEnabled else { return }
-        enqueueBoundaryNotifications()
+        guard runState == .running, mode != .stopwatch else { return }
+        player.ensureRunning()
+        guard soundEnabled, let timeline else { return }
+        let cues = timeline.cues.map { (id: $0.id, date: $0.date, sound: $0.sound) }
+        let armed = player.scheduleCues(cues)
+        if armed.isEmpty {
+            enqueueBoundaryNotifications()
+        } else {
+            scheduler.cancelPending()
+        }
     }
 
     private func beginIntervals(at now: Date) {
@@ -373,6 +422,10 @@ final class TrainingClock: ObservableObject {
     }
 
     private func playIfFresh(_ cue: Cue, now: Date) {
+        if player.isScheduled(cue.id) {
+            scheduler.cancel(id: cue.id)
+            return
+        }
         let late = now.timeIntervalSince(cue.date)
         guard late < 1.5 else {
             scheduler.cancel(id: cue.id)
@@ -393,9 +446,9 @@ final class TrainingClock: ObservableObject {
         runState = .finished
         stopTicker()
         let detail = mode == .countdown
-            ? String(localized: "detail.finished_countdown")
-            : String(localized: "detail.finished_session")
-        publish(Face(text: "00:00", phaseName: String(localized: "phase.end"), detail: detail, tint: "end"))
+            ? AppLanguage.shared.text("detail.finished_countdown")
+            : AppLanguage.shared.text("detail.finished_session")
+        publish(Face(text: "00:00", phaseName: AppLanguage.shared.text("phase.end"), detail: detail, tint: "end"))
         showActivity(at: now, force: true)
         UIApplication.shared.isIdleTimerDisabled = false
         Task { @MainActor in
@@ -412,11 +465,11 @@ final class TrainingClock: ObservableObject {
         publish(Face(
             text: ClockFormat.stopwatch(stopwatch.elapsed(at: now)),
             phaseName: runState == .paused
-                ? String(localized: "phase.pause")
-                : String(localized: "phase.stopwatch"),
+                ? AppLanguage.shared.text("phase.pause")
+                : AppLanguage.shared.text("phase.stopwatch"),
             detail: laps.isEmpty
-                ? String(localized: "detail.stopwatch_idle")
-                : String(localized: "detail.lap_count \(laps.count)"),
+                ? AppLanguage.shared.text("detail.stopwatch_idle")
+                : AppLanguage.shared.text("detail.lap_count \(laps.count)"),
             tint: "stopwatch"
         ))
     }
@@ -455,8 +508,8 @@ final class TrainingClock: ObservableObject {
             let start = now.addingTimeInterval(-elapsed)
             let running = runState == .running
             return TrainingAttributes.ContentState(
-                phaseName: running ? "STOPER" : "PAUZA",
-                detail: "Czas w górę",
+                phaseName: running ? AppLanguage.shared.text("phase.stopwatch") : AppLanguage.shared.text("phase.pause"),
+                detail: AppLanguage.shared.text("detail.stopwatch_idle"),
                 tint: "stopwatch",
                 usesTimer: running,
                 countsDown: false,
@@ -468,8 +521,10 @@ final class TrainingClock: ObservableObject {
 
         if runState == .finished {
             return TrainingAttributes.ContentState(
-                phaseName: "KONIEC",
-                detail: mode == .countdown ? "Czas minął" : "Sesja zakończona",
+                phaseName: AppLanguage.shared.text("phase.end"),
+                detail: mode == .countdown
+                    ? AppLanguage.shared.text("detail.finished_countdown")
+                    : AppLanguage.shared.text("detail.finished_session"),
                 tint: "end",
                 usesTimer: false,
                 countsDown: true,
@@ -483,7 +538,7 @@ final class TrainingClock: ObservableObject {
         let running = runState == .running && !snap.isFinished
         let end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
         return TrainingAttributes.ContentState(
-            phaseName: running ? snap.phaseName : "PAUZA",
+            phaseName: running ? snap.phaseName : AppLanguage.shared.text("phase.pause"),
             detail: snap.detail,
             tint: snap.tint,
             usesTimer: running,
