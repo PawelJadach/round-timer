@@ -311,10 +311,6 @@ struct RootView: View {
             } increment: {
                 clock.rounds = min(30, max(1, clock.rounds + 1))
             }
-            Text(L10n.t("setting.total \(ClockFormat.clock(seconds: clock.sparringTotalSeconds))"))
-                .font(Palette.ui(13))
-                .foregroundStyle(Palette.ink.opacity(0.64))
-                .frame(maxWidth: .infinity, alignment: .center)
         }
     }
 
