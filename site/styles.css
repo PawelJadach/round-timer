@@ -200,8 +200,7 @@ body:has(.home) {
   flex-direction: column;
 }
 
-body:has(.home) .wrap,
-body:has(.home) .stage { width: min(68rem, calc(100% - 3rem)); }
+body:has(.home) .wrap { width: min(72rem, calc(100% - 3rem)); }
 
 @property --glow {
   syntax: "<color>";
@@ -215,7 +214,7 @@ body[data-shot="stop"] { --glow: #7ac2f2; }
 
 body:has(.home) .glow {
   top: 46%;
-  left: 70%;
+  left: 34%;
   width: 34rem;
   height: 34rem;
   translate: -50% -50%;
@@ -233,14 +232,16 @@ body:has(.home) .glow {
 }
 
 .stage {
+  width: min(52rem, calc(100% - 3rem));
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
-  justify-content: space-between;
-  gap: clamp(2rem, 6vw, 5rem);
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 3.5rem);
   text-align: left;
 }
 
-.copy { flex: 1; max-width: 34rem; }
+.copy { flex: 0 1 24rem; max-width: 24rem; }
 
 .lede {
   margin: 0.7rem 0 0;
@@ -251,29 +252,28 @@ body:has(.home) .glow {
 .phone {
   position: relative;
   margin: 0;
-  height: min(74vh, 38rem);
+  height: min(62vh, 30rem);
   aspect-ratio: 1170 / 2532;
-  border-radius: 2rem;
+  border-radius: 1.6rem;
   overflow: hidden;
   box-shadow:
     0 0 0 1px rgba(244, 239, 230, 0.16),
-    0 1.5rem 3.2rem rgba(0, 0, 0, 0.4);
+    0 1.2rem 2.4rem rgba(0, 0, 0, 0.4);
+}
+
+.reel {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .phone img {
-  position: absolute;
-  inset: 0;
+  flex: 0 0 100%;
   width: 100%;
+  min-width: 0;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
-  transform: scale(1.02);
-  transition: opacity 0.9s ease, transform 0.9s ease;
-}
-
-.phone img.on {
-  opacity: 1;
-  transform: none;
 }
 
 @media (max-width: 860px) {
@@ -282,7 +282,7 @@ body:has(.home) .glow {
     text-align: center;
   }
   .copy { max-width: 24rem; }
-  .phone { height: min(70vh, 32rem); }
+  .phone { height: min(58vh, 26rem); }
   body:has(.home) .glow { left: 50%; top: 58%; }
 }
 
@@ -305,7 +305,7 @@ body:has(.home) .glow {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phone img,
+  .reel,
   body:has(.home) .glow { transition: none; }
 }
 
