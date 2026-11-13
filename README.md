@@ -11,6 +11,7 @@ Formerly MMA Clock / Train Clock — same product.
 ```
 round-timer/
   web/                 → static PWA (engine.js + app.js)
+  android/             → native Android app (Jetpack Compose)
   ios/
     MMAClock.xcodeproj → open this in Xcode
     MMAClock/          → SwiftUI app (iOS 17+)
@@ -53,3 +54,14 @@ EN + PL via `Localizable.xcstrings` (system language).
 - Modes: Sparring/Tabata, Countdown, Stopwatch (laps).
 - Settings: prepare / work / rest / rounds, presets, sound + volume, About / share.
 - Lean App Store shell: `AppConfig`, Privacy Manifest, review prompt, haptics — no heavy SDKs.
+
+## Android
+
+Open `android/` in Android Studio, or build from the command line with the Android SDK:
+
+```bash
+cd android
+./gradlew :app:assembleDebug
+```
+
+Same clock as the web app: sparring, countdown, and stopwatch, the same presets, 5-second steps, the ring bell, volume starting at 80 with a preview, and English or Polish from the switch on the clock. A running session stays in a foreground service, so the bell still plays if you leave the app. Store listing copy, the icon, and privacy notes are in `android/play/` for a manual Play Console upload. Nothing here submits the app.
