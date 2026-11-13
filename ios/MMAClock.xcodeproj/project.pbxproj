@@ -36,6 +36,11 @@
 		B10000000000000000000010 /* cue_keepalive.wav in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000010 /* cue_keepalive.wav */; };
 		B10000000000000000000012 /* bell.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000012 /* bell.m4a */; };
 		B1000000000000000000004B /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000004B /* AppLanguage.swift */; };
+		B1000000000000000000004C /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000004C /* L10n.swift */; };
+		B10000000000000000000050 /* BarlowCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000050 /* BarlowCondensed-Bold.ttf */; };
+		B10000000000000000000051 /* BarlowCondensed-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000051 /* BarlowCondensed-SemiBold.ttf */; };
+		B10000000000000000000052 /* Barlow-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000052 /* Barlow-Medium.ttf */; };
+		B10000000000000000000053 /* Barlow-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000053 /* Barlow-SemiBold.ttf */; };
 		B10000000000000000000021 /* MMAClockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* MMAClockWidget.swift */; };
 		B10000000000000000000022 /* TrainingAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* TrainingAttributes.swift */; };
 		B10000000000000000000030 /* MMAClockWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F10000000000000000000031 /* MMAClockWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -95,6 +100,11 @@
 		F10000000000000000000049 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F1000000000000000000004A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F1000000000000000000004B /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		F1000000000000000000004C /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		F10000000000000000000050 /* BarlowCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BarlowCondensed-Bold.ttf"; sourceTree = "<group>"; };
+		F10000000000000000000051 /* BarlowCondensed-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BarlowCondensed-SemiBold.ttf"; sourceTree = "<group>"; };
+		F10000000000000000000052 /* Barlow-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Barlow-Medium.ttf"; sourceTree = "<group>"; };
+		F10000000000000000000053 /* Barlow-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Barlow-SemiBold.ttf"; sourceTree = "<group>"; };
 		F10000000000000000000011 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F10000000000000000000021 /* MMAClockWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMAClockWidget.swift; sourceTree = "<group>"; };
 		F10000000000000000000022 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -152,6 +162,10 @@
 				F10000000000000000000006 /* NotificationScheduler.swift */,
 				F10000000000000000000007 /* LiveActivityController.swift */,
 				F10000000000000000000008 /* Theme.swift */,
+				F10000000000000000000050 /* BarlowCondensed-Bold.ttf */,
+				F10000000000000000000051 /* BarlowCondensed-SemiBold.ttf */,
+				F10000000000000000000052 /* Barlow-Medium.ttf */,
+				F10000000000000000000053 /* Barlow-SemiBold.ttf */,
 				F1000000000000000000000A /* Assets.xcassets */,
 				F10000000000000000000049 /* Localizable.xcstrings */,
 				F1000000000000000000004A /* PrivacyInfo.xcprivacy */,
@@ -172,6 +186,7 @@
 			children = (
 				F10000000000000000000040 /* AppConfig.swift */,
 				F1000000000000000000004B /* AppLanguage.swift */,
+				F1000000000000000000004C /* L10n.swift */,
 				F10000000000000000000041 /* AppStorageKeys.swift */,
 				F10000000000000000000042 /* PersistenceHelpers.swift */,
 				F10000000000000000000043 /* HapticFeedback.swift */,
@@ -299,6 +314,10 @@
 				B10000000000000000000012 /* bell.m4a in Resources */,
 				B10000000000000000000049 /* Localizable.xcstrings in Resources */,
 				B1000000000000000000004A /* PrivacyInfo.xcprivacy in Resources */,
+				B10000000000000000000050 /* BarlowCondensed-Bold.ttf in Resources */,
+				B10000000000000000000051 /* BarlowCondensed-SemiBold.ttf in Resources */,
+				B10000000000000000000052 /* Barlow-Medium.ttf in Resources */,
+				B10000000000000000000053 /* Barlow-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +351,7 @@
 				B10000000000000000000045 /* ReviewPrompt.swift in Sources */,
 				B10000000000000000000046 /* ShareHelper.swift in Sources */,
 				B1000000000000000000004B /* AppLanguage.swift in Sources */,
+				B1000000000000000000004C /* L10n.swift in Sources */,
 				B10000000000000000000047 /* SettingsView.swift in Sources */,
 				B10000000000000000000048 /* AboutView.swift in Sources */,
 				B10000000000000000000009 /* TrainingAttributes.swift in Sources */,

@@ -8,6 +8,8 @@ struct MMAClockApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(clock)
+                .environmentObject(AppLanguage.shared)
+                .environment(\.locale, AppLanguage.shared.locale)
                 .preferredColorScheme(.dark)
         }
     }

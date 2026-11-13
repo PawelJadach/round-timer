@@ -12,27 +12,27 @@ struct AboutView: View {
     var body: some View {
         List {
             Section {
-                LabeledContent(String(localized: "about.app"), value: AppConfig.displayName)
-                LabeledContent(String(localized: "about.version"), value: version)
-                LabeledContent(String(localized: "about.build"), value: build)
+                LabeledContent(L10n.t("about.app"), value: AppConfig.displayName)
+                LabeledContent(L10n.t("about.version"), value: version)
+                LabeledContent(L10n.t("about.build"), value: build)
             }
 
             Section {
-                Link(String(localized: "about.privacy"), destination: AppConfig.privacyPolicyURL)
-                Link(String(localized: "about.terms"), destination: AppConfig.termsOfUseURL)
-                Link(String(localized: "about.website"), destination: AppConfig.marketingURL)
+                Link(L10n.t("about.privacy"), destination: AppConfig.privacyPolicyURL)
+                Link(L10n.t("about.terms"), destination: AppConfig.termsOfUseURL)
+                Link(L10n.t("about.website"), destination: AppConfig.marketingURL)
             }
 
             Section {
                 Link(
-                    String(localized: "about.support"),
+                    L10n.t("about.support"),
                     destination: URL(string: "mailto:\(AppConfig.supportEmail)")!
                 )
             } footer: {
                 Text(AppConfig.supportEmail)
             }
         }
-        .navigationTitle(String(localized: "about.title"))
+        .navigationTitle(L10n.t("about.title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

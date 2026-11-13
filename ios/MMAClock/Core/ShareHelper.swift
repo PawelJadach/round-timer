@@ -6,12 +6,12 @@ enum ShareHelper {
         let label: String
         let items: [Any]
 
-        init(label: String = String(localized: "share.button"), text: String) {
+        init(label: String = L10n.t("share.button"), text: String) {
             self.label = label
             self.items = [text]
         }
 
-        init(label: String = String(localized: "share.button"), url: URL) {
+        init(label: String = L10n.t("share.button"), url: URL) {
             self.label = label
             self.items = [url]
         }

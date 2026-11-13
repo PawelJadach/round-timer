@@ -98,10 +98,10 @@ struct TrainingLiveActivity: Widget {
 
     private func tintColor(_ tint: String) -> Color {
         switch tint {
-        case "work": return Color(red: 1.0, green: 0.306, blue: 0.180)
-        case "rest": return Color(red: 0.18, green: 0.74, blue: 0.98)
-        case "prepare": return Color(red: 1.0, green: 0.74, blue: 0.30)
-        case "end": return Color(red: 0.49, green: 0.86, blue: 0.45)
+        case "work": return Color(red: 0.886, green: 0.227, blue: 0.169)
+        case "rest": return Color(red: 0.247, green: 0.525, blue: 0.839)
+        case "prepare": return Color(red: 0.894, green: 0.694, blue: 0.353)
+        case "end": return Color(red: 0.839, green: 0.890, blue: 0.416)
         default: return .white
         }
     }

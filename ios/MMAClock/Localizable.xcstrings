@@ -349,6 +349,72 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Włącz dźwięk" } }
       }
     },
+    "a11y.close" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Zamknij" } }
+      }
+    },
+    "hint.bell_credit" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bell: Benboncan, CC BY 4.0." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dzwonek: Benboncan, CC BY 4.0." } }
+      }
+    },
+    "hint.bell_link" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Freesound source" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Źródło na Freesound" } }
+      }
+    },
+    "preset.countdown_five" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "five minutes" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "pięć minut" } }
+      }
+    },
+    "preset.countdown_half" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "half a minute" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "pół minuty" } }
+      }
+    },
+    "preset.countdown_minute" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "one minute" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "minuta" } }
+      }
+    },
+    "preset.countdown_ten" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "ten minutes" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "dziesięć minut" } }
+      }
+    },
+    "preset.countdown_three" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "three minutes" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "trzy minuty" } }
+      }
+    },
+    "settings.language" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Język" } }
+      }
+    },
+    "step.less" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Less" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Mniej" } }
+      }
+    },
+    "step.more" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "More" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Więcej" } }
+      }
+    },
     "stopwatch.hint" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Time counts up. Lap stores a split." } },
