@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#100c0a" />
-    <meta name="description" content="Rounds, a countdown, and a stopwatch. A dark face, a ring bell, no account." />
+    <meta name="description" content="An athlete's essential tool." />
     <meta name="robots" content="index, follow" />
     <title>Round Timer</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
     <link rel="alternate" hreflang="en" href="/" />
     <link rel="alternate" hreflang="pl" href="/pl/" />
     <link rel="alternate" hreflang="x-default" href="/" />
@@ -19,8 +19,8 @@
     <header class="top">
       <div class="wrap top-bar">
         <a class="brand" href="/">
+          <img class="brand-mark" src="/logo.svg" alt="" width="64" height="64" />
           <span class="brand-name">Round Timer</span>
-          <span class="brand-kicker">Gym clock</span>
         </a>
         <nav class="lang" aria-label="Language">
           <a href="/" hreflang="en" lang="en" aria-current="page">EN</a>
@@ -28,148 +28,43 @@
         </nav>
       </div>
     </header>
-    <main id="main">
-      <section class="hero wrap">
-        <p class="kicker">No account</p>
-        <h1>Rounds, then rest.</h1>
-        <p class="lede">A dark face. The glow follows the phase. The bell carries across the gym.</p>
-        <figure class="clock">
-          <div class="clock-face">
-            <div class="mode-pill" aria-hidden="true">
-              <span aria-current="true">Rounds</span>
-              <span>Timer</span>
-              <span>Stopwatch</span>
-            </div>
-            <p class="clock-phase">Work</p>
-            <p class="clock-time">03:00</p>
-            <p class="clock-detail">Round 1 of 5</p>
-          </div>
-          <figcaption>Sparring preset, in the round. Ten seconds of prepare come first.</figcaption>
-        </figure>
-        <div class="actions">
-          <a class="open" href="https://mma-clock.vercel.app/">Open the clock</a>
-          <p class="fine">English and Polish, in the browser and on the phone.</p>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <p class="kicker">Modes</p>
-          <h2>Three modes.</h2>
-          <div class="stack">
-            <article class="card">
-              <h3>Rounds</h3>
-              <p>Prepare, work, rest, and how many times. Nothing follows the last round.</p>
-            </article>
-            <article class="card">
-              <h3>Timer</h3>
-              <p>Counts down. Five seconds at the shortest, up to 24 hours.</p>
-            </article>
-            <article class="card">
-              <h3>Stopwatch</h3>
-              <p>Counts up, to the hundredth. Lap keeps the split and the total.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <p class="kicker">Presets</p>
-          <h2>Two presets.</h2>
-          <div class="chips">
-            <article class="chip">
-              <strong>Interval</strong>
-              <span>30/15 × 10</span>
-              <small>5s prepare</small>
-            </article>
-            <article class="chip">
-              <strong>Sparring</strong>
-              <span>3:00 / 1:00 × 5</span>
-              <small>10s prepare</small>
-            </article>
-          </div>
-          <p class="intro">Or set it yourself. Prepare up to 2:00, work from 5 seconds to 60:00, rest up to 30:00, rounds from 1 to 30. In the browser and on Android, the timer also has 0:30, 1:00, 3:00, 5:00, and 10:00.</p>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <p class="kicker">The face</p>
-          <h2>Color is the phase.</h2>
-          <ul class="phases">
-            <li>
-              <span class="swatch prepare" aria-hidden="true"></span>
-              <div>
-                <strong>Prepare</strong>
-                <p>Gold. Starting soon.</p>
-              </div>
-            </li>
-            <li>
-              <span class="swatch work" aria-hidden="true"></span>
-              <div>
-                <strong>Work</strong>
-                <p>Red. The round.</p>
-              </div>
-            </li>
-            <li>
-              <span class="swatch rest" aria-hidden="true"></span>
-              <div>
-                <strong>Rest</strong>
-                <p>Blue. Between rounds.</p>
-              </div>
-            </li>
-            <li>
-              <span class="swatch end" aria-hidden="true"></span>
-              <div>
-                <strong>End</strong>
-                <p>Session complete, or time’s up.</p>
-              </div>
-            </li>
+    <main id="main" class="home">
+      <div class="stage">
+        <div class="copy">
+          <p class="eyebrow">Simple to use / Configurable</p>
+          <h1>An athlete's essential tool</h1>
+          <ul class="points">
+            <li>Timing rounds</li>
+            <li>Timer</li>
+            <li>Stopwatch</li>
           </ul>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <p class="kicker">Sound</p>
-          <h2>A bell, then three ticks.</h2>
-          <p>Work, rest, and the end use the ring bell. The last three seconds tick when that stretch lasts at least five seconds. Prepare does not tick. Sound and volume stay on the device.</p>
-          <p>On iPhone the cue ducks other music, then the mix comes back. Screen off, the cue arrives as a notification. The time can sit on the Lock Screen and in the Dynamic Island.</p>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <p class="kicker">Where</p>
-          <h2>Browser, iPhone, Android.</h2>
-          <div class="stack">
-            <article class="card">
-              <h3>Browser</h3>
-              <p>Opens on the phone. English or Polish from the switch on the clock. Add it to the home screen. Settings stay on that device.</p>
-            </article>
-            <article class="card">
-              <h3>iPhone</h3>
-              <p>iOS 17 or later. Same two languages. Lock Screen and Dynamic Island when Live Activities are on.</p>
-            </article>
-            <article class="card">
-              <h3>Android</h3>
-              <p>The same three modes. A running session keeps the bell playing if you leave the app.</p>
-            </article>
+          <div class="actions">
+            <p class="badge">
+              <svg class="store-mark" viewBox="0 0 18 22" aria-hidden="true"><path fill="currentColor" d="M14.9 11.5c0-2.2 1.8-3.2 1.9-3.3-1-1.5-2.6-1.7-3.2-1.7-1.3-.2-2.6.8-3.3.8-.7 0-1.8-.8-2.9-.7-1.5.1-2.9.9-3.6 2.2-1.6 2.7-.4 6.7 1.1 8.9.7 1.1 1.6 2.3 2.8 2.2 1.1 0 1.5-.7 2.9-.7s1.7.7 2.9.7c1.2 0 2-.1 2.8-1.2.8-1.2 1.2-2.4 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM12.4 5.4c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.6-2.8 1.4-.6.7-1.1 1.8-1 2.8 1.1.1 2.1-.5 2.8-1.3z"/></svg>
+              <span class="badge-copy"><span>Download on the</span><strong>App Store</strong></span>
+            </p>
+            <p class="badge">
+              <svg class="store-mark play" viewBox="0 0 24 24" aria-hidden="true"><path fill="#34A853" d="M3.4 20.7c.4.3.9.3 1.4.1L13 15.1l-2.5-2.5-7.1 8.1z"/><path fill="#FBBC04" d="M20.5 10.7l-2.8-1.6-2.7 2.7 2.7 2.6 2.8-1.6c.8-.5.8-1.6 0-2.1z"/><path fill="#4285F4" d="M3.2 3.2c-.2.3-.3.7-.3 1.2v15.2c0 .5.1.9.3 1.2l.1.1 8.9-8.9v-.2L3.3 3.1l-.1.1z"/><path fill="#EA4335" d="M13.1 12.2 15.8 9.5 4.8 3.2c-.5-.3-1.1-.3-1.5 0L13.1 12.2z"/></svg>
+              <span class="badge-copy"><span>Get it on</span><strong>Google Play</strong></span>
+            </p>
           </div>
         </div>
-      </section>
+        <figure class="phone">
+          <img class="on" src="/media/rounds.jpg" alt="Rounds" width="1170" height="2532" />
+          <img src="/media/timer.jpg" alt="Timer" width="1170" height="2532" aria-hidden="true" />
+          <img src="/media/stopwatch.jpg" alt="Stopwatch" width="1170" height="2532" aria-hidden="true" />
+        </figure>
+      </div>
     </main>
     <footer class="foot">
       <div class="wrap">
-        <p>Formerly MMA Clock and Train Clock. Same clock.</p>
-        <p>Bell: <a href="https://freesound.org/s/66952/">Benboncan</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. <a href="mailto:hello@pawel.dev">hello@pawel.dev</a></p>
-        <p class="foot-links">
+        <p class="legal">
           <a href="/privacy/">Privacy</a>
           <a href="/terms/">Terms</a>
-          <a href="https://mma-clock.vercel.app/">Open the clock</a>
+          <a href="mailto:pawel.jadach.96@gmail.com">pawel.jadach.96@gmail.com</a>
         </p>
       </div>
     </footer>
+    <script src="/cycle.js"></script>
   </body>
 </html>

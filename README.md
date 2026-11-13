@@ -34,7 +34,7 @@ Or deploy `web/` as a static site (e.g. Vercel).
 
 ## Marketing site
 
-`site/` is only the public page: product, privacy, and terms, in English and Polish. It does not change the clock in `web/`.
+`site/` is the public page: a header, store buttons, privacy, and terms, in English and Polish. It does not change the clock in `web/`.
 
 ```bash
 cd site
