@@ -93,17 +93,23 @@ struct RootView: View {
                             Button {
                                 showAppSettings = false
                             } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .symbolRenderingMode(.hierarchical)
-                                    .foregroundStyle(.secondary)
+                                Image(systemName: "xmark")
+                                    .font(.body.weight(.semibold))
+                                    .frame(width: 36, height: 36)
+                                    .background(Palette.canvas.opacity(0.9), in: Circle())
+                                    .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+                                    .foregroundStyle(Palette.ink)
                             }
+                            .buttonStyle(.plain)
                             .accessibilityLabel(L10n.t("a11y.close"))
                         }
                     }
             }
             .environmentObject(clock)
             .environmentObject(language)
+            .environment(\.locale, language.locale)
             .preferredColorScheme(.dark)
+            .presentationBackground(Palette.background)
         }
         .onAppear {
             language.syncWithSystemIfNeeded()
