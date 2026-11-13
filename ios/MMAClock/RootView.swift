@@ -279,6 +279,7 @@ struct RootView: View {
                     clock.rounds = 5
                 }
             }
+            .padding(.bottom, compact ? 10 : 14)
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
