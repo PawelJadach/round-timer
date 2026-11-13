@@ -37,25 +37,7 @@ struct SettingsView: View {
                 } label: {
                     Label(L10n.t("about.title"), systemImage: "info.circle")
                 }
-                ShareHelper.TextOrURLButton(url: AppConfig.marketingURL)
-            }
-
-            Section {
-                Picker(L10n.t("settings.language"), selection: Binding(
-                    get: { language.code },
-                    set: { language.select($0) }
-                )) {
-                    Text("English").tag("en")
-                    Text("Polski").tag("pl")
-                }
-                if language.usesManualLanguage {
-                    Button(L10n.t("settings.language_system")) {
-                        language.followSystemLanguage()
-                        HapticFeedback.selection()
-                    }
-                }
-            } footer: {
-                Text(L10n.t("settings.language_footer"))
+                ShareHelper.TextOrURLButton(url: AppConfig.marketingURL(for: language.code))
             }
 
             #if DEBUG

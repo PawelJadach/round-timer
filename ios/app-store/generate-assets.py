@@ -72,12 +72,12 @@ def make_icon(out: Path) -> None:
     time_font = load_font("BarlowCondensed-Bold.ttf", 250)
     label_font = load_font("BarlowCondensed-Bold.ttf", 120)
     draw.text((cx, cy - 80), "03:00", font=time_font, fill=INK, anchor="mm")
-    draw.text((cx, cy + 150), "ROUND", font=label_font, fill=WORK, anchor="mm")
+    draw.text((cx, cy + 150), "ROUNDS", font=label_font, fill=WORK, anchor="mm")
     out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out)
 
 
-def draw_mode_bar(draw: ImageDraw.ImageDraw, y: int, labels: list[str], active: int, lang: str) -> None:
+def draw_mode_bar(draw: ImageDraw.ImageDraw, y: int, labels: list[str], active: int) -> None:
     pill_font = load_font("BarlowCondensed-SemiBold.ttf", 34)
     x = 80
     for index, label in enumerate(labels):
@@ -89,13 +89,6 @@ def draw_mode_bar(draw: ImageDraw.ImageDraw, y: int, labels: list[str], active: 
         draw.rounded_rectangle((x, y, x + width, y + height), radius=30, fill=fill, outline=GOLD, width=2)
         draw.text((x + pad_x, y + pad_y - 4), label, font=pill_font, fill=GOLD if index == active else MUTED)
         x += width + 12
-    lang_x = 700
-    for code in ("EN", "PL"):
-        selected = code.lower() == lang
-        draw.rounded_rectangle((lang_x, y, lang_x + 86, y + 64), radius=30,
-                               fill=GOLD if selected else (40, 28, 22), outline=GOLD, width=2)
-        draw.text((lang_x + 43, y + 32), code, font=pill_font, fill=BG if selected else MUTED, anchor="mm")
-        lang_x += 96
 
 
 def screenshot(lang: str, phase: str, time_text: str, detail: str, tint: tuple[int, int, int], out: Path) -> None:
@@ -105,16 +98,11 @@ def screenshot(lang: str, phase: str, time_text: str, detail: str, tint: tuple[i
     draw = ImageDraw.Draw(img)
 
     if lang == "en":
-        modes = ["SPARRING", "TIMER", "STOPWATCH"]
-        volume = "VOLUME"
+        modes = ["ROUNDS", "TIMER", "STOPWATCH"]
     else:
-        modes = ["SPARING", "MINUTNIK", "STOPER"]
-        volume = "GŁOŚNOŚĆ"
+        modes = ["RUNDY", "MINUTNIK", "STOPER"]
 
-    draw_mode_bar(draw, 120, modes, 0, lang)
-    draw.text((80, 220), volume, font=load_font("BarlowCondensed-SemiBold.ttf", 30), fill=MUTED)
-    draw.rounded_rectangle((220, 230, 1040, 260), radius=8, fill=(40, 28, 22), outline=GOLD, width=2)
-    draw.rectangle((220, 230, 900, 260), fill=GOLD)
+    draw_mode_bar(draw, 120, modes, 0)
 
     draw_ring_corners(draw, (90, 560, width - 90, 1120))
     draw.text((width // 2, 660), phase, font=load_font("BarlowCondensed-Bold.ttf", 52), fill=tint, anchor="mm")

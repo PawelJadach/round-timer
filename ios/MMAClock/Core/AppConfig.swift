@@ -9,10 +9,29 @@ enum AppConfig {
     /// Matches web `--work` accent; dark gym clock, not purple AI chrome.
     static let accentColor = Color(red: 1.0, green: 0.306, blue: 0.180)
 
-    static let marketingURL = URL(string: "https://mma-clock.vercel.app")!
-    static let supportEmail = "hello@pawel.dev"
-    static let privacyPolicyURL = URL(string: "https://mma-clock.vercel.app/privacy")!
-    static let termsOfUseURL = URL(string: "https://mma-clock.vercel.app/terms")!
+    static let marketingSiteHost = "https://round-timer-marketing.vercel.app"
+    static let supportEmail = "pawel.jadach.96@gmail.com"
+
+    static func marketingURL(for languageCode: String) -> URL {
+        if languageCode == "pl" {
+            return URL(string: "\(marketingSiteHost)/pl/")!
+        }
+        return URL(string: "\(marketingSiteHost)/")!
+    }
+
+    static func privacyPolicyURL(for languageCode: String) -> URL {
+        if languageCode == "pl" {
+            return URL(string: "\(marketingSiteHost)/pl/privacy/")!
+        }
+        return URL(string: "\(marketingSiteHost)/privacy/")!
+    }
+
+    static func termsOfUseURL(for languageCode: String) -> URL {
+        if languageCode == "pl" {
+            return URL(string: "\(marketingSiteHost)/pl/terms/")!
+        }
+        return URL(string: "\(marketingSiteHost)/terms/")!
+    }
 
     /// Gym clock should open straight to the timer.
     static let onboardingEnabled = false
