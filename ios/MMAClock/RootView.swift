@@ -42,7 +42,7 @@ struct RootView: View {
                         controls
                         hints
                     }
-                    .padding(.horizontal, 22)
+                    .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 18)
                     .frame(maxWidth: 560)
