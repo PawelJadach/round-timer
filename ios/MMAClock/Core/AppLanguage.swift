@@ -14,7 +14,13 @@ final class AppLanguage: ObservableObject {
     var locale: Locale { Locale(identifier: code) }
 
     nonisolated func text(_ value: String.LocalizationValue) -> String {
-        String(localized: value, locale: Locale(identifier: Self.resolvedLanguageCode()))
+        let code = Self.resolvedLanguageCode()
+        let locale = Locale(identifier: code)
+        guard let path = Bundle.main.path(forResource: code, ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            return String(localized: value, bundle: .main, locale: locale)
+        }
+        return String(localized: value, bundle: bundle, locale: locale)
     }
 
     nonisolated private static func resolvedLanguageCode() -> String {
