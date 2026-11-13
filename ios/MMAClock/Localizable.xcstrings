@@ -139,6 +139,18 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Gotowy" } }
       }
     },
+    "stopwatch.lap_split" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Split" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Odcinek" } }
+      }
+    },
+    "stopwatch.lap_total" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Total" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Łącznie" } }
+      }
+    },
     "hint.background" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "YouTube keeps playing. With the screen off, round cues arrive as notifications." } },

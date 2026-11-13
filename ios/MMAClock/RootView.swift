@@ -17,6 +17,10 @@ struct RootView: View {
 
     private var compactLayout: Bool { horizontalSizeClass == .compact }
 
+    private var showStopwatchLaps: Bool {
+        clock.mode == .stopwatch && !clock.laps.isEmpty && clock.runState != .idle
+    }
+
     var body: some View {
         ZStack {
             Palette.background.ignoresSafeArea()
@@ -31,16 +35,16 @@ struct RootView: View {
                         topBar(compact: compactLayout)
                     }
                     if sessionActive {
-                        Spacer(minLength: compactLayout ? 48 : 64)
+                        Spacer(minLength: showStopwatchLaps ? (compactLayout ? 20 : 28) : (compactLayout ? 48 : 64))
                     } else {
                         Spacer(minLength: compactLayout ? 20 : 28)
                     }
                     timerBlock(compact: compactLayout)
-                    if sessionActive {
+                    if sessionActive, !showStopwatchLaps {
                         Spacer(minLength: compactLayout ? 48 : 64)
                     }
-                    if !sessionActive, clock.mode == .stopwatch, !clock.laps.isEmpty {
-                        lapsList
+                    if showStopwatchLaps {
+                        lapsList(live: true)
                     }
                     if showSettings, selected != .stopwatch {
                         settings(compact: compactLayout)
@@ -269,27 +273,41 @@ struct RootView: View {
         }
     }
 
-    private var lapsList: some View {
-        ScrollView {
-            VStack(spacing: 8) {
-                ForEach(clock.laps.reversed()) { lap in
-                    HStack {
-                        Text("\(lap.id)")
-                            .foregroundStyle(.secondary)
-                            .frame(width: 28, alignment: .leading)
-                        Spacer()
-                        Text(ClockFormat.stopwatch(lap.split))
-                            .foregroundStyle(.secondary)
-                        Text(ClockFormat.stopwatch(lap.total))
-                            .frame(width: 116, alignment: .trailing)
-                    }
-                    .font(.subheadline.monospacedDigit())
-                }
+    private func lapsList(live: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("#")
+                    .frame(width: 28, alignment: .leading)
+                Spacer()
+                Text(L10n.t("stopwatch.lap_split"))
+                Text(L10n.t("stopwatch.lap_total"))
+                    .frame(width: 116, alignment: .trailing)
             }
-            .padding(.horizontal, 4)
+            .font(Palette.ui(12))
+            .foregroundStyle(Palette.ink.opacity(0.55))
+            ScrollView {
+                VStack(spacing: 8) {
+                    ForEach(clock.laps.reversed()) { lap in
+                        HStack {
+                            Text("\(lap.id)")
+                                .foregroundStyle(.secondary)
+                                .frame(width: 28, alignment: .leading)
+                            Spacer()
+                            Text(ClockFormat.stopwatch(lap.split))
+                                .foregroundStyle(.secondary)
+                            Text(ClockFormat.stopwatch(lap.total))
+                                .frame(width: 116, alignment: .trailing)
+                        }
+                        .font(.subheadline.monospacedDigit())
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
+            .scrollIndicators(.hidden)
         }
-        .scrollIndicators(.hidden)
-        .frame(maxHeight: 168)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxHeight: live ? 140 : 168)
+        .padding(.top, live ? 4 : 0)
     }
 
     @ViewBuilder
