@@ -151,7 +151,7 @@ struct RootView: View {
     private func shiftSelectedMode(by offset: Int) {
         let modes = TrainingMode.allCases
         guard let index = modes.firstIndex(of: selected) else { return }
-        let next = (index + offset % modes.count + modes.count) % modes.count
+        let next = (index + offset + modes.count) % modes.count
         selectMode(modes[next])
     }
 
