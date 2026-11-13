@@ -21,12 +21,6 @@ struct RootView: View {
     var body: some View {
         ZStack {
             Palette.background.ignoresSafeArea()
-            Circle()
-                .fill(Palette.color(display.tint).opacity(0.42))
-                .frame(width: 460, height: 460)
-                .blur(radius: 90)
-                .offset(y: -80)
-                .allowsHitTesting(false)
 
             ScrollView(.vertical) {
                 LazyVStack(spacing: compactLayout ? 10 : 16) {
@@ -48,6 +42,14 @@ struct RootView: View {
             }
             .scrollIndicators(.hidden)
             .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+        }
+        .overlay {
+            Circle()
+                .fill(Palette.color(display.tint).opacity(0.42))
+                .frame(width: 460, height: 460)
+                .blur(radius: 90)
+                .offset(y: -80)
+                .allowsHitTesting(false)
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
