@@ -18,7 +18,6 @@ struct RootView: View {
     var body: some View {
         GeometryReader { geo in
             let compact = geo.size.height < 820
-            let columnWidth = min(560, max(0, geo.size.width - 32))
             ZStack {
                 Palette.background.ignoresSafeArea()
                 Circle()
@@ -45,10 +44,12 @@ struct RootView: View {
                     }
                     .padding(.top, 6)
                     .padding(.bottom, 12)
-                    .frame(width: columnWidth, alignment: .center)
+                    .frame(maxWidth: min(560, geo.size.width))
                     .frame(minHeight: geo.size.height, alignment: .top)
                     .frame(maxWidth: .infinity)
+                    .clipped()
                 }
+                .contentMargins(.horizontal, 16, for: .scrollContent)
                 .scrollIndicators(.hidden)
             }
         }
@@ -150,7 +151,7 @@ struct RootView: View {
         } label: {
             Image(systemName: clock.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
                 .font(.body.weight(.semibold))
-                .frame(width: 40, height: 40)
+                .frame(width: 36, height: 36)
                 .background(Palette.canvas.opacity(0.9), in: Circle())
                 .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
         }
@@ -164,7 +165,7 @@ struct RootView: View {
         } label: {
             Image(systemName: "gearshape.fill")
                 .font(.body.weight(.semibold))
-                .frame(width: 40, height: 40)
+                .frame(width: 36, height: 36)
                 .background(Palette.canvas.opacity(0.9), in: Circle())
                 .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
         }
@@ -396,17 +397,18 @@ struct RootView: View {
     }
 
     private func stepRow(_ title: String, text: String, compact: Bool = false, decrement: @escaping () -> Void, increment: @escaping () -> Void) -> some View {
-        let controlSize: CGFloat = compact ? 36 : 40
-        return HStack(spacing: 6) {
+        let controlSize: CGFloat = 34
+        return HStack(spacing: 4) {
             Text(title)
                 .font(Palette.ui(compact ? 15 : 16))
                 .lineLimit(1)
-                .minimumScaleFactor(0.85)
-            Spacer(minLength: 4)
+                .minimumScaleFactor(0.75)
+                .layoutPriority(1)
+            Spacer(minLength: 0)
             stepButton("minus", label: L10n.t("step.less"), size: controlSize, action: decrement)
             Text(text)
                 .font(Palette.ui(compact ? 15 : 16).monospacedDigit())
-                .frame(width: compact ? 64 : 72)
+                .frame(width: compact ? 58 : 64)
             stepButton("plus", label: L10n.t("step.more"), size: controlSize, action: increment)
         }
         .frame(maxWidth: .infinity)
