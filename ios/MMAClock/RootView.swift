@@ -411,7 +411,7 @@ struct RootView: View {
         increment: @escaping () -> Void
     ) -> some View {
         let isCurrent = roundsHighlightPhase == phase
-        stepRow(title, text: text, compact: compact, decrement: decrement, increment: increment)
+        return stepRow(title, text: text, compact: compact, decrement: decrement, increment: increment)
             .padding(.horizontal, 6)
             .padding(.vertical, compact ? 4 : 6)
             .background(Palette.color(phase).opacity(isCurrent ? 0.26 : 0.14), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
