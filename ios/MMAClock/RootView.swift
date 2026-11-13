@@ -18,6 +18,7 @@ struct RootView: View {
     var body: some View {
         GeometryReader { geo in
             let compact = geo.size.height < 820
+            let columnWidth = min(560, max(0, geo.size.width - 32))
             ZStack {
                 Palette.background.ignoresSafeArea()
                 Circle()
@@ -42,15 +43,13 @@ struct RootView: View {
                             hints
                         }
                     }
-                    .padding(.horizontal, 16)
                     .padding(.top, 6)
                     .padding(.bottom, 12)
-                    .frame(maxWidth: 560)
+                    .frame(width: columnWidth, alignment: .center)
                     .frame(minHeight: geo.size.height, alignment: .top)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollIndicators(.hidden)
-                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
             }
         }
         .sheet(isPresented: $showAppSettings) {
@@ -91,25 +90,9 @@ struct RootView: View {
         VStack(spacing: compact ? 6 : 8) {
             if showSessionChrome {
                 modePicker(compact: compact)
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     languagePicker
-                    Slider(value: $clock.cueVolume, in: 0...100, step: 1) { editing in
-                        if editing {
-                            volumePreviewArmed = true
-                        } else if volumePreviewArmed {
-                            volumePreviewArmed = false
-                            clock.previewVolume()
-                        }
-                    }
-                    .tint(Palette.gold)
-                    .frame(minWidth: compact ? 56 : 72, maxWidth: .infinity)
-                    .disabled(!clock.soundEnabled)
-                    .opacity(clock.soundEnabled ? 1 : 0.4)
-                    .accessibilityLabel(L10n.t("settings.volume"))
-                    Text("\(Int(clock.cueVolume))")
-                        .font(Palette.ui(12).monospacedDigit())
-                        .foregroundStyle(Palette.ink.opacity(0.64))
-                        .frame(width: 26, alignment: .trailing)
+                    Spacer(minLength: 0)
                     soundToggleButton
                     settingsButton
                 }
@@ -300,28 +283,32 @@ struct RootView: View {
         }
     }
 
+    private var presetColumns: [GridItem] {
+        [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)]
+    }
+
     private func sparringSettings(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 12) {
-            PresetRow {
-                preset(L10n.t("preset.tabata"), "20/10 × 8", compact: compact) {
+            LazyVGrid(columns: presetColumns, spacing: 6) {
+                preset(L10n.t("preset.tabata"), "20/10 × 8", compact: true) {
                     clock.prepareSeconds = 5
                     clock.workSeconds = 20
                     clock.restSeconds = 10
                     clock.rounds = 8
                 }
-                preset(L10n.t("preset.interval"), "30/15 × 10", compact: compact) {
+                preset(L10n.t("preset.interval"), "30/15 × 10", compact: true) {
                     clock.prepareSeconds = 5
                     clock.workSeconds = 30
                     clock.restSeconds = 15
                     clock.rounds = 10
                 }
-                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5", compact: compact) {
+                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5", compact: true) {
                     clock.prepareSeconds = 10
                     clock.workSeconds = 180
                     clock.restSeconds = 60
                     clock.rounds = 5
                 }
-                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3", compact: compact) {
+                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3", compact: true) {
                     clock.prepareSeconds = 10
                     clock.workSeconds = 300
                     clock.restSeconds = 60
@@ -358,12 +345,12 @@ struct RootView: View {
 
     private func countdownSettings(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 12) {
-            PresetRow {
-                preset("0:30", L10n.t("preset.countdown_half"), compact: compact) { clock.countdownSeconds = 30 }
-                preset("1:00", L10n.t("preset.countdown_minute"), compact: compact) { clock.countdownSeconds = 60 }
-                preset("3:00", L10n.t("preset.countdown_three"), compact: compact) { clock.countdownSeconds = 180 }
-                preset("5:00", L10n.t("preset.countdown_five"), compact: compact) { clock.countdownSeconds = 300 }
-                preset("10:00", L10n.t("preset.countdown_ten"), compact: compact) { clock.countdownSeconds = 600 }
+            LazyVGrid(columns: presetColumns, spacing: 6) {
+                preset("0:30", L10n.t("preset.countdown_half"), compact: true) { clock.countdownSeconds = 30 }
+                preset("1:00", L10n.t("preset.countdown_minute"), compact: true) { clock.countdownSeconds = 60 }
+                preset("3:00", L10n.t("preset.countdown_three"), compact: true) { clock.countdownSeconds = 180 }
+                preset("5:00", L10n.t("preset.countdown_five"), compact: true) { clock.countdownSeconds = 300 }
+                preset("10:00", L10n.t("preset.countdown_ten"), compact: true) { clock.countdownSeconds = 600 }
             }
             stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)", compact: compact) {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 60))
@@ -394,8 +381,9 @@ struct RootView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
             }
-            .padding(.horizontal, compact ? 10 : 12)
-            .padding(.vertical, compact ? 6 : 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, compact ? 8 : 12)
+            .padding(.vertical, compact ? 5 : 8)
             .background(Palette.canvas.opacity(0.9), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -515,26 +503,6 @@ struct RootView: View {
             Link(L10n.t("hint.bell_link"), destination: URL(string: "https://freesound.org/s/66952/")!)
                 .font(Palette.ui(13))
         }
-    }
-}
-
-private struct PresetRow<Content: View>: View {
-    let content: Content
-
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-
-    var body: some View {
-        GeometryReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    content
-                }
-            }
-            .frame(width: proxy.size.width, alignment: .leading)
-        }
-        .frame(height: 48)
     }
 }
 
