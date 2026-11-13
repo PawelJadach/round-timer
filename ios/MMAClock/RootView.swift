@@ -29,7 +29,7 @@ struct RootView: View {
                 .allowsHitTesting(false)
 
             ScrollView(.vertical) {
-                VStack(spacing: compactLayout ? 10 : 16) {
+                LazyVStack(spacing: compactLayout ? 10 : 16) {
                     topBar(compact: compactLayout)
                     timerBlock(compact: compactLayout)
                     if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
@@ -44,12 +44,10 @@ struct RootView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 6)
-                .padding(.bottom, 12)
-                .frame(maxWidth: 560)
-                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
             }
             .scrollIndicators(.hidden)
+            .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
@@ -339,7 +337,6 @@ struct RootView: View {
                 .foregroundStyle(Palette.ink.opacity(0.64))
                 .frame(maxWidth: .infinity, alignment: .center)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func countdownSettings(compact: Bool) -> some View {
