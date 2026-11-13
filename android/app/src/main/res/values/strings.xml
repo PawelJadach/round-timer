@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Round Timer</string>
-    <string name="mode_sparring">Sparring</string>
+    <string name="mode_sparring">Rounds</string>
     <string name="mode_countdown">Timer</string>
     <string name="mode_stopwatch">Stopwatch</string>
     <string name="phase_prepare">PREPARE</string>

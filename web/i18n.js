@@ -1,6 +1,6 @@
 const STRINGS = {
   en: {
-    modeSparring: "Sparring",
+    modeSparring: "Rounds",
     modeCountdown: "Timer",
     modeStopwatch: "Stopwatch",
     volume: "Volume",
@@ -48,7 +48,7 @@ const STRINGS = {
     presetTen: "ten minutes",
   },
   pl: {
-    modeSparring: "Sparing",
+    modeSparring: "Rundy",
     modeCountdown: "Minutnik",
     modeStopwatch: "Stoper",
     volume: "Głośność",

@@ -171,8 +171,8 @@
     },
     "mode.sparring" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sparring" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Sparing" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rounds" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Rundy" } }
       }
     },
     "mode.stopwatch" : {
