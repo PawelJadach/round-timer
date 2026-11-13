@@ -17,6 +17,7 @@ struct RootView: View {
 
     var body: some View {
         GeometryReader { geo in
+            let contentWidth = min(560, max(0, geo.size.width - 44))
             ZStack {
                 Palette.background.ignoresSafeArea()
                 Circle()
@@ -29,6 +30,7 @@ struct RootView: View {
                 ScrollView {
                     VStack(spacing: 18) {
                         topBar
+                            .frame(maxWidth: .infinity)
                         if showSessionChrome {
                             volumeRow
                         }
@@ -45,7 +47,7 @@ struct RootView: View {
                     .padding(.horizontal, 22)
                     .padding(.top, 8)
                     .padding(.bottom, 18)
-                    .frame(maxWidth: 560)
+                    .frame(maxWidth: contentWidth)
                     .frame(minHeight: geo.size.height)
                     .frame(maxWidth: .infinity)
                 }
@@ -87,9 +89,9 @@ struct RootView: View {
     }
 
     private var topBar: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             if showSessionChrome {
-                HStack(spacing: 4) {
+                HStack(spacing: 2) {
                     ForEach(TrainingMode.allCases) { mode in
                         Button {
                             guard clock.runState == .idle || clock.runState == .finished else { return }
@@ -100,9 +102,11 @@ struct RootView: View {
                             HapticFeedback.selection()
                         } label: {
                             Text(mode.title)
-                                .font(Palette.display(15))
+                                .font(Palette.display(13))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.65)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .padding(.vertical, 9)
                                 .background(
                                     selected == mode ? Palette.gold.opacity(0.18) : Color.clear,
                                     in: Capsule()
@@ -117,11 +121,15 @@ struct RootView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(4)
+                .padding(3)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .layoutPriority(0)
                 .background(Palette.canvas.opacity(0.9), in: Capsule())
                 .overlay(Capsule().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
 
                 languagePicker
+                    .fixedSize(horizontal: true, vertical: false)
+                    .layoutPriority(1)
 
                 Button {
                     clock.soundEnabled.toggle()
@@ -129,11 +137,13 @@ struct RootView: View {
                 } label: {
                     Image(systemName: clock.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
                         .font(.body.weight(.semibold))
-                        .frame(width: 44, height: 44)
+                        .frame(width: 40, height: 40)
                         .background(Palette.canvas.opacity(0.9), in: Circle())
                         .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
+                .fixedSize()
+                .layoutPriority(1)
                 .accessibilityLabel(clock.soundEnabled ? L10n.t("sound.off") : L10n.t("sound.on"))
             } else {
                 Spacer(minLength: 0)
@@ -144,11 +154,13 @@ struct RootView: View {
             } label: {
                 Image(systemName: "gearshape.fill")
                     .font(.body.weight(.semibold))
-                    .frame(width: 44, height: 44)
+                    .frame(width: 40, height: 40)
                     .background(Palette.canvas.opacity(0.9), in: Circle())
                     .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
             }
             .buttonStyle(.plain)
+            .fixedSize()
+            .layoutPriority(1)
             .accessibilityLabel(L10n.t("settings.title"))
         }
     }
@@ -162,8 +174,8 @@ struct RootView: View {
                 } label: {
                     Text(code.uppercased())
                         .font(Palette.display(12))
-                        .frame(minWidth: 34)
-                        .padding(.vertical, 8)
+                        .frame(minWidth: 28)
+                        .padding(.vertical, 7)
                         .background(language.code == code ? Palette.gold : Color.clear, in: Capsule())
                         .foregroundStyle(language.code == code ? Color(red: 0.102, green: 0.063, blue: 0.047) : Palette.ink.opacity(0.48))
                 }
@@ -177,10 +189,12 @@ struct RootView: View {
     }
 
     private var volumeRow: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             Text(L10n.t("settings.volume"))
                 .font(Palette.display(14))
                 .foregroundStyle(Palette.ink.opacity(0.64))
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
             Slider(value: $clock.cueVolume, in: 0...100, step: 1) { editing in
                 if editing {
                     volumePreviewArmed = true
@@ -190,6 +204,7 @@ struct RootView: View {
                 }
             }
             .tint(Palette.gold)
+            .frame(minWidth: 0, maxWidth: .infinity)
             .disabled(!clock.soundEnabled)
             .opacity(clock.soundEnabled ? 1 : 0.4)
             Text("\(Int(clock.cueVolume))")
@@ -392,14 +407,16 @@ struct RootView: View {
     }
 
     private func stepRow(_ title: String, text: String, decrement: @escaping () -> Void, increment: @escaping () -> Void) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             Text(title)
                 .font(Palette.ui(16))
-            Spacer(minLength: 8)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+            Spacer(minLength: 4)
             stepButton("minus", label: L10n.t("step.less"), action: decrement)
             Text(text)
                 .font(Palette.ui(16).monospacedDigit())
-                .frame(width: 78)
+                .frame(width: 72)
             stepButton("plus", label: L10n.t("step.more"), action: increment)
         }
         .accessibilityElement(children: .combine)
@@ -414,7 +431,7 @@ struct RootView: View {
         } label: {
             Image(systemName: systemName)
                 .font(.headline.weight(.semibold))
-                .frame(width: 44, height: 44)
+                .frame(width: 40, height: 40)
                 .background(Palette.canvas.opacity(0.9), in: Circle())
                 .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
         }
