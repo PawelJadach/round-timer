@@ -1,15 +1,15 @@
-# Train Clock
+# Round Timer
 
 Monorepo: web PWA + native iOS. Gym clock for sparring / tabata, countdown timer, and stopwatch. No accounts.
 
 Dark face, round glow, short cues that duck other music briefly. On iOS the countdown also shows on the Lock Screen (Live Activity / Dynamic Island).
 
-Formerly known as MMA Clock — same product, generic name.
+Formerly MMA Clock / Train Clock — same product.
 
 ## Layout
 
 ```
-train-clock/
+round-timer/
   web/                 → static PWA (engine.js + app.js)
   ios/
     MMAClock.xcodeproj → open this in Xcode

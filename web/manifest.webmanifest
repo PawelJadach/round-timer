@@ -1,6 +1,6 @@
 {
-  "name": "Train Clock",
-  "short_name": "Train Clock",
+  "name": "Round Timer",
+  "short_name": "Round Timer",
   "description": "Timer do sparingu, minutnik i stoper.",
   "start_url": "./",
   "scope": "./",

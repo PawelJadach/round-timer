@@ -1,10 +1,10 @@
 import SwiftUI
 
-/// Branding and lean App Store feature flags for Train Clock.
+/// Branding and lean App Store feature flags for Round Timer.
 enum AppConfig {
-    static let displayName = "Train Clock"
-    static let bundleIdentifierPlaceholder = "dev.pawel.trainclock"
-    static let urlScheme = "trainclock"
+    static let displayName = "Round Timer"
+    static let bundleIdentifierPlaceholder = "dev.pawel.roundtimer"
+    static let urlScheme = "roundtimer"
 
     /// Matches web `--work` accent; dark gym clock, not purple AI chrome.
     static let accentColor = Color(red: 1.0, green: 0.306, blue: 0.180)

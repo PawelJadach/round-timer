@@ -13,7 +13,7 @@ extension AnalyticsClient {
 }
 
 struct ConsoleAnalyticsClient: AnalyticsClient {
-    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TrainClock", category: "Analytics")
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "RoundTimer", category: "Analytics")
 
     func track(_ event: String, parameters: [String: String]) {
         if parameters.isEmpty {
