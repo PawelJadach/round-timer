@@ -7,8 +7,6 @@ struct RootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var selected: TrainingMode = .sparring
     @State private var showAppSettings = false
-    @State private var volumePreviewArmed = false
-
     private var display: Face {
         clock.runState == .idle ? clock.previewFace(for: selected) : clock.face
     }
@@ -23,15 +21,17 @@ struct RootView: View {
             Palette.background.ignoresSafeArea()
 
             ScrollView(.vertical) {
-                LazyVStack(spacing: compactLayout ? 10 : 16) {
+                LazyVStack(spacing: compactLayout ? 12 : 16) {
                     topBar(compact: compactLayout)
+                    Spacer(minLength: compactLayout ? 4 : 12)
                     timerBlock(compact: compactLayout)
                     if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
                         lapsList
                     }
-                    if showSettings {
+                    if showSettings, selected != .stopwatch {
                         settings(compact: compactLayout)
                     }
+                    Spacer(minLength: compactLayout ? 8 : 16)
                     if !(showSettings && compactLayout) {
                         hints
                     }
@@ -80,12 +80,16 @@ struct RootView: View {
             .environmentObject(language)
             .preferredColorScheme(.dark)
         }
-        .onAppear { clock.refreshCapabilities() }
+        .onAppear {
+            language.syncWithSystemIfNeeded()
+            clock.refreshCapabilities()
+        }
         .onChange(of: language.code) { _, _ in
             clock.relocalize()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                language.syncWithSystemIfNeeded()
                 clock.catchUp()
                 clock.refreshCapabilities()
             } else if phase == .background {
@@ -95,21 +99,13 @@ struct RootView: View {
     }
 
     private func topBar(compact: Bool) -> some View {
-        VStack(spacing: compact ? 6 : 8) {
+        HStack(spacing: 8) {
             if showSessionChrome {
                 modePicker(compact: compact)
-                HStack(spacing: 8) {
-                    languagePicker
-                    Spacer(minLength: 0)
-                    soundToggleButton
-                    settingsButton
-                }
             } else {
-                HStack {
-                    Spacer(minLength: 0)
-                    settingsButton
-                }
+                Spacer(minLength: 0)
             }
+            settingsButton
         }
         .frame(maxWidth: .infinity)
     }
@@ -151,21 +147,6 @@ struct RootView: View {
         .overlay(Capsule().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
     }
 
-    private var soundToggleButton: some View {
-        Button {
-            clock.soundEnabled.toggle()
-            HapticFeedback.light()
-        } label: {
-            Image(systemName: clock.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                .font(.body.weight(.semibold))
-                .frame(width: 36, height: 36)
-                .background(Palette.canvas.opacity(0.9), in: Circle())
-                .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(clock.soundEnabled ? L10n.t("sound.off") : L10n.t("sound.on"))
-    }
-
     private var settingsButton: some View {
         Button {
             showAppSettings = true
@@ -180,49 +161,32 @@ struct RootView: View {
         .accessibilityLabel(L10n.t("settings.title"))
     }
 
-    private var languagePicker: some View {
-        HStack(spacing: 2) {
-            ForEach(["en", "pl"], id: \.self) { code in
-                Button {
-                    language.select(code)
-                    HapticFeedback.selection()
-                } label: {
-                    Text(code.uppercased())
-                        .font(Palette.display(12))
-                        .frame(minWidth: 28)
-                        .padding(.vertical, 7)
-                        .background(language.code == code ? Palette.gold : Color.clear, in: Capsule())
-                        .foregroundStyle(language.code == code ? Color(red: 0.102, green: 0.063, blue: 0.047) : Palette.ink.opacity(0.48))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(3)
-        .background(Palette.canvas.opacity(0.9), in: Capsule())
-        .overlay(Capsule().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
-        .accessibilityLabel(L10n.t("settings.language"))
-    }
-
     private func timerBlock(compact: Bool) -> some View {
-        let settingsIdle = showSettings && compact
-        return VStack(spacing: settingsIdle ? 4 : 8) {
-            Text(display.phaseName)
-                .font(Palette.display(settingsIdle ? 16 : (showSettings ? 18 : 22)))
-                .tracking(3)
-                .foregroundStyle(Palette.color(display.tint))
+        let idle = showSettings
+        let stopwatchSession = selected == .stopwatch && idle
+        return VStack(spacing: idle ? 6 : 10) {
+            if !stopwatchSession || clock.runState != .idle {
+                Text(display.phaseName)
+                    .font(Palette.display(idle ? 18 : 22))
+                    .tracking(3)
+                    .foregroundStyle(Palette.color(display.tint))
+            }
             Text(display.text)
-                .font(Palette.display(settingsIdle ? 60 : (showSettings ? 76 : 96)))
+                .font(Palette.display(stopwatchSession ? 96 : (idle ? 84 : 96)))
                 .monospacedDigit()
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
                 .foregroundStyle(Palette.ink)
                 .accessibilityLabel("\(display.phaseName) \(display.text)")
-            Text(display.detail)
-                .font(Palette.ui(settingsIdle ? 17 : 20))
-                .foregroundStyle(Palette.ink.opacity(0.72))
+            if !(stopwatchSession && display.detail.isEmpty) {
+                Text(display.detail)
+                    .font(Palette.ui(idle ? 18 : 20))
+                    .foregroundStyle(Palette.ink.opacity(0.72))
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, settingsIdle ? 2 : 8)
+        .multilineTextAlignment(.center)
+        .padding(.vertical, idle ? 12 : 8)
         .overlay(ringCorners.allowsHitTesting(false))
         .clipped()
         .animation(.easeInOut(duration: 0.25), value: display.tint)
@@ -284,45 +248,12 @@ struct RootView: View {
         case .countdown:
             countdownSettings(compact: compact)
         case .stopwatch:
-            Text(L10n.t("stopwatch.hint"))
-                .font(Palette.ui(15))
-                .foregroundStyle(Palette.ink.opacity(0.64))
-                .multilineTextAlignment(.center)
+            EmptyView()
         }
-    }
-
-    private var presetColumns: [GridItem] {
-        [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)]
     }
 
     private func sparringSettings(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 12) {
-            LazyVGrid(columns: presetColumns, spacing: 6) {
-                preset(L10n.t("preset.tabata"), "20/10 × 8", compact: true) {
-                    clock.prepareSeconds = 5
-                    clock.workSeconds = 20
-                    clock.restSeconds = 10
-                    clock.rounds = 8
-                }
-                preset(L10n.t("preset.interval"), "30/15 × 10", compact: true) {
-                    clock.prepareSeconds = 5
-                    clock.workSeconds = 30
-                    clock.restSeconds = 15
-                    clock.rounds = 10
-                }
-                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5", compact: true) {
-                    clock.prepareSeconds = 10
-                    clock.workSeconds = 180
-                    clock.restSeconds = 60
-                    clock.rounds = 5
-                }
-                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3", compact: true) {
-                    clock.prepareSeconds = 10
-                    clock.workSeconds = 300
-                    clock.restSeconds = 60
-                    clock.rounds = 3
-                }
-            }
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds), compact: compact) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
@@ -352,13 +283,6 @@ struct RootView: View {
 
     private func countdownSettings(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 12) {
-            LazyVGrid(columns: presetColumns, spacing: 6) {
-                preset("0:30", L10n.t("preset.countdown_half"), compact: true) { clock.countdownSeconds = 30 }
-                preset("1:00", L10n.t("preset.countdown_minute"), compact: true) { clock.countdownSeconds = 60 }
-                preset("3:00", L10n.t("preset.countdown_three"), compact: true) { clock.countdownSeconds = 180 }
-                preset("5:00", L10n.t("preset.countdown_five"), compact: true) { clock.countdownSeconds = 300 }
-                preset("10:00", L10n.t("preset.countdown_ten"), compact: true) { clock.countdownSeconds = 600 }
-            }
             stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)", compact: compact) {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 60))
             } increment: {
@@ -370,36 +294,6 @@ struct RootView: View {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds + 5))
             }
         }
-    }
-
-    private func preset(_ title: String, _ subtitle: String, compact: Bool = false, apply: @escaping () -> Void) -> some View {
-        Button {
-            apply()
-            HapticFeedback.selection()
-        } label: {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(Palette.display(compact ? 13 : 15))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                Text(subtitle)
-                    .font(Palette.ui(compact ? 11 : 12))
-                    .foregroundStyle(Palette.ink.opacity(0.64))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, compact ? 8 : 12)
-            .padding(.vertical, compact ? 5 : 8)
-            .background(Palette.canvas.opacity(0.9), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Palette.gold)
-                    .frame(width: 3)
-            }
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Palette.gold.opacity(0.32), lineWidth: 1))
-        }
-        .buttonStyle(.plain)
     }
 
     private func stepRow(_ title: String, text: String, compact: Bool = false, decrement: @escaping () -> Void, increment: @escaping () -> Void) -> some View {
@@ -480,10 +374,6 @@ struct RootView: View {
     private var hints: some View {
         VStack(spacing: 8) {
             bellCredit
-            Text(L10n.t("hint.background"))
-                .font(Palette.ui(13))
-                .foregroundStyle(Palette.ink.opacity(0.64))
-                .multilineTextAlignment(.center)
             if clock.notificationStatus == .needsPrompt || clock.notificationStatus == .denied {
                 Button(clock.notificationStatus == .denied
                        ? L10n.t("hint.notifications_denied")

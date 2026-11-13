@@ -403,6 +403,18 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Język" } }
       }
     },
+    "settings.language_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "By default the app follows your iPhone language." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Domyślnie aplikacja używa języka iPhone’a." } }
+      }
+    },
+    "settings.language_system" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Use iPhone language" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Użyj języka iPhone’a" } }
+      }
+    },
     "step.less" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Less" } },
