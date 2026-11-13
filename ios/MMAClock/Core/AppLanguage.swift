@@ -8,20 +8,22 @@ final class AppLanguage: ObservableObject {
     @Published private(set) var code: String
 
     private init() {
-        let stored = UserDefaults.standard.string(forKey: Self.storageKey)
-        if stored == "en" || stored == "pl" {
-            code = stored!
-        } else {
-            let system = Locale.current.language.languageCode?.identifier ?? "en"
-            code = system == "pl" ? "pl" : "en"
-        }
+        code = Self.resolvedLanguageCode()
     }
 
     var locale: Locale { Locale(identifier: code) }
 
-    func text(_ value: String.LocalizationValue) -> String {
-        _ = code
-        return String(localized: value, locale: locale)
+    nonisolated func text(_ value: String.LocalizationValue) -> String {
+        String(localized: value, locale: Locale(identifier: Self.resolvedLanguageCode()))
+    }
+
+    nonisolated private static func resolvedLanguageCode() -> String {
+        let stored = UserDefaults.standard.string(forKey: storageKey)
+        if stored == "en" || stored == "pl" {
+            return stored!
+        }
+        let system = Locale.current.language.languageCode?.identifier ?? "en"
+        return system == "pl" ? "pl" : "en"
     }
 
     func select(_ next: String) {
