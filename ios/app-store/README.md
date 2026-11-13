@@ -11,7 +11,7 @@ Assets and copy for **manual** upload to App Store Connect. Nothing here is subm
 | `privacy-app-store.md` | Privacy questionnaire answers |
 | `age-rating.md` | Age rating worksheet notes |
 | `icon/AppIcon-1024.png` | 1024×1024 marketing icon (RGB, no alpha; synced to `MMAClock` asset catalog) |
-| `screenshots/{en,pl}/*.png` | Real iPhone captures (**1170×2532**): `01-rounds.png`, `02-timer.png` per locale |
+| `screenshots/{en,pl}/*.png` | Real iPhone captures (**1170×2532**): `01-rounds.png`, `02-timer.png`, `03-stopwatch.png` per locale |
 | `generate-assets.py` | Regenerate marketing icon only (do not use it for store screenshots) |
 
 Regenerate the marketing icon (requires Pillow):
@@ -33,12 +33,11 @@ Store screenshots are checked in as PNGs from device captures; replace those fil
 6. **Age rating**: `age-rating.md`.
 7. **Export compliance**: `ITSAppUsesNonExemptEncryption` = false in `Info.plist` (HTTPS links only).
 
-## Screenshot gaps (first submission)
+## Screenshot gaps (optional extras)
 
 | Gap | Notes |
 | --- | --- |
-| **Stopwatch** | No stopwatch frame in `screenshots/{en,pl}/` yet — capture and add when ready. |
-| **Count** | **2** images per locale (rounds + timer); Apple allows up to 10 — add stopwatch, settings, or Live Activity as needed. |
+| **Count** | **3** images per locale (rounds, timer, stopwatch); Apple allows up to 10 — add settings or Live Activity if you want more. |
 | **Device sizes** | Committed PNGs are **1170×2532** native captures (not upscaled to 1290×2796). App Store Connect also accepts **1290×2796** (6.7″) and may ask for **1320×2868** (6.9″) depending on account settings. No iPad screenshots (iPhone-only app). |
 | **Widget / Live Activity** | Optional extra frames if you want to highlight Lock Screen countdown. |
 
