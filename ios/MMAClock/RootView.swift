@@ -319,26 +319,23 @@ struct RootView: View {
             apply()
             HapticFeedback.selection()
         } label: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(spacing: 2) {
                 Text(title)
                     .font(Palette.display(compact ? 13 : 15))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
+                    .multilineTextAlignment(.center)
                 Text(subtitle)
                     .font(Palette.ui(compact ? 11 : 12))
                     .foregroundStyle(Palette.ink.opacity(0.64))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
+                    .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, compact ? 8 : 12)
             .padding(.vertical, compact ? 5 : 8)
             .background(Palette.canvas.opacity(0.9), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Palette.gold)
-                    .frame(width: 3)
-            }
             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Palette.gold.opacity(0.32), lineWidth: 1))
         }
         .buttonStyle(.plain)
