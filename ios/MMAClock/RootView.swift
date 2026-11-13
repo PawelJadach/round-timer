@@ -4,7 +4,7 @@ struct RootView: View {
     @EnvironmentObject private var clock: TrainingClock
     @ObservedObject private var language = AppLanguage.shared
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var selected: TrainingMode = .sparring
     @State private var showAppSettings = false
     @State private var volumePreviewArmed = false
@@ -16,7 +16,7 @@ struct RootView: View {
     private var showSettings: Bool { clock.runState == .idle }
     private var showSessionChrome: Bool { clock.runState == .idle }
 
-    private var compactLayout: Bool { verticalSizeClass == .compact }
+    private var compactLayout: Bool { horizontalSizeClass == .compact }
 
     var body: some View {
         ZStack {
