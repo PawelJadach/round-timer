@@ -24,6 +24,7 @@
 		B10000000000000000000046 /* ShareHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000046 /* ShareHelper.swift */; };
 		B10000000000000000000047 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000047 /* SettingsView.swift */; };
 		B10000000000000000000048 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000048 /* AboutView.swift */; };
+		B10000000000000000000054 /* SettingsChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000054 /* SettingsChrome.swift */; };
 		B10000000000000000000049 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000049 /* Localizable.xcstrings */; };
 		B1000000000000000000004A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000004A /* PrivacyInfo.xcprivacy */; };
 		B10000000000000000000009 /* TrainingAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* TrainingAttributes.swift */; };
@@ -97,6 +98,7 @@
 		F10000000000000000000046 /* ShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareHelper.swift; sourceTree = "<group>"; };
 		F10000000000000000000047 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F10000000000000000000048 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		F10000000000000000000054 /* SettingsChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsChrome.swift; sourceTree = "<group>"; };
 		F10000000000000000000049 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F1000000000000000000004A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F1000000000000000000004B /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 		F10000000000000000000046 /* ShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareHelper.swift; sourceTree = "<group>"; };
 		F10000000000000000000047 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F10000000000000000000048 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		F10000000000000000000054 /* SettingsChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsChrome.swift; sourceTree = "<group>"; };
 		F10000000000000000000049 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F1000000000000000000004A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -211,6 +214,7 @@
 		A10000000000000000000011 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				F10000000000000000000054 /* SettingsChrome.swift */,
 				F10000000000000000000047 /* SettingsView.swift */,
 				F10000000000000000000048 /* AboutView.swift */,
 			);
@@ -363,6 +367,7 @@
 				B10000000000000000000046 /* ShareHelper.swift in Sources */,
 				B1000000000000000000004B /* AppLanguage.swift in Sources */,
 				B1000000000000000000004C /* L10n.swift in Sources */,
+				B10000000000000000000054 /* SettingsChrome.swift in Sources */,
 				B10000000000000000000047 /* SettingsView.swift in Sources */,
 				B10000000000000000000048 /* AboutView.swift in Sources */,
 				B10000000000000000000009 /* TrainingAttributes.swift in Sources */,
