@@ -16,41 +16,41 @@ struct RootView: View {
     private var showSessionChrome: Bool { clock.runState == .idle }
 
     var body: some View {
-        ZStack {
-            Palette.background.ignoresSafeArea()
-            Circle()
-                .fill(Palette.color(display.tint).opacity(0.42))
-                .frame(width: 460, height: 460)
-                .blur(radius: 90)
-                .offset(y: -80)
-                .allowsHitTesting(false)
+        GeometryReader { geo in
+            ZStack {
+                Palette.background.ignoresSafeArea()
+                Circle()
+                    .fill(Palette.color(display.tint).opacity(0.42))
+                    .frame(width: 460, height: 460)
+                    .blur(radius: 90)
+                    .offset(y: -80)
+                    .allowsHitTesting(false)
 
-            ScrollView(.vertical) {
-                VStack(spacing: 18) {
-                    topBar
-                    if showSessionChrome {
-                        volumeRow
+                ScrollView(.vertical) {
+                    VStack(spacing: 18) {
+                        topBar
+                        if showSessionChrome {
+                            volumeRow
+                        }
+                        timerBlock
+                        if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
+                            lapsList
+                        }
+                        if showSettings {
+                            settings
+                        }
+                        controls
+                        hints
                     }
-                    timerBlock
-                    if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
-                        lapsList
-                    }
-                    if showSettings {
-                        settings
-                    }
-                    controls
-                    hints
+                    .padding(.horizontal, 22)
+                    .padding(.top, 8)
+                    .padding(.bottom, 18)
+                    .frame(maxWidth: 560)
+                    .frame(minHeight: geo.size.height, alignment: .top)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .padding(.bottom, 18)
-                .containerRelativeFrame(.horizontal, count: 1, spacing: 0, alignment: .center)
-                .frame(maxWidth: 560)
+                .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
-            .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
-            .contentMargins(.horizontal, 0, for: .scrollContent)
-            .scrollClipDisabled(false)
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
@@ -240,7 +240,8 @@ struct RootView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
-        .overlay(ringCorners)
+        .overlay(ringCorners.allowsHitTesting(false))
+        .clipped()
         .animation(.easeInOut(duration: 0.25), value: display.tint)
     }
 
@@ -307,34 +308,36 @@ struct RootView: View {
         }
     }
 
+    private var presetColumns: [GridItem] {
+        [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
+    }
+
     private var sparringSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            ClippedHorizontalScroll(height: 58, alignment: .leading) {
-                HStack(spacing: 8) {
-                    preset(L10n.t("preset.tabata"), "20/10 × 8") {
-                        clock.prepareSeconds = 5
-                        clock.workSeconds = 20
-                        clock.restSeconds = 10
-                        clock.rounds = 8
-                    }
-                    preset(L10n.t("preset.interval"), "30/15 × 10") {
-                        clock.prepareSeconds = 5
-                        clock.workSeconds = 30
-                        clock.restSeconds = 15
-                        clock.rounds = 10
-                    }
-                    preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5") {
-                        clock.prepareSeconds = 10
-                        clock.workSeconds = 180
-                        clock.restSeconds = 60
-                        clock.rounds = 5
-                    }
-                    preset(L10n.t("preset.round"), "5:00 / 1:00 × 3") {
-                        clock.prepareSeconds = 10
-                        clock.workSeconds = 300
-                        clock.restSeconds = 60
-                        clock.rounds = 3
-                    }
+            LazyVGrid(columns: presetColumns, spacing: 8) {
+                preset(L10n.t("preset.tabata"), "20/10 × 8") {
+                    clock.prepareSeconds = 5
+                    clock.workSeconds = 20
+                    clock.restSeconds = 10
+                    clock.rounds = 8
+                }
+                preset(L10n.t("preset.interval"), "30/15 × 10") {
+                    clock.prepareSeconds = 5
+                    clock.workSeconds = 30
+                    clock.restSeconds = 15
+                    clock.rounds = 10
+                }
+                preset(L10n.t("preset.sparring"), "3:00 / 1:00 × 5") {
+                    clock.prepareSeconds = 10
+                    clock.workSeconds = 180
+                    clock.restSeconds = 60
+                    clock.rounds = 5
+                }
+                preset(L10n.t("preset.round"), "5:00 / 1:00 × 3") {
+                    clock.prepareSeconds = 10
+                    clock.workSeconds = 300
+                    clock.restSeconds = 60
+                    clock.rounds = 3
                 }
             }
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds)) {
@@ -367,14 +370,12 @@ struct RootView: View {
 
     private var countdownSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            ClippedHorizontalScroll(height: 58) {
-                HStack(spacing: 8) {
-                    preset("0:30", L10n.t("preset.countdown_half")) { clock.countdownSeconds = 30 }
-                    preset("1:00", L10n.t("preset.countdown_minute")) { clock.countdownSeconds = 60 }
-                    preset("3:00", L10n.t("preset.countdown_three")) { clock.countdownSeconds = 180 }
-                    preset("5:00", L10n.t("preset.countdown_five")) { clock.countdownSeconds = 300 }
-                    preset("10:00", L10n.t("preset.countdown_ten")) { clock.countdownSeconds = 600 }
-                }
+            LazyVGrid(columns: presetColumns, spacing: 8) {
+                preset("0:30", L10n.t("preset.countdown_half")) { clock.countdownSeconds = 30 }
+                preset("1:00", L10n.t("preset.countdown_minute")) { clock.countdownSeconds = 60 }
+                preset("3:00", L10n.t("preset.countdown_three")) { clock.countdownSeconds = 180 }
+                preset("5:00", L10n.t("preset.countdown_five")) { clock.countdownSeconds = 300 }
+                preset("10:00", L10n.t("preset.countdown_ten")) { clock.countdownSeconds = 600 }
             }
             stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)") {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 60))
@@ -397,10 +398,15 @@ struct RootView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(Palette.display(15))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
                 Text(subtitle)
                     .font(Palette.ui(12))
                     .foregroundStyle(Palette.ink.opacity(0.64))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(Palette.canvas.opacity(0.9), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -521,26 +527,6 @@ struct RootView: View {
             Link(L10n.t("hint.bell_link"), destination: URL(string: "https://freesound.org/s/66952/")!)
                 .font(Palette.ui(13))
         }
-    }
-}
-
-private struct ClippedHorizontalScroll<Content: View>: View {
-    let height: CGFloat
-    let alignment: Alignment
-    let content: Content
-
-    init(height: CGFloat, alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
-        self.height = height
-        self.alignment = alignment
-        self.content = content()
-    }
-
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            content
-        }
-        .containerRelativeFrame(.horizontal, count: 1, spacing: 0, alignment: alignment)
-        .frame(height: height)
     }
 }
 
