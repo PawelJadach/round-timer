@@ -31,6 +31,12 @@ struct AboutView: View {
             } footer: {
                 Text(AppConfig.supportEmail)
             }
+
+            Section {
+                Link(L10n.t("hint.bell_link"), destination: URL(string: "https://freesound.org/s/66952/")!)
+            } footer: {
+                Text(L10n.t("hint.bell_credit"))
+            }
         }
         .navigationTitle(L10n.t("about.title"))
         .navigationBarTitleDisplayMode(.inline)

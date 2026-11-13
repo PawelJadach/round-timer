@@ -23,7 +23,7 @@ struct RootView: View {
             ScrollView(.vertical) {
                 LazyVStack(spacing: compactLayout ? 12 : 16) {
                     topBar(compact: compactLayout)
-                    Spacer(minLength: compactLayout ? 4 : 12)
+                    Spacer(minLength: compactLayout ? 20 : 28)
                     timerBlock(compact: compactLayout)
                     if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
                         lapsList
@@ -163,7 +163,9 @@ struct RootView: View {
 
     private func timerBlock(compact: Bool) -> some View {
         let idle = showSettings
-        let stopwatchSession = selected == .stopwatch && idle
+        let previewMode = idle ? selected : clock.mode
+        let stopwatchSession = previewMode == .stopwatch && idle
+        let showDetail = shouldShowTimerDetail(for: previewMode)
         return VStack(spacing: idle ? 6 : 10) {
             if !stopwatchSession || clock.runState != .idle {
                 Text(display.phaseName)
@@ -178,7 +180,7 @@ struct RootView: View {
                 .minimumScaleFactor(0.4)
                 .foregroundStyle(Palette.ink)
                 .accessibilityLabel("\(display.phaseName) \(display.text)")
-            if !(stopwatchSession && display.detail.isEmpty) {
+            if showDetail {
                 Text(display.detail)
                     .font(Palette.ui(idle ? 18 : 20))
                     .foregroundStyle(Palette.ink.opacity(0.72))
@@ -187,34 +189,16 @@ struct RootView: View {
         .frame(maxWidth: .infinity)
         .multilineTextAlignment(.center)
         .padding(.vertical, idle ? 12 : 8)
-        .overlay(ringCorners.allowsHitTesting(false))
-        .clipped()
         .animation(.easeInOut(duration: 0.25), value: display.tint)
     }
 
-    private var ringCorners: some View {
-        ZStack {
-            cornerMark(.topLeading)
-            cornerMark(.topTrailing)
-            cornerMark(.bottomLeading)
-            cornerMark(.bottomTrailing)
+    private func shouldShowTimerDetail(for mode: TrainingMode) -> Bool {
+        guard !display.detail.isEmpty else { return false }
+        if mode == .stopwatch { return false }
+        if mode == .countdown {
+            return !(showSettings && clock.countdownSeconds >= 5)
         }
-    }
-
-    private func cornerMark(_ alignment: Alignment) -> some View {
-        ZStack(alignment: alignment) {
-            Color.clear
-            Rectangle()
-                .fill(Palette.gold)
-                .frame(width: 22, height: 2)
-                .offset(x: alignment == .topLeading || alignment == .bottomLeading ? 8 : -8,
-                        y: alignment == .topLeading || alignment == .topTrailing ? 10 : -12)
-            Rectangle()
-                .fill(Palette.gold)
-                .frame(width: 2, height: 22)
-                .offset(x: alignment == .topLeading || alignment == .bottomLeading ? 8 : -8,
-                        y: alignment == .topLeading || alignment == .topTrailing ? 10 : -12)
-        }
+        return true
     }
 
     private var lapsList: some View {
@@ -371,10 +355,12 @@ struct RootView: View {
         }
     }
 
+    @ViewBuilder
     private var hints: some View {
-        VStack(spacing: 8) {
-            bellCredit
-            if clock.notificationStatus == .needsPrompt || clock.notificationStatus == .denied {
+        let showNotifications = clock.notificationStatus == .needsPrompt || clock.notificationStatus == .denied
+        if showNotifications || (showSettings && clock.liveActivitiesOff) {
+            VStack(spacing: 8) {
+            if showNotifications {
                 Button(clock.notificationStatus == .denied
                        ? L10n.t("hint.notifications_denied")
                        : L10n.t("hint.notifications_prompt")) {
@@ -389,17 +375,7 @@ struct RootView: View {
                 .font(Palette.ui(13).weight(.semibold))
                 .multilineTextAlignment(.center)
             }
-        }
-    }
-
-    private var bellCredit: some View {
-        VStack(spacing: 2) {
-            Text(L10n.t("hint.bell_credit"))
-                .font(Palette.ui(13))
-                .foregroundStyle(Palette.ink.opacity(0.64))
-                .multilineTextAlignment(.center)
-            Link(L10n.t("hint.bell_link"), destination: URL(string: "https://freesound.org/s/66952/")!)
-                .font(Palette.ui(13))
+            }
         }
     }
 }
