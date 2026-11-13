@@ -21,7 +21,7 @@ struct RootView: View {
         ZStack {
             Palette.background.ignoresSafeArea()
             if let phase = liveRoundsPhase {
-                Palette.color(phase).opacity(0.48).ignoresSafeArea().allowsHitTesting(false)
+                liveRoundsBackdrop(phase).ignoresSafeArea().allowsHitTesting(false)
                     .animation(.easeInOut(duration: 0.25), value: phase)
             }
 
@@ -187,20 +187,18 @@ struct RootView: View {
         let showDetail = shouldShowTimerDetail(for: previewMode)
         let liveRounds = !idle && previewMode == .sparring && clock.runState != .finished
         let phase = liveRoundsPhase
+        let liveInk = phase.map { liveRoundsInk($0) }
         return VStack(spacing: liveRounds ? 14 : (idle ? 6 : 10)) {
-            if liveRounds, let phase {
-                roundsPhaseIndicator(current: phase, compact: compact, prominent: true)
-            }
             if idle, !stopwatchSession {
                 Text(display.phaseName)
                     .font(Palette.display(18))
                     .tracking(3)
                     .foregroundStyle(Palette.color(display.tint))
-            } else if liveRounds {
+            } else if liveRounds, let liveInk {
                 Text(display.phaseName)
                     .font(Palette.display(compact ? 34 : 40))
                     .tracking(4)
-                    .foregroundStyle(Palette.ink(on: display.tint))
+                    .foregroundStyle(liveInk)
                     .shadow(color: .black.opacity(0.35), radius: 6, y: 2)
             }
             Text(display.text)
@@ -208,7 +206,7 @@ struct RootView: View {
                 .monospacedDigit()
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
-                .foregroundStyle(liveRounds && phase != nil ? Palette.ink(on: display.tint) : Palette.ink)
+                .foregroundStyle(liveInk ?? Palette.ink)
                 .accessibilityLabel("\(display.phaseName) \(display.text)")
             if showDetail {
                 Text(display.detail)
@@ -245,32 +243,30 @@ struct RootView: View {
         return ["prepare", "work", "rest"].contains(tint) ? tint : nil
     }
 
-    private func roundsPhaseIndicator(current: String, compact: Bool, prominent: Bool = false) -> some View {
-        HStack(spacing: prominent ? 8 : 6) {
-            roundsPhaseChip("prepare", title: L10n.t("setting.prepare"), current: current, compact: compact, prominent: prominent)
-            roundsPhaseChip("work", title: L10n.t("setting.work"), current: current, compact: compact, prominent: prominent)
-            roundsPhaseChip("rest", title: L10n.t("setting.rest"), current: current, compact: compact, prominent: prominent)
+    private func liveRoundsBackdrop(_ phase: String) -> Color {
+        switch phase {
+        case "prepare":
+            return Color.black
+        case "work":
+            return Palette.color("work")
+        case "rest":
+            return Color(red: 0.16, green: 0.52, blue: 0.30)
+        default:
+            return Palette.background
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(L10n.t(current == "prepare" ? "phase.prepare" : current == "work" ? "phase.work" : "phase.rest"))
     }
 
-    private func roundsPhaseChip(_ phase: String, title: String, current: String, compact: Bool, prominent: Bool) -> some View {
-        let isCurrent = phase == current
-        return Text(title)
-            .font(prominent ? Palette.display(compact ? 17 : 19) : Palette.ui(compact ? 12 : 13))
-            .lineLimit(1)
-            .minimumScaleFactor(0.75)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, prominent ? (compact ? 11 : 13) : (compact ? 7 : 8))
-            .foregroundStyle(isCurrent ? Palette.ink(on: phase) : Palette.ink.opacity(prominent ? 0.7 : 0.55))
-            .background(Palette.color(phase).opacity(isCurrent ? 1 : (prominent ? 0.22 : 0.2)), in: RoundedRectangle(cornerRadius: prominent ? 12 : 10, style: .continuous))
-            .overlay {
-                if isCurrent {
-                    RoundedRectangle(cornerRadius: prominent ? 12 : 10, style: .continuous)
-                        .stroke(Palette.ink.opacity(prominent ? 0.45 : 0.35), lineWidth: prominent ? 2 : 1)
-                }
-            }
+    private func liveRoundsInk(_ phase: String) -> Color {
+        switch phase {
+        case "prepare":
+            return Palette.ink
+        case "work":
+            return Palette.ink(on: "work")
+        case "rest":
+            return Color(red: 1, green: 0.97, blue: 0.95)
+        default:
+            return Palette.ink
+        }
     }
 
     private var lapsList: some View {
