@@ -4,6 +4,7 @@ struct RootView: View {
     @EnvironmentObject private var clock: TrainingClock
     @ObservedObject private var language = AppLanguage.shared
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var selected: TrainingMode = .sparring
     @State private var showAppSettings = false
     @State private var volumePreviewArmed = false
@@ -15,43 +16,40 @@ struct RootView: View {
     private var showSettings: Bool { clock.runState == .idle }
     private var showSessionChrome: Bool { clock.runState == .idle }
 
-    var body: some View {
-        GeometryReader { geo in
-            let compact = geo.size.height < 820
-            ZStack {
-                Palette.background.ignoresSafeArea()
-                Circle()
-                    .fill(Palette.color(display.tint).opacity(0.42))
-                    .frame(width: 460, height: 460)
-                    .blur(radius: 90)
-                    .offset(y: -80)
-                    .allowsHitTesting(false)
+    private var compactLayout: Bool { verticalSizeClass == .compact }
 
-                ScrollView(.vertical) {
-                    VStack(spacing: compact ? 10 : 16) {
-                        topBar(compact: compact)
-                        timerBlock(compact: compact)
-                        if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
-                            lapsList
-                        }
-                        if showSettings {
-                            settings(compact: compact)
-                        }
-                        controls(compact: compact)
-                        if !(showSettings && compact) {
-                            hints
-                        }
+    var body: some View {
+        ZStack {
+            Palette.background.ignoresSafeArea()
+            Circle()
+                .fill(Palette.color(display.tint).opacity(0.42))
+                .frame(width: 460, height: 460)
+                .blur(radius: 90)
+                .offset(y: -80)
+                .allowsHitTesting(false)
+
+            ScrollView(.vertical) {
+                VStack(spacing: compactLayout ? 10 : 16) {
+                    topBar(compact: compactLayout)
+                    timerBlock(compact: compactLayout)
+                    if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
+                        lapsList
                     }
-                    .padding(.top, 6)
-                    .padding(.bottom, 12)
-                    .frame(maxWidth: min(560, geo.size.width))
-                    .frame(minHeight: geo.size.height, alignment: .top)
-                    .frame(maxWidth: .infinity)
-                    .clipped()
+                    if showSettings {
+                        settings(compact: compactLayout)
+                    }
+                    controls(compact: compactLayout)
+                    if !(showSettings && compactLayout) {
+                        hints
+                    }
                 }
-                .contentMargins(.horizontal, 16, for: .scrollContent)
-                .scrollIndicators(.hidden)
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+                .padding(.bottom, 12)
+                .frame(maxWidth: 560)
+                .frame(maxWidth: .infinity)
             }
+            .scrollIndicators(.hidden)
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
