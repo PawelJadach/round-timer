@@ -17,7 +17,7 @@ struct RootView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let contentWidth = min(560, max(0, geo.size.width - 44))
+            let columnWidth = min(560, max(0, geo.size.width - 32))
             ZStack {
                 Palette.background.ignoresSafeArea()
                 Circle()
@@ -27,10 +27,9 @@ struct RootView: View {
                     .offset(y: -80)
                     .allowsHitTesting(false)
 
-                ScrollView {
+                ScrollView(.vertical) {
                     VStack(spacing: 18) {
                         topBar
-                            .frame(maxWidth: .infinity)
                         if showSessionChrome {
                             volumeRow
                         }
@@ -40,18 +39,20 @@ struct RootView: View {
                         }
                         if showSettings {
                             settings
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         controls
                         hints
                     }
-                    .padding(.horizontal, 22)
+                    .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 18)
-                    .frame(maxWidth: contentWidth)
-                    .frame(minHeight: geo.size.height)
+                    .frame(width: columnWidth, alignment: .center)
                     .frame(maxWidth: .infinity)
+                    .frame(minHeight: geo.size.height, alignment: .top)
                 }
                 .scrollIndicators(.hidden)
+                .frame(width: geo.size.width)
             }
         }
         .sheet(isPresented: $showAppSettings) {
@@ -89,80 +90,89 @@ struct RootView: View {
     }
 
     private var topBar: some View {
-        HStack(spacing: 8) {
+        VStack(spacing: 8) {
             if showSessionChrome {
-                HStack(spacing: 2) {
-                    ForEach(TrainingMode.allCases) { mode in
-                        Button {
-                            guard clock.runState == .idle || clock.runState == .finished else { return }
-                            if clock.runState == .finished, mode != selected {
-                                clock.reset()
-                            }
-                            selected = mode
-                            HapticFeedback.selection()
-                        } label: {
-                            Text(mode.title)
-                                .font(Palette.display(13))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.65)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 9)
-                                .background(
-                                    selected == mode ? Palette.gold.opacity(0.18) : Color.clear,
-                                    in: Capsule()
-                                )
-                                .overlay {
-                                    if selected == mode {
-                                        Capsule().stroke(Palette.gold.opacity(0.45), lineWidth: 1)
-                                    }
-                                }
-                                .foregroundStyle(selected == mode ? Palette.gold : Palette.ink.opacity(0.48))
-                        }
-                        .buttonStyle(.plain)
-                    }
+                modePicker
+                HStack(spacing: 10) {
+                    languagePicker
+                    Spacer(minLength: 0)
+                    soundToggleButton
+                    settingsButton
                 }
-                .padding(3)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .layoutPriority(0)
-                .background(Palette.canvas.opacity(0.9), in: Capsule())
-                .overlay(Capsule().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+            } else {
+                HStack {
+                    Spacer(minLength: 0)
+                    settingsButton
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
 
-                languagePicker
-                    .fixedSize(horizontal: true, vertical: false)
-                    .layoutPriority(1)
-
+    private var modePicker: some View {
+        HStack(spacing: 4) {
+            ForEach(TrainingMode.allCases) { mode in
                 Button {
-                    clock.soundEnabled.toggle()
-                    HapticFeedback.light()
+                    guard clock.runState == .idle || clock.runState == .finished else { return }
+                    if clock.runState == .finished, mode != selected {
+                        clock.reset()
+                    }
+                    selected = mode
+                    HapticFeedback.selection()
                 } label: {
-                    Image(systemName: clock.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                        .font(.body.weight(.semibold))
-                        .frame(width: 40, height: 40)
-                        .background(Palette.canvas.opacity(0.9), in: Circle())
-                        .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+                    Text(mode.title)
+                        .font(Palette.display(14))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            selected == mode ? Palette.gold.opacity(0.18) : Color.clear,
+                            in: Capsule()
+                        )
+                        .overlay {
+                            if selected == mode {
+                                Capsule().stroke(Palette.gold.opacity(0.45), lineWidth: 1)
+                            }
+                        }
+                        .foregroundStyle(selected == mode ? Palette.gold : Palette.ink.opacity(0.48))
                 }
                 .buttonStyle(.plain)
-                .fixedSize()
-                .layoutPriority(1)
-                .accessibilityLabel(clock.soundEnabled ? L10n.t("sound.off") : L10n.t("sound.on"))
-            } else {
-                Spacer(minLength: 0)
             }
-
-            Button {
-                showAppSettings = true
-            } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.body.weight(.semibold))
-                    .frame(width: 40, height: 40)
-                    .background(Palette.canvas.opacity(0.9), in: Circle())
-                    .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .fixedSize()
-            .layoutPriority(1)
-            .accessibilityLabel(L10n.t("settings.title"))
         }
+        .padding(4)
+        .frame(maxWidth: .infinity)
+        .background(Palette.canvas.opacity(0.9), in: Capsule())
+        .overlay(Capsule().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+    }
+
+    private var soundToggleButton: some View {
+        Button {
+            clock.soundEnabled.toggle()
+            HapticFeedback.light()
+        } label: {
+            Image(systemName: clock.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                .font(.body.weight(.semibold))
+                .frame(width: 40, height: 40)
+                .background(Palette.canvas.opacity(0.9), in: Circle())
+                .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(clock.soundEnabled ? L10n.t("sound.off") : L10n.t("sound.on"))
+    }
+
+    private var settingsButton: some View {
+        Button {
+            showAppSettings = true
+        } label: {
+            Image(systemName: "gearshape.fill")
+                .font(.body.weight(.semibold))
+                .frame(width: 40, height: 40)
+                .background(Palette.canvas.opacity(0.9), in: Circle())
+                .overlay(Circle().stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(L10n.t("settings.title"))
     }
 
     private var languagePicker: some View {
@@ -329,7 +339,9 @@ struct RootView: View {
                         clock.rounds = 3
                     }
                 }
+                .padding(.trailing, 1)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             stepRow(L10n.t("setting.prepare"), text: ClockFormat.clock(seconds: clock.prepareSeconds)) {
                 clock.prepareSeconds = min(120, max(0, clock.prepareSeconds - 5))
             } increment: {
@@ -367,7 +379,9 @@ struct RootView: View {
                     preset("5:00", L10n.t("preset.countdown_five")) { clock.countdownSeconds = 300 }
                     preset("10:00", L10n.t("preset.countdown_ten")) { clock.countdownSeconds = 600 }
                 }
+                .padding(.trailing, 1)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             stepRow(L10n.t("setting.countdown_minutes"), text: "\(clock.countdownSeconds / 60)") {
                 clock.countdownSeconds = min(86_400, max(0, clock.countdownSeconds - 60))
             } increment: {
@@ -419,6 +433,7 @@ struct RootView: View {
                 .frame(width: 72)
             stepButton("plus", label: L10n.t("step.more"), action: increment)
         }
+        .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(title)
         .accessibilityValue(text)
