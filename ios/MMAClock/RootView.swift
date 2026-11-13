@@ -32,16 +32,25 @@ struct RootView: View {
                     if showSettings {
                         settings(compact: compactLayout)
                     }
-                    controls(compact: compactLayout)
                     if !(showSettings && compactLayout) {
                         hints
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
             }
             .scrollIndicators(.hidden)
             .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                controls(compact: compactLayout)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 4)
+                    .frame(maxWidth: 560)
+                    .frame(maxWidth: .infinity)
+                    .background(Palette.background.opacity(0.94))
+            }
         }
         .overlay {
             Circle()
