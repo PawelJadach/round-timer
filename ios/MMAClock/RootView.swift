@@ -16,43 +16,40 @@ struct RootView: View {
     private var showSessionChrome: Bool { clock.runState == .idle }
 
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                Palette.background.ignoresSafeArea()
-                Circle()
-                    .fill(Palette.color(display.tint).opacity(0.42))
-                    .frame(width: 460, height: 460)
-                    .blur(radius: 90)
-                    .offset(y: -80)
-                    .allowsHitTesting(false)
+        ZStack {
+            Palette.background.ignoresSafeArea()
+            Circle()
+                .fill(Palette.color(display.tint).opacity(0.42))
+                .frame(width: 460, height: 460)
+                .blur(radius: 90)
+                .offset(y: -80)
+                .allowsHitTesting(false)
 
-                ScrollView(.vertical) {
-                    VStack(spacing: 18) {
-                        topBar
-                        if showSessionChrome {
-                            volumeRow
-                        }
-                        timerBlock
-                        if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
-                            lapsList
-                        }
-                        if showSettings {
-                            settings
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        controls
-                        hints
+            ScrollView(.vertical) {
+                VStack(spacing: 18) {
+                    topBar
+                    if showSessionChrome {
+                        volumeRow
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 18)
-                    .frame(maxWidth: min(560, geo.size.width))
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: geo.size.height, alignment: .top)
+                    timerBlock
+                    if clock.mode == .stopwatch, clock.runState != .idle, !clock.laps.isEmpty {
+                        lapsList
+                    }
+                    if showSettings {
+                        settings
+                    }
+                    controls
+                    hints
                 }
-                .scrollIndicators(.hidden)
-                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .padding(.bottom, 18)
+                .frame(maxWidth: 560)
+                .frame(maxWidth: .infinity)
             }
+            .scrollIndicators(.hidden)
+            .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+            .contentMargins(.horizontal, 0, for: .scrollContent)
         }
         .sheet(isPresented: $showAppSettings) {
             NavigationStack {
@@ -311,7 +308,7 @@ struct RootView: View {
 
     private var sparringSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            clippedHorizontalScroll(height: 58) {
+            ClippedHorizontalScroll(height: 58) {
                 HStack(spacing: 8) {
                     preset(L10n.t("preset.tabata"), "20/10 × 8") {
                         clock.prepareSeconds = 5
@@ -368,7 +365,7 @@ struct RootView: View {
 
     private var countdownSettings: some View {
         VStack(alignment: .leading, spacing: 14) {
-            clippedHorizontalScroll(height: 58) {
+            ClippedHorizontalScroll(height: 58) {
                 HStack(spacing: 8) {
                     preset("0:30", L10n.t("preset.countdown_half")) { clock.countdownSeconds = 30 }
                     preset("1:00", L10n.t("preset.countdown_minute")) { clock.countdownSeconds = 60 }
@@ -432,16 +429,6 @@ struct RootView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(title)
         .accessibilityValue(text)
-    }
-
-    private func clippedHorizontalScroll<Content: View>(height: CGFloat, @ViewBuilder content: () -> Content) -> some View {
-        GeometryReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
-                content()
-            }
-            .frame(width: proxy.size.width, alignment: .leading)
-        }
-        .frame(height: height)
     }
 
     private func stepButton(_ systemName: String, label: String, action: @escaping () -> Void) -> some View {
@@ -532,6 +519,27 @@ struct RootView: View {
             Link(L10n.t("hint.bell_link"), destination: URL(string: "https://freesound.org/s/66952/")!)
                 .font(Palette.ui(13))
         }
+    }
+}
+
+private struct ClippedHorizontalScroll<Content: View>: View {
+    let height: CGFloat
+    let content: Content
+
+    init(height: CGFloat, @ViewBuilder content: () -> Content) {
+        self.height = height
+        self.content = content()
+    }
+
+    var body: some View {
+        GeometryReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                content
+            }
+            .frame(width: proxy.size.width, alignment: .leading)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: height)
     }
 }
 
