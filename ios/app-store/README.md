@@ -11,15 +11,17 @@ Assets and copy for **manual** upload to App Store Connect. Nothing here is subm
 | `privacy-app-store.md` | Privacy questionnaire answers |
 | `age-rating.md` | Age rating worksheet notes |
 | `icon/AppIcon-1024.png` | 1024×1024 marketing icon (RGB, no alpha; synced to `MMAClock` asset catalog) |
-| `screenshots/{en,pl}/*.png` | 1290×2796 (6.7″ class) **mock** frames from `generate-assets.py` |
-| `generate-assets.py` | Regenerate icon and screenshot mocks after UI changes |
+| `screenshots/{en,pl}/*.png` | Real iPhone captures (**1170×2532**): `01-rounds.png`, `02-timer.png` per locale |
+| `generate-assets.py` | Regenerate marketing icon only (do not use it for store screenshots) |
 
-Regenerate visuals (requires Pillow):
+Regenerate the marketing icon (requires Pillow):
 
 ```bash
 pip install pillow
 python3 ios/app-store/generate-assets.py
 ```
+
+Store screenshots are checked in as PNGs from device captures; replace those files directly when the UI changes.
 
 ## Signing and distribution (Paweł only)
 
@@ -35,9 +37,9 @@ python3 ios/app-store/generate-assets.py
 
 | Gap | Notes |
 | --- | --- |
-| **Obsolete mocks** | Current PNGs show old UI (mode tab “Sparring”, on-screen volume bar, EN/PL toggle). Prefer **device captures** after this build. |
-| **Count** | Only **2** images per locale; Apple allows up to 10 — add timer, stopwatch, and settings as needed. |
-| **Device sizes** | Only **1290×2796** (6.7″). Also provide **6.9″** (1320×2868) if App Store Connect requires the largest iPhone size for your account. No iPad screenshots (iPhone-only app). |
+| **Stopwatch** | No stopwatch frame in `screenshots/{en,pl}/` yet — capture and add when ready. |
+| **Count** | **2** images per locale (rounds + timer); Apple allows up to 10 — add stopwatch, settings, or Live Activity as needed. |
+| **Device sizes** | Committed PNGs are **1170×2532** native captures (not upscaled to 1290×2796). App Store Connect also accepts **1290×2796** (6.7″) and may ask for **1320×2868** (6.9″) depending on account settings. No iPad screenshots (iPhone-only app). |
 | **Widget / Live Activity** | Optional extra frames if you want to highlight Lock Screen countdown. |
 
 Do not invent App Store or Play Store listing URLs for the marketing site buttons.
