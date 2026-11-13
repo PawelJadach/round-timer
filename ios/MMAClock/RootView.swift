@@ -192,19 +192,7 @@ struct RootView: View {
         let liveRounds = !idle && previewMode == .sparring && clock.runState != .finished
         let phase = liveRoundsPhase
         let liveInk = phase.map { liveRoundsInk($0) }
-        return VStack(spacing: liveRounds ? 14 : (idle ? 6 : 10)) {
-            if idle, !stopwatchSession {
-                Text(display.phaseName)
-                    .font(Palette.display(18))
-                    .tracking(3)
-                    .foregroundStyle(Palette.color(display.tint))
-            } else if liveRounds, let liveInk {
-                Text(display.phaseName)
-                    .font(Palette.display(compact ? 34 : 40))
-                    .tracking(4)
-                    .foregroundStyle(liveInk)
-                    .shadow(color: .black.opacity(0.35), radius: 6, y: 2)
-            }
+        return VStack(spacing: idle ? 6 : 10) {
             Text(display.text)
                 .font(Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96))))
                 .monospacedDigit()
