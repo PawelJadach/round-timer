@@ -27,4 +27,4 @@ Not required.
 No.
 
 ## Notes for reviewer
-Free utility for coaches and athletes. Sparring timer with optional notification and Live Activity. Bell sound is licensed (Benboncan, CC BY 4.0).
+Free utility for coaches and athletes. Rounds / timer / stopwatch with optional notification and Live Activity. Bell sound is licensed (Benboncan, CC BY 4.0); credit is in Terms and About.

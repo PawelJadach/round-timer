@@ -4,35 +4,37 @@
 Round Timer
 
 ## Subtitle
-Sparring rounds, timer, stopwatch
+Rounds, timer, and stopwatch
 
 ## Promotional text (170 chars)
-Ring-style bells for every round. Tabata presets, countdown, laps. English and Polish. Keeps timing in the background while you coach.
+Ring-style bell on every round change. Rounds, countdown, and laps. English or Polish follows your iPhone. Keeps time in the background.
 
 ## Description
-Round Timer is a gym clock for boxing, MMA, and martial-arts training. Set work and rest rounds, run a simple countdown, or use the stopwatch with laps.
+Round Timer is a gym clock for boxing, MMA, and martial-arts training. Run interval rounds with prepare / work / rest, a standalone countdown, or a stopwatch with laps.
 
-**Sparring / tabata**
-- Prepare, work, rest, and round count with one-tap presets (Tabata, intervals, 3-minute rounds)
+**Rounds**
+- Prepare (black), work (red), and rest (green) fills while a session runs
+- Interval and Sparring presets; adjust prepare, work, rest, and round count in 5-second steps
 - Ring bell at round boundaries; short ticks in the final three seconds
 - Total session length shown before you start
 
 **Timer and stopwatch**
-- Standalone countdown with quick presets
+- Standalone countdown with minute and 5-second steps
 - Stopwatch with lap splits
 
 **Built for the floor**
-- Dark, high-contrast face readable from across the mat
-- Mute, volume preview, and EN/PL language switch
-- Cues keep playing when you leave the app (background audio on iOS; playback session on the web PWA)
+- Dark, high-contrast face with a simple gold-ring logo
+- Volume control (default 80); cues in Settings
+- English and Polish follow your device language
+- Cues keep playing when you leave the app (background audio)
 - Optional Live Activity on the Lock Screen (countdown mode)
 
 No account. No ads. Timer settings stay on your device.
 
-Bell sound: Benboncan (Freesound), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Bell sound: Benboncan (Freesound), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — see Terms in the app.
 
 ## Keywords
-boxing,timer,MMA,tabata,interval,round,sparring,stopwatch,workout,coach
+boxing,timer,MMA,interval,round,sparring,stopwatch,workout,coach,rounds
 
 ## Primary category
 Sports
@@ -44,10 +46,10 @@ Health & Fitness
 © Pawel Jadach
 
 ## Support URL
-https://mma-clock.vercel.app/
+https://round-timer-marketing.vercel.app/
 
 ## Marketing URL
-https://mma-clock.vercel.app/
+https://round-timer-marketing.vercel.app/
 
 ## Privacy policy URL
-https://mma-clock.vercel.app/privacy
+https://round-timer-marketing.vercel.app/privacy/

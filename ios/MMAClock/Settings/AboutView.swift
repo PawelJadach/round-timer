@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AboutView: View {
+    @ObservedObject private var language = AppLanguage.shared
+
     private var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
     }
@@ -18,9 +20,9 @@ struct AboutView: View {
             }
 
             Section {
-                Link(L10n.t("about.privacy"), destination: AppConfig.privacyPolicyURL)
-                Link(L10n.t("about.terms"), destination: AppConfig.termsOfUseURL)
-                Link(L10n.t("about.website"), destination: AppConfig.marketingURL)
+                Link(L10n.t("about.privacy"), destination: AppConfig.privacyPolicyURL(for: language.code))
+                Link(L10n.t("about.terms"), destination: AppConfig.termsOfUseURL(for: language.code))
+                Link(L10n.t("about.website"), destination: AppConfig.marketingURL(for: language.code))
             }
 
             Section {

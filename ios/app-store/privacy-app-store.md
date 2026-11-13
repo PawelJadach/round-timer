@@ -17,15 +17,15 @@ None. `NSPrivacyTracking` is `false`.
 | — | No | — | — | — |
 
 ## On-device storage only
-Timer settings (prepare/work/rest/rounds, countdown, sound, volume, language) are stored in **UserDefaults** on the device. They are not transmitted.
+Timer settings (prepare/work/rest/rounds, countdown, sound, volume) are stored in **UserDefaults** on the device. They are not transmitted. The UI language follows the system locale; no language choice is stored unless the user previously picked one in an older app version (legacy key, harmless).
 
 ## Required-reason APIs
 | API | Reason code | Use in app |
 | --- | --- | --- |
-| User Defaults | CA92.1 | Persist timer settings and language preference |
+| User Defaults | CA92.1 | Persist timer settings |
 
 ## Third-party SDKs
-No analytics or advertising SDKs in the Release build. Debug-only review counters use Apple’s in-app review API locally.
+No analytics or advertising SDKs in the Release build. Debug-only review counters use Apple’s in-app review API locally. Release `Analytics` logs to OSLog only.
 
 ## Encryption
 `ITSAppUsesNonExemptEncryption` = **false** (standard HTTPS only for optional links).
