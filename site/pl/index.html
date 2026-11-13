@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0e0f12" />
+    <meta name="description" content="Zegar na salę: sparing z rundami, minutnik i stoper. Ciemna tarcza, dzwonek jak z ringu, bez konta. W przeglądarce i na iPhonie." />
+    <meta name="robots" content="index, follow" />
+    <title>Round Timer — zegar do sparingu</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="pl" href="/pl/" />
+    <link rel="alternate" hreflang="x-default" href="/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Przejdź do treści</a>
+    <header class="top">
+      <div class="wrap top-bar">
+        <a class="brand" href="/pl/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>
+            <span class="brand-name">Round Timer</span>
+            <span class="brand-kicker">Zegar na salę</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Strony">
+          <a href="/pl/privacy/">Prywatność</a>
+          <a href="/pl/terms/">Regulamin</a>
+          <a href="https://mma-clock.vercel.app/">Otwórz zegar</a>
+        </nav>
+        <nav class="lang" aria-label="Język">
+          <a href="/" hreflang="en" lang="en">English</a>
+          <a href="/pl/" hreflang="pl" lang="pl" aria-current="page">Polski</a>
+        </nav>
+      </div>
+      <div class="ropes" aria-hidden="true"></div>
+    </header>
+    <main id="main">
+      <section class="hero wrap">
+        <div>
+          <p class="kicker">Sparing · Minutnik · Stoper</p>
+          <h1>Rundy, przerwa i dzwonek z ringu.</h1>
+          <p class="lede">Sparing, minutnik i stoper. Ciemna tarcza, poświata przy każdej fazie i żadnego konta.</p>
+          <div class="actions">
+            <a class="ticket" href="https://mma-clock.vercel.app/">Otwórz zegar</a>
+            <p class="fine">W przeglądarce telefonu. Ekran zegara jest po polsku. Na iPhonie angielski i polski idą za językiem telefonu.</p>
+          </div>
+        </div>
+        <figure class="clock">
+          <div class="clock-face">
+            <p class="clock-phase">Praca</p>
+            <p class="clock-time">03:00</p>
+            <p class="clock-detail">Runda 1 z 5</p>
+          </div>
+          <figcaption>Preset Sparing, w trakcie rundy. Najpierw jest 10 sekund przygotowania.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Karta</p>
+          <h2>Trzy tryby.</h2>
+          <p class="intro">Ten sam zegar w przeglądarce i na iPhonie. Wybierasz tryb i startujesz. Na tarczy są pauza, wznowienie i reset. Gdy kończy się minutnik albo sparing, Jeszcze raz puszcza go od nowa.</p>
+          <div class="modes">
+            <article class="card">
+              <p class="mode-no">01</p>
+              <h3>Sparing</h3>
+              <p>Przygotowanie, praca, przerwa i rundy. Tarcza pokazuje rundę, a ustawienia — długość całej sesji. Po ostatniej rundzie nie ma przerwy.</p>
+              <p>Własne czasy: przygotowanie do 2:00, praca od 5 sekund do 60:00, przerwa do 30:00, rundy od 1 do 30.</p>
+            </article>
+            <article class="card">
+              <p class="mode-no">02</p>
+              <h3>Minutnik</h3>
+              <p>Odliczanie w dół. Gotowce od 30 sekund do 10 minut albo własne minuty i sekundy.</p>
+              <p>Start od 5 sekund, najwyżej 24 godziny.</p>
+            </article>
+            <article class="card">
+              <p class="mode-no">03</p>
+              <h3>Stoper</h3>
+              <p>Czas leci w górę, do setnych sekundy. Okrążenie zapisuje międzyczas i całość.</p>
+              <p>Przyciski: Start, Pauza, Wznów, Reset, Jeszcze raz. Na stoperze: Okrążenie.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Presety</p>
+          <h2>Cztery karty sparingu i pięć minutników.</h2>
+          <ul class="bouts">
+            <li>
+              <p class="bout-name">Tabata</p>
+              <div>
+                <p class="bout-line">20/10 × 8</p>
+                <p>5 sekund przygotowania, 20 sekund pracy, 10 sekund przerwy, 8 rund.</p>
+              </div>
+            </li>
+            <li>
+              <p class="bout-name">Interwał</p>
+              <div>
+                <p class="bout-line">30/15 × 10</p>
+                <p>5 sekund przygotowania, 30 sekund pracy, 15 sekund przerwy, 10 rund.</p>
+              </div>
+            </li>
+            <li>
+              <p class="bout-name">Sparing</p>
+              <div>
+                <p class="bout-line">3:00 / 1:00 × 5</p>
+                <p>10 sekund przygotowania, 3:00 pracy, 1:00 przerwy, 5 rund.</p>
+              </div>
+            </li>
+            <li>
+              <p class="bout-name">Runda</p>
+              <div>
+                <p class="bout-line">5:00 / 1:00 × 3</p>
+                <p>10 sekund przygotowania, 5:00 pracy, 1:00 przerwy, 3 rundy.</p>
+              </div>
+            </li>
+          </ul>
+          <p class="note">Gotowce minutnika: 0:30, 1:00, 3:00, 5:00 i 10:00. Dźwięk, głośność i te czasy zostają na urządzeniu.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Tarcza</p>
+          <h2>Poświata idzie za fazą.</h2>
+          <p class="intro">Napis na zegarze jest krótki i wielkimi literami. Kolor za nim zmienia się razem z fazą.</p>
+          <ul class="phases">
+            <li>
+              <span class="swatch prepare" aria-hidden="true"></span>
+              <div>
+                <h3>Przygotowanie</h3>
+                <p>Złoty. „Zaraz start”.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch work" aria-hidden="true"></span>
+              <div>
+                <h3>Praca</h3>
+                <p>Czerwony. Sama runda.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch rest" aria-hidden="true"></span>
+              <div>
+                <h3>Przerwa</h3>
+                <p>Niebieski. Między rundami.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch end" aria-hidden="true"></span>
+              <div>
+                <h3>Koniec</h3>
+                <p>Zielony. „Sesja zakończona” albo, na minutniku, „Czas minął”.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch pause" aria-hidden="true"></span>
+              <div>
+                <h3>Pauza</h3>
+                <p>Tarcza pokazuje Pauza, dopóki nie wznowisz albo nie zresetujesz.</p>
+              </div>
+            </li>
+            <li>
+              <span class="swatch stop" aria-hidden="true"></span>
+              <div>
+                <h3>Stoper</h3>
+                <p>Jasna tarcza. „Czas w górę” albo numer okrążenia.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Dzwonek</p>
+          <h2>Sygnał słychać w rękawicach.</h2>
+          <p>W przeglądarce pracę, przerwę i koniec otwiera dzwonek z ringu. Przygotowanie, start minutnika i ostatnie trzy sekundy to krótkie tony. Tyknięcia są wtedy, gdy odcinek trwa co najmniej pięć sekund — nie w trakcie przygotowania. Okrążenie tyka, jeśli dźwięk jest włączony. Dźwięk i głośność można ściszyć albo wyłączyć, i zegar to pamięta.</p>
+          <p>Na iPhonie każdy sygnał to krótki dźwięk, który na moment przycisza inną muzykę, a potem mix wraca. YouTube gra dalej. Przy zgaszonym ekranie sygnał rundy przychodzi jako powiadomienie, jeśli na to pozwolisz. Do sygnału dochodzi krótkie stuknięcie. Ekran nie gaśnie, dopóki sesja trwa. Faza i czas mogą zostać na zablokowanym ekranie i w Dynamic Island, gdy włączone są Aktywności na żywo.</p>
+          <p>W przeglądarce, gdy sesja trwa, strona prosi o to, żeby ekran został włączony.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="kicker">Gdzie działa</p>
+          <h2>Przeglądarka i iPhone.</h2>
+          <div class="places">
+            <article class="card split">
+              <h3>Przeglądarka</h3>
+              <ul>
+                <li>Otwiera się w przeglądarce telefonu. Bez konta.</li>
+                <li>Można dodać go do ekranu początkowego.</li>
+                <li>Po pierwszym otwarciu zostawia u Ciebie kopię plików na później.</li>
+                <li>Własny interfejs zegara jest po polsku.</li>
+                <li>Ustawienia zostają na tym urządzeniu.</li>
+              </ul>
+            </article>
+            <article class="card split">
+              <h3>iPhone</h3>
+              <ul>
+                <li>iOS 17 lub nowszy. Bez konta.</li>
+                <li>Angielski i polski według języka systemu.</li>
+                <li>Zablokowany ekran i Dynamic Island, gdy włączone są Aktywności na żywo.</li>
+                <li>Powiadomienia są zapasowym sygnałem, gdy system uśpi aplikację.</li>
+                <li>Z ustawień można udostępnić link do zegara. O aplikacji prowadzi do prywatności, regulaminu i kontaktu.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="foot">
+      <div class="wrap">
+        <p>Wcześniej MMA Clock i Train Clock — ten sam produkt.</p>
+        <p>Dzwonek w zegarze przeglądarkowym: <a href="https://freesound.org/s/66952/">Benboncan</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Kontakt: <a href="mailto:hello@pawel.dev">hello@pawel.dev</a>.</p>
+        <p class="foot-links">
+          <a href="/pl/privacy/">Prywatność</a>
+          <a href="/pl/terms/">Regulamin</a>
+          <a href="https://mma-clock.vercel.app/">Otwórz zegar</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
