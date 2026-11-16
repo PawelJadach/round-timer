@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -137,6 +138,9 @@ fun TimerScreen(
                     )
                 },
         ) {
+            val showStopwatchLaps = (state.runMode ?: state.mode) == Mode.STOPWATCH &&
+                state.laps.isNotEmpty() &&
+                state.runState != RunState.IDLE
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -145,22 +149,33 @@ fun TimerScreen(
                     .fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.safeDrawing)
                     .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .then(
+                        if (!showStopwatchLaps) {
+                            Modifier.verticalScroll(rememberScrollState())
+                        } else {
+                            Modifier.fillMaxHeight()
+                        },
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (state.chromeVisible) {
                     Spacer(Modifier.height(8.dp))
                     TopBar(state, onMode, onSettingsOpen)
                 } else if (state.runState != RunState.IDLE) {
-                    Spacer(Modifier.height(if (state.laps.isNotEmpty()) 20.dp else 48.dp))
+                    Spacer(Modifier.height(if (showStopwatchLaps) 20.dp else if (state.laps.isNotEmpty()) 20.dp else 48.dp))
                 }
                 if (state.showClock || state.runState != RunState.IDLE) {
                     FaceBlock(state, livePhase, Modifier.padding(vertical = if (state.chromeVisible) 12.dp else 24.dp))
                 }
-                if (state.laps.isNotEmpty()) {
-                    Laps(state)
-                }
-                if (state.settingsVisible) {
+                if (showStopwatchLaps) {
+                    Laps(
+                        state,
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                    )
+                } else if (state.settingsVisible) {
                     SettingsBlock(state, onPreset, onNudge)
                 }
             }
@@ -491,12 +506,9 @@ private fun faceSize(
 }
 
 @Composable
-private fun Laps(state: Display) {
+private fun Laps(state: Display, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(max = 140.dp)
-            .verticalScroll(rememberScrollState()),
+        modifier = modifier.verticalScroll(rememberScrollState()),
     ) {
         state.laps.forEach { lap ->
             Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
