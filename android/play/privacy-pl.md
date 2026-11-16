@@ -1,6 +1,6 @@
 # Round Timer — prywatność (polski)
 
-Notatki pod kartę w Play Console. To nie jest opublikowany adres polityki. Aplikacji nie wysyłano do recenzji.
+Notatki pod kartę w Play Console. Opublikowana polityka prywatności: https://round-timer-marketing.vercel.app/pl/privacy/ (wklej ten adres w Play Console). Aplikacji nie wysyłano do recenzji.
 
 ## Co aplikacja robi z danymi
 

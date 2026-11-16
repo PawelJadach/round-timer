@@ -1,6 +1,6 @@
 # Round Timer — privacy notes (English)
 
-For the Play Console listing. This file is not a hosted privacy-policy URL. Do not mark the app as submitted.
+For the Play Console listing. Hosted privacy policy: https://round-timer-marketing.vercel.app/privacy/ (use that URL in Play Console). Do not mark the app as submitted.
 
 ## What the app does with data
 
