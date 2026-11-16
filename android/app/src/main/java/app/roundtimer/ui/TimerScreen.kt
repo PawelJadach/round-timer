@@ -10,6 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,10 +42,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -77,6 +78,7 @@ import app.roundtimer.engine.formatClock
 import app.roundtimer.engine.formatStopwatch
 import app.roundtimer.presetTitle
 import kotlin.math.abs
+import kotlin.math.max
 
 @Composable
 fun TimerScreen(
@@ -117,14 +119,11 @@ fun TimerScreen(
             .background(backdrop),
     ) {
         if (glowTint != null) {
-            Box(
+            DecorativeGlow(
+                color = glow,
                 modifier = Modifier
-                    .size(460.dp)
-                    .align(Alignment.TopCenter)
-                    .offset(y = (-80).dp)
-                    .graphicsLayer { clip = false }
-                    .blur(90.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                    .background(glow.copy(alpha = 0.42f), CircleShape),
+                    .fillMaxSize()
+                    .graphicsLayer { clip = false },
             )
         }
         Column(
@@ -204,6 +203,48 @@ fun TimerScreen(
             onVolumeCommit = onVolumeCommit,
             onLanguage = onLanguage,
             onFollowSystemLanguage = onFollowSystemLanguage,
+        )
+    }
+}
+
+/**
+ * iOS-style wash: bright core (460pt circle, blur ~90) fading across most of the screen.
+ * A single blurred small layer clips on Android; this uses full-area gradients + core blur.
+ */
+@Composable
+private fun DecorativeGlow(color: Color, modifier: Modifier = Modifier) {
+    val density = LocalDensity.current
+    BoxWithConstraints(modifier) {
+        val w = constraints.maxWidth.toFloat()
+        val h = constraints.maxHeight.toFloat()
+        val centerX = w / 2f
+        // iOS: glow circle is centered on the root, then offset(y: -80) — on the clock, not the status bar.
+        val centerY = with(density) { (h / 2f) - 80.dp.toPx() }
+        val radius = max(w, h) * 1.22f
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.radialGradient(
+                        colorStops = arrayOf(
+                            0f to color.copy(alpha = 0.42f),
+                            0.22f to color.copy(alpha = 0.32f),
+                            0.48f to color.copy(alpha = 0.18f),
+                            0.72f to color.copy(alpha = 0.07f),
+                            1f to Color.Transparent,
+                        ),
+                        center = Offset(centerX, centerY),
+                        radius = radius,
+                    ),
+                ),
+        )
+        Box(
+            Modifier
+                .size(460.dp)
+                .align(Alignment.Center)
+                .offset(y = (-80).dp)
+                .blur(90.dp)
+                .background(color.copy(alpha = 0.42f), CircleShape),
         )
     }
 }
