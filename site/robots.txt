@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://round-timer-marketing.vercel.app/sitemap.xml
