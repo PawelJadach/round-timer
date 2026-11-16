@@ -2,7 +2,6 @@ package app.roundtimer.ui
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -42,14 +41,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -117,11 +115,8 @@ fun TimerScreen(
                     .size(460.dp)
                     .align(Alignment.TopCenter)
                     .offset(y = (-80).dp)
-                    .background(
-                        Brush.radialGradient(
-                            listOf(glow.copy(alpha = 0.42f), Color.Transparent),
-                        ),
-                    ),
+                    .blur(90.dp)
+                    .background(glow.copy(alpha = 0.42f), CircleShape),
             )
         }
         Column(
@@ -164,16 +159,6 @@ fun TimerScreen(
                     TopBar(state, onMode, onSettingsOpen)
                 } else if (state.runState != RunState.IDLE) {
                     Spacer(Modifier.height(if (state.laps.isNotEmpty()) 20.dp else 48.dp))
-                }
-                if (state.chromeVisible) {
-                    Image(
-                        painter = painterResource(R.drawable.app_logo),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(top = 8.dp, bottom = 4.dp)
-                            .size(40.dp),
-                        contentScale = ContentScale.Fit,
-                    )
                 }
                 if (state.showClock || state.runState != RunState.IDLE) {
                     FaceBlock(state, livePhase, Modifier.padding(vertical = if (state.chromeVisible) 12.dp else 24.dp))

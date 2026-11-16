@@ -7,8 +7,8 @@ import androidx.core.os.LocaleListCompat
 import app.roundtimer.data.Prefs
 import java.util.Locale
 
-fun Context.withAppLocale(): Context {
-    val code = Prefs(this).resolvedLanguage()
+fun Context.withAppLocale(languageCode: String? = null): Context {
+    val code = languageCode ?: Prefs(this).resolvedLanguage()
     val locale = if (code == "pl") Locale("pl") else Locale.ENGLISH
     val config = Configuration(resources.configuration)
     config.setLocale(locale)

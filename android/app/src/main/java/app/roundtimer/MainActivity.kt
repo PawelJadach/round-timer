@@ -17,7 +17,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import android.content.res.Configuration
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,7 +49,9 @@ class MainActivity : ComponentActivity() {
             var languageTick by remember { mutableIntStateOf(0) }
             val language = remember(languageTick) { prefs.resolvedLanguage() }
             val usesManualLanguage = remember(languageTick) { prefs.usesManualLanguage() }
-            val localizedContext = remember(language) { applicationContext.withAppLocale() }
+            val localizedContext = remember(language) { applicationContext.withAppLocale(language) }
+            val localizedConfiguration =
+                remember(localizedContext) { Configuration(localizedContext.resources.configuration) }
             var settingsOpen by remember { mutableStateOf(false) }
 
             DisposableEffect(state.runState) {
@@ -59,7 +63,10 @@ class MainActivity : ComponentActivity() {
                 onDispose { window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
             }
 
-            CompositionLocalProvider(LocalContext provides localizedContext) {
+            CompositionLocalProvider(
+                LocalContext provides localizedContext,
+                LocalConfiguration provides localizedConfiguration,
+            ) {
                 RoundTimerTheme {
                     TimerScreen(
                         state = state,

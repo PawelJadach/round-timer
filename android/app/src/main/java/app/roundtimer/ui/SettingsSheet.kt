@@ -1,6 +1,7 @@
 package app.roundtimer.ui
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,13 +34,16 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import app.roundtimer.AppLinks
 import app.roundtimer.R
 import app.roundtimer.engine.Display
+import app.roundtimer.withAppLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,54 +69,68 @@ fun SettingsSheet(
     onFollowSystemLanguage: () -> Unit,
 ) {
     if (!visible) return
+    val rootContext = LocalContext.current
+    val localizedContext = remember(language) {
+        rootContext.applicationContext.withAppLocale(language)
+    }
+    val localizedConfiguration = remember(localizedContext) {
+        Configuration(localizedContext.resources.configuration)
+    }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showAbout by remember { mutableStateOf(false) }
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = Bg,
-        dragHandle = null,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 28.dp),
+    key(language) {
+        ModalBottomSheet(
+            onDismissRequest = onDismiss,
+            sheetState = sheetState,
+            containerColor = Bg,
+            dragHandle = null,
         ) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(onClick = onDismiss) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = stringResource(R.string.close),
-                        tint = Ink,
-                        modifier = Modifier
-                            .background(Canvas.copy(alpha = 0.9f), CircleShape)
-                            .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
-                            .padding(8.dp),
-                    )
+            CompositionLocalProvider(
+                LocalContext provides localizedContext,
+                LocalConfiguration provides localizedConfiguration,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 28.dp),
+                ) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        IconButton(onClick = onDismiss) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(R.string.close),
+                                tint = Ink,
+                                modifier = Modifier
+                                    .background(Canvas.copy(alpha = 0.9f), CircleShape)
+                                    .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
+                                    .padding(8.dp),
+                            )
+                        }
+                    }
+                    if (showAbout) {
+                        AboutPanel(language) { showAbout = false }
+                    } else {
+                        Text(
+                            stringResource(R.string.settings_title),
+                            color = Ink,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                        )
+                        SettingsScroll(
+                            state = state,
+                            language = language,
+                            usesManualLanguage = usesManualLanguage,
+                            onOpenAbout = { showAbout = true },
+                            onToggleSound = onToggleSound,
+                            onVolume = onVolume,
+                            onVolumeCommit = onVolumeCommit,
+                            onLanguage = onLanguage,
+                            onFollowSystemLanguage = onFollowSystemLanguage,
+                        )
+                    }
                 }
-            }
-            if (showAbout) {
-                AboutPanel(language) { showAbout = false }
-            } else {
-                Text(
-                    stringResource(R.string.settings_title),
-                    color = Ink,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-                SettingsScroll(
-                    state = state,
-                    language = language,
-                    usesManualLanguage = usesManualLanguage,
-                    onOpenAbout = { showAbout = true },
-                    onToggleSound = onToggleSound,
-                    onVolume = onVolume,
-                    onVolumeCommit = onVolumeCommit,
-                    onLanguage = onLanguage,
-                    onFollowSystemLanguage = onFollowSystemLanguage,
-                )
             }
         }
     }

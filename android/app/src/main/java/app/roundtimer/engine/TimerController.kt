@@ -59,7 +59,7 @@ class TimerController(
             runMode = runMode,
             runState = runState,
             face = face,
-            showClock = runState != RunState.IDLE || mode == Mode.STOPWATCH || mode == Mode.COUNTDOWN,
+            showClock = true,
             chromeVisible = runState == RunState.IDLE,
             settingsVisible = runState == RunState.IDLE && mode != Mode.STOPWATCH,
             laps = if (showLaps) laps else emptyList(),
