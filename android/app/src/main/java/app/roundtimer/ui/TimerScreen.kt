@@ -32,8 +32,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -43,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -112,19 +109,10 @@ fun TimerScreen(
         if (glowIdle) snap() else tween(350),
         label = "glow",
     )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer { clip = false }
-            .background(backdrop),
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(Modifier.matchParentSize().background(backdrop))
         if (glowTint != null) {
-            DecorativeGlow(
-                color = glow,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { clip = false },
-            )
+            DecorativeGlow(color = glow, modifier = Modifier.matchParentSize())
         }
         Column(
             modifier = Modifier
@@ -207,44 +195,36 @@ fun TimerScreen(
     }
 }
 
-/**
- * iOS-style wash: bright core (460pt circle, blur ~90) fading across most of the screen.
- * A single blurred small layer clips on Android; this uses full-area gradients + core blur.
- */
+/** One full-screen soft wash (iOS blurred circle), centered on the clock. */
 @Composable
 private fun DecorativeGlow(color: Color, modifier: Modifier = Modifier) {
     val density = LocalDensity.current
-    BoxWithConstraints(modifier) {
+    BoxWithConstraints(
+        modifier.graphicsLayer { clip = false },
+    ) {
         val w = constraints.maxWidth.toFloat()
         val h = constraints.maxHeight.toFloat()
         val centerX = w / 2f
-        // iOS: glow circle is centered on the root, then offset(y: -80) — on the clock, not the status bar.
         val centerY = with(density) { (h / 2f) - 80.dp.toPx() }
-        val radius = max(w, h) * 1.22f
+        val radius = max(w, h) * 1.18f
         Box(
             Modifier
                 .fillMaxSize()
                 .background(
                     Brush.radialGradient(
                         colorStops = arrayOf(
-                            0f to color.copy(alpha = 0.42f),
-                            0.22f to color.copy(alpha = 0.32f),
-                            0.48f to color.copy(alpha = 0.18f),
-                            0.72f to color.copy(alpha = 0.07f),
+                            0f to color.copy(alpha = 0.38f),
+                            0.14f to color.copy(alpha = 0.30f),
+                            0.30f to color.copy(alpha = 0.20f),
+                            0.48f to color.copy(alpha = 0.11f),
+                            0.66f to color.copy(alpha = 0.05f),
+                            0.82f to color.copy(alpha = 0.015f),
                             1f to Color.Transparent,
                         ),
                         center = Offset(centerX, centerY),
                         radius = radius,
                     ),
                 ),
-        )
-        Box(
-            Modifier
-                .size(460.dp)
-                .align(Alignment.Center)
-                .offset(y = (-80).dp)
-                .blur(90.dp)
-                .background(color.copy(alpha = 0.42f), CircleShape),
         )
     }
 }
@@ -581,40 +561,63 @@ private fun ControlsBar(
 
 @Composable
 private fun PrimaryButton(label: String, tint: Tint, enabled: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
+    Box(
         modifier = modifier
             .height(56.dp)
-            .alpha(if (enabled) 1f else 0.4f),
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = tintColor(tint), contentColor = inkOn(tint)),
+            .alpha(if (enabled) 1f else 0.4f)
+            .clip(CircleShape)
+            .background(tintColor(tint))
+            .then(if (enabled) Modifier.clickableNoRipple(onClick) else Modifier),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(label, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(
+            label,
+            fontFamily = BarlowCondensed,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = inkOn(tint),
+        )
     }
 }
 
 @Composable
 private fun PlainButton(label: String, modifier: Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.height(56.dp),
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = InkDark),
+    Box(
+        modifier = modifier
+            .height(56.dp)
+            .clip(CircleShape)
+            .background(Ink)
+            .clickableNoRipple(onClick),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(label, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(
+            label,
+            fontFamily = BarlowCondensed,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = InkDark,
+        )
     }
 }
 
 @Composable
 private fun SecondaryButton(label: String, modifier: Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.height(56.dp),
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = Canvas.copy(alpha = 0.9f), contentColor = Ink),
+    Box(
+        modifier = modifier
+            .height(56.dp)
+            .clip(CircleShape)
+            .background(Canvas.copy(alpha = 0.9f))
+            .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
+            .clickableNoRipple(onClick),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(label, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(
+            label,
+            fontFamily = BarlowCondensed,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = Ink,
+        )
     }
 }
 
