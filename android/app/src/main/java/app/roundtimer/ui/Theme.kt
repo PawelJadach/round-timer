@@ -26,11 +26,19 @@ val StopwatchBlue = Color(0xFF7AC2F2)
 val Muted = Ink.copy(alpha = 0.62f)
 val InkDark = Color(0xFF1A100C)
 
-val Outfit = FontFamily(
-    Font(R.font.outfit_regular, FontWeight.Normal),
-    Font(R.font.outfit_semibold, FontWeight.SemiBold),
-    Font(R.font.outfit_bold, FontWeight.Bold),
-    Font(R.font.outfit_extrabold, FontWeight.ExtraBold),
+/** iOS `Palette.ui` — Barlow Medium / SemiBold for chrome and settings. */
+val Barlow = FontFamily(
+    Font(R.font.barlow_medium, FontWeight.Normal),
+    Font(R.font.barlow_medium, FontWeight.Medium),
+    Font(R.font.barlow_semibold, FontWeight.SemiBold),
+    Font(R.font.barlow_semibold, FontWeight.Bold),
+)
+
+/** iOS `Palette.display` — Barlow Condensed Bold for the main clock and phase titles. */
+val BarlowCondensed = FontFamily(
+    Font(R.font.barlow_condensed_bold, FontWeight.Bold),
+    Font(R.font.barlow_condensed_bold, FontWeight.ExtraBold),
+    Font(R.font.barlow_condensed_semibold, FontWeight.SemiBold),
 )
 
 fun tintColor(tint: Tint): Color = when (tint) {
@@ -39,6 +47,12 @@ fun tintColor(tint: Tint): Color = when (tint) {
     Tint.REST -> RestBlue
     Tint.END -> EndGreen
     Tint.STOPWATCH -> Ink
+}
+
+/** iOS `glowColor`: stopwatch uses blue; other modes use the phase tint. */
+fun glowColor(tint: Tint): Color = when (tint) {
+    Tint.STOPWATCH -> StopwatchBlue
+    else -> tintColor(tint)
 }
 
 fun inkOn(tint: Tint): Color = if (tint == Tint.WORK || tint == Tint.REST) Color(0xFFFFF8F2) else InkDark
@@ -73,14 +87,16 @@ fun RoundTimerTheme(content: @Composable () -> Unit) {
             onPrimary = InkDark,
         ),
         typography = Typography().let { type ->
-            val family = Outfit
             type.copy(
-                displayLarge = type.displayLarge.copy(fontFamily = family),
-                headlineLarge = type.headlineLarge.copy(fontFamily = family),
-                titleLarge = type.titleLarge.copy(fontFamily = family),
-                bodyLarge = type.bodyLarge.copy(fontFamily = family),
-                bodyMedium = type.bodyMedium.copy(fontFamily = family),
-                labelLarge = type.labelLarge.copy(fontFamily = family),
+                displayLarge = type.displayLarge.copy(
+                    fontFamily = BarlowCondensed,
+                    fontWeight = FontWeight.Bold,
+                ),
+                headlineLarge = type.headlineLarge.copy(fontFamily = BarlowCondensed, fontWeight = FontWeight.Bold),
+                titleLarge = type.titleLarge.copy(fontFamily = Barlow, fontWeight = FontWeight.SemiBold),
+                bodyLarge = type.bodyLarge.copy(fontFamily = Barlow, fontWeight = FontWeight.SemiBold),
+                bodyMedium = type.bodyMedium.copy(fontFamily = Barlow, fontWeight = FontWeight.SemiBold),
+                labelLarge = type.labelLarge.copy(fontFamily = Barlow, fontWeight = FontWeight.SemiBold),
             )
         },
         content = content,

@@ -1,6 +1,7 @@
 package app.roundtimer.ui
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,6 +52,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -99,9 +101,11 @@ fun TimerScreen(
     val livePhase = liveRoundsPhase(state)
     val backdrop = livePhase?.let { liveBackdrop(it) } ?: Bg
     val glowTint = if (livePhase == null) decorativeGlowTint(state) else null
+    val glowTarget = glowTint?.let { glowColor(it) } ?: Color.Transparent
+    val glowIdle = state.runState == RunState.IDLE
     val glow by animateColorAsState(
-        glowTint?.let { tintColor(it) } ?: Color.Transparent,
-        tween(350),
+        glowTarget,
+        if (glowIdle) snap() else tween(350),
         label = "glow",
     )
     Box(
@@ -319,7 +323,15 @@ private fun Chip(title: String, detail: String, modifier: Modifier, onClick: () 
             .padding(vertical = 8.dp, horizontal = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            title,
+            fontFamily = BarlowCondensed,
+            fontWeight = FontWeight.Bold,
+            fontSize = 13.sp,
+            color = Ink,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
         Text(detail, color = Muted, fontSize = 11.sp, textAlign = TextAlign.Center, maxLines = 2)
     }
 }
@@ -334,7 +346,17 @@ private fun Stepper(title: String, value: String, key: Nudge, onNudge: (Nudge, I
     ) {
         Text(title, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Ink, modifier = Modifier.weight(1f))
         StepButton("−", stringResource(R.string.less)) { onNudge(key, -1) }
-        Text(value, modifier = Modifier.width(64.dp), textAlign = TextAlign.Center, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Ink)
+        Text(
+            value,
+            modifier = Modifier.width(64.dp),
+            textAlign = TextAlign.Center,
+            color = Ink,
+            style = TextStyle(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                fontFeatureSettings = "tnum",
+            ),
+        )
         StepButton("+", stringResource(R.string.more)) { onNudge(key, 1) }
     }
 }
@@ -372,25 +394,35 @@ private fun FaceBlock(state: Display, livePhase: PhaseLabel?, modifier: Modifier
     val ink = livePhase?.let { liveInk(it) } ?: Ink
     val phaseColor = livePhase?.let { liveInk(it) } ?: tintColor(state.face.tint)
     val wide = state.face.text.length > 5
+    val stopwatchFace = state.mode == Mode.STOPWATCH || state.runMode == Mode.STOPWATCH
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             if (livePhase != null) {
                 Text(
                     phaseLabel,
                     color = phaseColor,
+                    fontFamily = BarlowCondensed,
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     letterSpacing = 0.08.em,
                 )
             }
+            val clockStyle = TextStyle(
+                fontFamily = BarlowCondensed,
+                fontWeight = FontWeight.Bold,
+                fontSize = faceSize(state.mode, state.runState, wide, state.chromeVisible, livePhase != null),
+                letterSpacing = (-0.04).em,
+            ).let { base ->
+                if (stopwatchFace) base.copy(fontFeatureSettings = "tnum") else base
+            }
             Text(
                 state.face.text,
                 color = ink,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = faceSize(wide, state.chromeVisible, livePhase != null),
-                letterSpacing = (-0.04).em,
+                style = clockStyle,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip,
             )
             if (showDetail) {
                 Text(
@@ -417,11 +449,19 @@ private fun shouldShowDetail(state: Display): Boolean {
 }
 
 @Composable
-private fun faceSize(wide: Boolean, setup: Boolean, live: Boolean): androidx.compose.ui.unit.TextUnit {
+private fun faceSize(
+    mode: Mode,
+    runState: RunState,
+    wide: Boolean,
+    setup: Boolean,
+    live: Boolean,
+): androidx.compose.ui.unit.TextUnit {
     val density = LocalDensity.current
     return with(density) {
+        val stopwatchIdle = mode == Mode.STOPWATCH && runState == RunState.IDLE
         val base = when {
             live -> 104.dp
+            stopwatchIdle -> 96.dp
             setup -> 84.dp
             wide -> 96.dp
             else -> 104.dp
@@ -441,9 +481,20 @@ private fun Laps(state: Display) {
         state.laps.forEach { lap ->
             Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
                 Text(lap.id.toString(), modifier = Modifier.width(28.dp), color = Muted)
-                Text(formatStopwatch(lap.split), color = Muted)
+                Text(
+                    formatStopwatch(lap.split),
+                    color = Muted,
+                    style = TextStyle(fontFeatureSettings = "tnum"),
+                )
                 Spacer(Modifier.weight(1f))
-                Text(formatStopwatch(lap.total), fontWeight = FontWeight.SemiBold, color = Ink)
+                Text(
+                    formatStopwatch(lap.total),
+                    color = Ink,
+                    style = TextStyle(
+                        fontWeight = FontWeight.SemiBold,
+                        fontFeatureSettings = "tnum",
+                    ),
+                )
             }
         }
     }
