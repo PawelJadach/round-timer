@@ -33,7 +33,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -175,7 +174,6 @@ fun TimerScreen(
                 onLap,
                 Modifier
                     .fillMaxWidth()
-                    .background(Bg.copy(alpha = 0.94f))
                     .windowInsetsPadding(WindowInsets.safeDrawing)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
             )
@@ -262,7 +260,6 @@ private fun TopBar(state: Display, onMode: (Mode) -> Unit, onSettingsOpen: (Bool
             modifier = Modifier
                 .weight(1f)
                 .clip(CircleShape)
-                .background(Canvas.copy(alpha = 0.9f))
                 .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
                 .padding(4.dp),
         ) {
@@ -296,13 +293,13 @@ private fun TopBar(state: Display, onMode: (Mode) -> Unit, onSettingsOpen: (Bool
                 }
             }
         }
-        IconButton(
-            onClick = { onSettingsOpen(true) },
+        Box(
             modifier = Modifier
                 .size(36.dp)
                 .clip(CircleShape)
-                .background(Canvas.copy(alpha = 0.9f))
-                .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape),
+                .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
+                .clickableNoRipple { onSettingsOpen(true) },
+            contentAlignment = Alignment.Center,
         ) {
             Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title), tint = Ink)
         }
@@ -342,7 +339,6 @@ private fun Chip(title: String, detail: String, modifier: Modifier, onClick: () 
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Canvas.copy(alpha = 0.9f))
             .border(1.dp, Gold.copy(alpha = 0.32f), RoundedCornerShape(12.dp))
             .clickableNoRipple(onClick)
             .padding(vertical = 8.dp, horizontal = 8.dp),
@@ -392,7 +388,6 @@ private fun StepButton(label: String, description: String, onClick: () -> Unit) 
         modifier = Modifier
             .size(34.dp)
             .clip(CircleShape)
-            .background(Canvas.copy(alpha = 0.9f))
             .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
             .clickableNoRipple(onClick)
             .semantics { contentDescription = description },
@@ -606,7 +601,6 @@ private fun SecondaryButton(label: String, modifier: Modifier, onClick: () -> Un
         modifier = modifier
             .height(56.dp)
             .clip(CircleShape)
-            .background(Canvas.copy(alpha = 0.9f))
             .border(1.dp, Gold.copy(alpha = 0.32f), CircleShape)
             .clickableNoRipple(onClick),
         contentAlignment = Alignment.Center,
