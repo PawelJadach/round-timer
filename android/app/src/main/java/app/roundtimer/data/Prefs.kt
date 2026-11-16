@@ -37,16 +37,27 @@ class Prefs(context: Context) {
         storage.edit().putInt(VOLUME, volume.coerceIn(0, 100)).apply()
     }
 
-    /** Null follows the system language. "en" or "pl" is an explicit choice. */
-    fun language(): String? = storage.getString(LANGUAGE, null)
+    fun usesManualLanguage(): Boolean = storage.getBoolean(LANGUAGE_OVERRIDE, false)
 
     fun setLanguage(code: String) {
-        storage.edit().putString(LANGUAGE, code).apply()
+        storage.edit()
+            .putString(LANGUAGE, code)
+            .putBoolean(LANGUAGE_OVERRIDE, true)
+            .apply()
+    }
+
+    fun followSystemLanguage() {
+        storage.edit()
+            .remove(LANGUAGE_OVERRIDE)
+            .remove(LANGUAGE)
+            .apply()
     }
 
     fun resolvedLanguage(): String {
-        val saved = language()
-        if (saved == "pl" || saved == "en") return saved
+        if (usesManualLanguage()) {
+            val saved = storage.getString(LANGUAGE, null)
+            if (saved == "pl" || saved == "en") return saved
+        }
         return if (Locale.getDefault().language == "pl") "pl" else "en"
     }
 
@@ -60,5 +71,6 @@ class Prefs(context: Context) {
         private const val SOUND = "sound"
         private const val VOLUME = "volume"
         private const val LANGUAGE = "language"
+        private const val LANGUAGE_OVERRIDE = "language_override"
     }
 }

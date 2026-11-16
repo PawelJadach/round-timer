@@ -8,6 +8,7 @@ enum class Controls { START, RESET_PAUSE, LAP_PAUSE, RESET_RESUME, RESET_AGAIN }
 
 data class Display(
     val mode: Mode,
+    val runMode: Mode?,
     val runState: RunState,
     val face: Face,
     val showClock: Boolean,
@@ -55,6 +56,7 @@ class TimerController(
         val showLaps = runMode == Mode.STOPWATCH && laps.isNotEmpty() && runState != RunState.IDLE
         return Display(
             mode = mode,
+            runMode = runMode,
             runState = runState,
             face = face,
             showClock = runState != RunState.IDLE || mode == Mode.STOPWATCH || mode == Mode.COUNTDOWN,
