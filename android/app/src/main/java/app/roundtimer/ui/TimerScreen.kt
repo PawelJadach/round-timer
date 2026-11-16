@@ -41,11 +41,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -111,6 +113,7 @@ fun TimerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .graphicsLayer { clip = false }
             .background(backdrop),
     ) {
         if (glowTint != null) {
@@ -119,7 +122,8 @@ fun TimerScreen(
                     .size(460.dp)
                     .align(Alignment.TopCenter)
                     .offset(y = (-80).dp)
-                    .blur(90.dp)
+                    .graphicsLayer { clip = false }
+                    .blur(90.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                     .background(glow.copy(alpha = 0.42f), CircleShape),
             )
         }
