@@ -29,40 +29,50 @@ struct RootView: View {
                     .animation(.easeInOut(duration: 0.25), value: phase)
             }
 
-            ScrollView(.vertical) {
-                LazyVStack(spacing: compactLayout ? 12 : 16) {
-                    if showSessionChrome {
-                        topBar(compact: compactLayout)
-                    }
-                    if sessionActive {
-                        Spacer(minLength: showStopwatchLaps ? (compactLayout ? 20 : 28) : (compactLayout ? 48 : 64))
-                    } else {
+            Group {
+                if showStopwatchLaps {
+                    VStack(spacing: compactLayout ? 12 : 16) {
                         Spacer(minLength: compactLayout ? 20 : 28)
-                    }
-                    timerBlock(compact: compactLayout)
-                    if sessionActive, !showStopwatchLaps {
-                        Spacer(minLength: compactLayout ? 48 : 64)
-                    }
-                    if showStopwatchLaps {
+                        timerBlock(compact: compactLayout)
                         lapsList(live: true)
                     }
-                    if showSettings, selected != .stopwatch {
-                        settings(compact: compactLayout)
-                    }
-                    if !sessionActive {
-                        Spacer(minLength: compactLayout ? 8 : 16)
-                        if !(showSettings && compactLayout) {
-                            hints
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 4)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                } else {
+                    ScrollView(.vertical) {
+                        LazyVStack(spacing: compactLayout ? 12 : 16) {
+                            if showSessionChrome {
+                                topBar(compact: compactLayout)
+                            }
+                            if sessionActive {
+                                Spacer(minLength: compactLayout ? 48 : 64)
+                            } else {
+                                Spacer(minLength: compactLayout ? 20 : 28)
+                            }
+                            timerBlock(compact: compactLayout)
+                            if sessionActive {
+                                Spacer(minLength: compactLayout ? 48 : 64)
+                            }
+                            if showSettings, selected != .stopwatch {
+                                settings(compact: compactLayout)
+                            }
+                            if !sessionActive {
+                                Spacer(minLength: compactLayout ? 8 : 16)
+                                if !(showSettings && compactLayout) {
+                                    hints
+                                }
+                            }
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.top, sessionActive ? 0 : 8)
+                        .padding(.bottom, 4)
+                        .frame(maxWidth: .infinity, minHeight: sessionActive ? scrollMinHeight(compact: compactLayout) : nil, alignment: .center)
                     }
+                    .scrollIndicators(.hidden)
+                    .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, sessionActive ? 0 : 8)
-                .padding(.bottom, 4)
-                .frame(maxWidth: .infinity, minHeight: sessionActive ? scrollMinHeight(compact: compactLayout) : nil, alignment: .center)
             }
-            .scrollIndicators(.hidden)
-            .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
             .simultaneousGesture(modeSwipeGesture)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 controls(compact: compactLayout)
@@ -380,9 +390,9 @@ struct RootView: View {
                 .padding(.horizontal, 4)
             }
             .scrollIndicators(.hidden)
+            .frame(maxHeight: live ? .infinity : nil)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(maxHeight: live ? 140 : 168)
+        .frame(maxWidth: .infinity, maxHeight: live ? .infinity : nil, alignment: .topLeading)
         .padding(.top, live ? 4 : 0)
     }
 
