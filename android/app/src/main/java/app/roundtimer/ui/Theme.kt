@@ -9,16 +9,22 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import app.roundtimer.R
+import app.roundtimer.engine.Mode
+import app.roundtimer.engine.PhaseLabel
 import app.roundtimer.engine.Tint
 
-val Bg = Color(0xFF0E0F12)
-val Work = Color(0xFFFF4E2E)
-val Rest = Color(0xFF2EBDF8)
-val Prepare = Color(0xFFFFBC4D)
-val EndGreen = Color(0xFF7DDB73)
-val StopwatchInk = Color(0xFFF2F2F5)
-val Muted = Color.White.copy(alpha = 0.62f)
-val InkDark = Color(0xFF141414)
+val Bg = Color(0xFF100C0A)
+val Ink = Color(0xFFF4EFEA)
+val Gold = Color(0xFFE4B15A)
+val Canvas = Color(0xFF1A120E)
+val Work = Color(0xFFE23A2B)
+val RestBlue = Color(0xFF3F86D6)
+val LiveRestGreen = Color(0xFF298543)
+val PrepareGold = Gold
+val EndGreen = Color(0xFFD6E36A)
+val StopwatchBlue = Color(0xFF7AC2F2)
+val Muted = Ink.copy(alpha = 0.62f)
+val InkDark = Color(0xFF1A100C)
 
 val Outfit = FontFamily(
     Font(R.font.outfit_regular, FontWeight.Normal),
@@ -28,14 +34,34 @@ val Outfit = FontFamily(
 )
 
 fun tintColor(tint: Tint): Color = when (tint) {
-    Tint.PREPARE -> Prepare
+    Tint.PREPARE -> PrepareGold
     Tint.WORK -> Work
-    Tint.REST -> Rest
+    Tint.REST -> RestBlue
     Tint.END -> EndGreen
-    Tint.STOPWATCH -> StopwatchInk
+    Tint.STOPWATCH -> Ink
 }
 
-fun inkOn(tint: Tint): Color = if (tint == Tint.WORK || tint == Tint.REST) Color.White else InkDark
+fun inkOn(tint: Tint): Color = if (tint == Tint.WORK || tint == Tint.REST) Color(0xFFFFF8F2) else InkDark
+
+fun modeAccent(mode: Mode): Color = when (mode) {
+    Mode.SPARRING -> Gold
+    Mode.COUNTDOWN -> Work
+    Mode.STOPWATCH -> StopwatchBlue
+}
+
+fun liveBackdrop(phase: PhaseLabel): Color = when (phase) {
+    PhaseLabel.PREPARE -> Color.Black
+    PhaseLabel.WORK -> Work
+    PhaseLabel.REST -> LiveRestGreen
+    else -> Bg
+}
+
+fun liveInk(phase: PhaseLabel): Color = when (phase) {
+    PhaseLabel.PREPARE -> Ink
+    PhaseLabel.WORK -> Color(0xFFFFF8F2)
+    PhaseLabel.REST -> Color(0xFFFFF7F2)
+    else -> Ink
+}
 
 @Composable
 fun RoundTimerTheme(content: @Composable () -> Unit) {
@@ -43,8 +69,8 @@ fun RoundTimerTheme(content: @Composable () -> Unit) {
         colorScheme = darkColorScheme(
             background = Bg,
             surface = Bg,
-            primary = Work,
-            onPrimary = Color.White,
+            primary = Gold,
+            onPrimary = InkDark,
         ),
         typography = Typography().let { type ->
             val family = Outfit

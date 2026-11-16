@@ -12,6 +12,7 @@ class RoundTimerApp : Application() {
     override fun onCreate() {
         super.onCreate()
         val prefs = Prefs(this)
+        applyAppLanguage(prefs)
         repository = SessionRepository(this, prefs, CuePlayer(this))
     }
 }
