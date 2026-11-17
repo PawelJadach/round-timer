@@ -7,3 +7,5 @@ captures/
 *.aab
 .idea/
 .cxx/
+
+fastlane/report.xml
