@@ -48,4 +48,20 @@
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/about/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/about/" />
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/pl/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/about/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/about/" />
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>

@@ -517,3 +517,34 @@ body:has(.home) .foot { text-align: center; padding-top: 0.2rem; }
 @media (max-width: 420px) {
   .brand-kicker { display: none; }
 }
+
+.plain-top .top-bar {
+  justify-content: flex-end;
+}
+
+.plain-main {
+  max-width: 32rem;
+  padding: clamp(2.5rem, 12vh, 5rem) 1.4rem 3rem;
+}
+
+.plain-main h1 {
+  margin: 0 0 0.65rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2.2rem, 8vw, 3rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.plain-tagline {
+  margin: 0 0 1.35rem;
+  color: var(--muted);
+}
+
+.plain-main a {
+  color: var(--prepare);
+}
+
+.plain-main p {
+  margin: 0.45rem 0;
+}
