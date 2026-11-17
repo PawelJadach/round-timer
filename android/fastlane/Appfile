@@ -1,0 +1,2 @@
+json_key_file(ENV["PLAY_CONSOLE_JSON"] || File.expand_path("~/round-timer-play-api.json"))
+package_name("app.roundtimer")

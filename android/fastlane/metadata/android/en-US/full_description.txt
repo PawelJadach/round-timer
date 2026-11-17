@@ -1,0 +1,19 @@
+Round Timer is a gym clock for sparring, a plain countdown, and a stopwatch.
+
+Sparring
+Set prepare, work, rest, and rounds. Each timing step is 5 seconds. Presets: Tabata (20/10 × 8), Interval (30/15 × 10), Sparring (3:00 / 1:00 × 5), and Round (5:00 / 1:00 × 3). The total sits under the steppers. There is no rest after the last round.
+
+Countdown
+Presets run from 30 seconds to 10 minutes, or set the minutes and seconds yourself. Start stays off under 5 seconds, and the clock says “Minimum 5 seconds”.
+
+Stopwatch
+Counts up. Lap stores the split and the total, newest first.
+
+Sound
+A ring bell marks work, rest, and the end of the session. Prepare is two short beeps, and the last three seconds tick. Volume starts at 80. Let go of the slider to hear a preview. Mute is remembered. Other music ducks for the cue, then comes back.
+
+The screen stays on while you are in the app and a session is running. Switch away and the clock keeps going: a notification shows the phase, and you still hear the cues, including the bell at the end.
+
+English and Polish, with a language switch on the clock. No account. Your settings stay on the phone.
+
+Bell recording: Benboncan, CC BY 4.0 (freesound.org/s/66952).

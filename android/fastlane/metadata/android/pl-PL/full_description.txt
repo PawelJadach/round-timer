@@ -1,0 +1,19 @@
+Round Timer to zegar na salę: sparing, zwykły minutnik i stoper.
+
+Sparing
+Ustaw przygotowanie, pracę, przerwę i rundy. Każdy krok czasu to 5 sekund. Presety: Tabata (20/10 × 8), Interwał (30/15 × 10), Sparing (3:00 / 1:00 × 5) i Runda (5:00 / 1:00 × 3). Całość jest pod suwakami. Po ostatniej rundzie nie ma przerwy.
+
+Minutnik
+Presety od 30 sekund do 10 minut albo własne minuty i sekundy. Start jest wyłączony poniżej 5 sekund, a zegar mówi „Minimum 5 sekund”.
+
+Stoper
+Liczy w górę. Okrążenie zapisuje międzyczas i całość, najnowsze na górze.
+
+Dźwięk
+Dzwonek z ringu oznacza pracę, przerwę i koniec sesji. Przygotowanie to dwa krótkie piknięcia, a ostatnie trzy sekundy tykają. Głośność startuje od 80. Puść suwak, żeby usłyszeć próbkę. Wyciszenie zostaje zapamiętane. Inna muzyka na chwilę cichnie, potem wraca.
+
+Ekran nie gaśnie, gdy jesteś w aplikacji i sesja trwa. Wyjdź z aplikacji, a zegar liczy dalej: powiadomienie pokazuje fazę i słychać sygnały, także dzwonek na końcu.
+
+Angielski i polski, przełącznik języka na zegarze. Bez konta. Ustawienia zostają w telefonie.
+
+Nagranie dzwonka: Benboncan, CC BY 4.0 (freesound.org/s/66952).

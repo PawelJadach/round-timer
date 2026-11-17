@@ -1,0 +1,56 @@
+default_platform(:android)
+
+AAB_PATH = ENV["ROUND_TIMER_AAB"] || "/Users/pawel/round-timer-release/round-timer-1.0.0-1.aab"
+
+platform :android do
+  desc "Upload AAB to internal testing as draft + store listing graphics/text (no production)"
+  lane :internal_draft do
+    UI.user_error!("AAB not found at #{AAB_PATH}") unless File.exist?(AAB_PATH)
+    json = ENV["PLAY_CONSOLE_JSON"] || File.expand_path("~/round-timer-play-api.json")
+    UI.user_error!(
+      "Play Console API key missing. Save service account JSON to #{json} or set PLAY_CONSOLE_JSON."
+    ) unless File.exist?(json)
+
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      aab: AAB_PATH,
+      metadata_path: "fastlane/metadata/android",
+      skip_upload_apk: true,
+      skip_upload_aab: false,
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+      validate_only: false
+    )
+
+    # Screenshots are per-locale folders; supply expects them under metadata path.
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: false,
+      metadata_path: "fastlane/metadata/android",
+      skip_upload_changelogs: true
+    )
+  end
+
+  desc "Store listing text and graphics only (no binary)"
+  lane :listing_only do
+    json = ENV["PLAY_CONSOLE_JSON"] || File.expand_path("~/round-timer-play-api.json")
+    UI.user_error!("Play Console API key missing at #{json}") unless File.exist?(json)
+
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      metadata_path: "fastlane/metadata/android",
+      skip_upload_changelogs: true
+    )
+  end
+end
