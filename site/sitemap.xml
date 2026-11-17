@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/" />
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/pl/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/" />
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/privacy/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/privacy/" />
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/pl/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/privacy/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/privacy/" />
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/terms/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/terms/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/terms/" />
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://round-timer-marketing.vercel.app/pl/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://round-timer-marketing.vercel.app/terms/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://round-timer-marketing.vercel.app/pl/terms/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://round-timer-marketing.vercel.app/terms/" />
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
