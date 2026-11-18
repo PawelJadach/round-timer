@@ -1,5 +1,5 @@
 <pl-PL>
-Pierwsza publiczna wersja Round Timer (1.0.0).
+Round Timer 1.0.0 (build 5).
 
 • Sparing z rundami i presetami (Tabata, interwał, sparing, runda)
 • Minutnik i stoper z okrążeniami
@@ -9,7 +9,7 @@ Pierwsza publiczna wersja Round Timer (1.0.0).
 • Bez konta — ustawienia tylko na telefonie
 </pl-PL>
 <en-US>
-First public release of Round Timer (1.0.0).
+Round Timer 1.0.0 (build 5).
 
 • Rounds with presets (Tabata, interval, sparring, round)
 • Countdown timer and stopwatch with laps
