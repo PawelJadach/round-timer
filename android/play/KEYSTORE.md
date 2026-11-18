@@ -16,7 +16,7 @@ Zapisz hasła w menedżerze haseł.
 ## `android/keystore.properties`
 
 ```properties
-storeFile=app/round-timer-upload.jks
+storeFile=round-timer-upload.jks
 storePassword=TWOJE_HASLO_SKLEPU
 keyAlias=round-timer-upload
 keyPassword=TWOJE_HASLO_KLUCZA
