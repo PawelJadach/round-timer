@@ -1,0 +1,20 @@
+<pl-PL>
+Pierwsza publiczna wersja Round Timer (1.0.0).
+
+• Sparing z rundami i presetami (Tabata, interwał, sparing, runda)
+• Minutnik i stoper z okrążeniami
+• Dźwięki ringu, 3 s tykania przed zmianą fazy, zapamiętane wyciszenie
+• Sesja w tle z powiadomieniem
+• Polski i angielski
+• Bez konta — ustawienia tylko na telefonie
+</pl-PL>
+<en-US>
+First public release of Round Timer (1.0.0).
+
+• Rounds with presets (Tabata, interval, sparring, round)
+• Countdown timer and stopwatch with laps
+• Ring bell cues, 3-second countdown ticks, mute remembered
+• Background session with notification
+• Polish and English
+• No account — settings stay on your device
+</en-US>

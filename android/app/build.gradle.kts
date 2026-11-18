@@ -15,14 +15,14 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "app.roundtimer"
-    compileSdk = 35
-    buildToolsVersion = "35.0.0"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
         applicationId = "app.roundtimer"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
+        targetSdk = 36
+        versionCode = 4
         versionName = "1.0.0"
     }
 
