@@ -169,6 +169,7 @@ final class TrainingClock: ObservableObject {
         if defaults.object(forKey: Key.sound) != nil {
             soundEnabled = defaults.bool(forKey: Key.sound)
         }
+        activities.stop()
     }
 
     var sparringTotalSeconds: Int {
@@ -202,7 +203,6 @@ final class TrainingClock: ObservableObject {
                     publish(face(from: snap))
                 }
             }
-            showActivity(at: now, force: true)
             if runState == .running, mode != .stopwatch, soundEnabled {
                 enqueueBoundaryNotifications()
             }
@@ -211,7 +211,6 @@ final class TrainingClock: ObservableObject {
                 ? AppLanguage.shared.text("detail.finished_countdown")
                 : AppLanguage.shared.text("detail.finished_session")
             publish(Face(text: "00:00", phaseName: AppLanguage.shared.text("phase.end"), detail: detail, tint: "end"))
-            showActivity(at: now, force: true)
         }
     }
 
@@ -256,7 +255,6 @@ final class TrainingClock: ObservableObject {
         guard canStart(mode) else { return }
         tearDownAudio()
         self.mode = mode
-        activities.beginSession()
         let now = Date()
 
         switch mode {
@@ -266,7 +264,6 @@ final class TrainingClock: ObservableObject {
             stopwatch.start(at: now)
             runState = .running
             publishStopwatch(at: now)
-            showActivity(at: now, force: true)
             startTicker()
         case .sparring:
             timeline = SessionTimeline.tabata(
@@ -310,7 +307,6 @@ final class TrainingClock: ObservableObject {
                 ))
             }
         }
-        showActivity(at: now, force: true)
         UIApplication.shared.isIdleTimerDisabled = false
     }
 
@@ -336,7 +332,6 @@ final class TrainingClock: ObservableObject {
             }
         }
         startTicker()
-        showActivity(at: now, force: true)
         UIApplication.shared.isIdleTimerDisabled = true
     }
 
@@ -412,7 +407,6 @@ final class TrainingClock: ObservableObject {
         uiNow = now
         if mode == .stopwatch {
             publishStopwatch(at: now)
-            showActivity(at: now, force: true)
             startTicker()
             return
         }
@@ -422,7 +416,7 @@ final class TrainingClock: ObservableObject {
     }
 
     func refreshCapabilities() {
-        liveActivitiesOff = !activities.areEnabled
+        liveActivitiesOff = true
         UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
             DispatchQueue.main.async {
                 self?.notificationStatus = Self.map(settings.authorizationStatus)
@@ -517,7 +511,6 @@ final class TrainingClock: ObservableObject {
         }
         let displaySnap = timeline.snapshotForDisplay(at: displayAt)
         publish(face(from: displaySnap))
-        showLiveActivity(at: Date())
     }
 
     private func isPhaseBoundaryCue(_ cue: Cue) -> Bool {
@@ -555,7 +548,6 @@ final class TrainingClock: ObservableObject {
             ? AppLanguage.shared.text("detail.finished_countdown")
             : AppLanguage.shared.text("detail.finished_session")
         publish(Face(text: "00:00", phaseName: AppLanguage.shared.text("phase.end"), detail: detail, tint: "end"))
-        showActivity(at: now, force: true)
         UIApplication.shared.isIdleTimerDisabled = false
         Task { @MainActor in
             ReviewPrompt.recordSuccessfulUseAndMaybeAsk()
@@ -606,16 +598,7 @@ final class TrainingClock: ObservableObject {
         readout = next
     }
 
-    private func showActivity(at now: Date, force: Bool = false) {
-        showLiveActivity(at: now)
-    }
-
-    /// Live Activity only — wall-clock phase/remaining; never dedupe updates.
-    private func showLiveActivity(at now: Date) {
-        activities.show(title: mode.title, state: liveActivityState(at: now), force: true)
-    }
-
-    /// Refreshes on-screen state and Live Activity from wall clock (e.g. before suspend).
+    /// Refreshes on-screen state from wall clock (e.g. before suspend).
     func syncPresentation(at now: Date = Date()) {
         uiNow = now
         guard runState == .running || runState == .paused else { return }
@@ -624,7 +607,6 @@ final class TrainingClock: ObservableObject {
             poll(now: now)
         case .paused:
             refreshReadout(at: now)
-            showActivity(at: now, force: true)
         default:
             break
         }
@@ -674,60 +656,6 @@ final class TrainingClock: ObservableObject {
             rangeStart: snap.segmentStart,
             rangeEnd: end,
             frozenText: ClockFormat.remaining(snap.remaining)
-        )
-    }
-
-    private func liveActivitySnapshot(at now: Date) -> ClockSnapshot {
-        guard let timeline else { return .empty }
-        let snap = timeline.snapshot(at: now)
-        guard !snap.isFinished, snap.remaining <= 0 else { return snap }
-        return timeline.snapshot(at: snap.segmentEnd.addingTimeInterval(0.001))
-    }
-
-    private func liveActivityState(at now: Date) -> TrainingAttributes.ContentState {
-        if mode == .stopwatch {
-            let running = runState == .running
-            return TrainingAttributes.ContentState(
-                phaseName: running ? AppLanguage.shared.text("phase.stopwatch") : AppLanguage.shared.text("phase.pause"),
-                detail: laps.isEmpty
-                    ? AppLanguage.shared.text("detail.stopwatch_idle")
-                    : AppLanguage.shared.text("detail.lap_count \(laps.count)"),
-                tint: "stopwatch",
-                usesTimer: false,
-                countsDown: false,
-                rangeStart: now,
-                rangeEnd: now.addingTimeInterval(86_400),
-                frozenText: ""
-            )
-        }
-
-        if runState == .finished {
-            return TrainingAttributes.ContentState(
-                phaseName: AppLanguage.shared.text("phase.end"),
-                detail: mode == .countdown
-                    ? AppLanguage.shared.text("detail.finished_countdown")
-                    : AppLanguage.shared.text("detail.finished_session"),
-                tint: "end",
-                usesTimer: false,
-                countsDown: false,
-                rangeStart: now,
-                rangeEnd: now.addingTimeInterval(1),
-                frozenText: ""
-            )
-        }
-
-        let snap = liveActivitySnapshot(at: now)
-        let running = runState == .running && !snap.isFinished
-        let end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
-        return TrainingAttributes.ContentState(
-            phaseName: running ? snap.phaseName : AppLanguage.shared.text("phase.pause"),
-            detail: snap.detail,
-            tint: snap.tint,
-            usesTimer: false,
-            countsDown: false,
-            rangeStart: snap.segmentStart,
-            rangeEnd: end,
-            frozenText: ""
         )
     }
 
