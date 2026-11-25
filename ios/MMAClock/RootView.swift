@@ -229,17 +229,29 @@ struct RootView: View {
         .accessibilityLabel(L10n.t("settings.title"))
     }
 
+    @ViewBuilder
     private func timerBlock(compact: Bool) -> some View {
         let idle = showSettings
+        let useLiveClock = sessionActive && clock.runState == .running && scenePhase == .active
+        if useLiveClock {
+            TimelineView(.periodic(from: .now, by: 0.2)) { context in
+                timerBlockContent(compact: compact, idle: idle, face: clock.sessionFace(at: context.date))
+            }
+        } else {
+            timerBlockContent(compact: compact, idle: idle, face: display)
+        }
+    }
+
+    private func timerBlockContent(compact: Bool, idle: Bool, face: Face) -> some View {
         let previewMode = idle ? selected : clock.mode
         let stopwatchSession = previewMode == .stopwatch && idle
-        let showDetail = shouldShowTimerDetail(for: previewMode)
+        let showDetail = shouldShowTimerDetail(for: previewMode, face: face)
         let liveRounds = !idle && previewMode == .sparring && clock.runState != .finished
-        let phase = liveRoundsPhase
-        let liveInk = phase.map { liveRoundsInk($0) }
+        let roundsPhase = liveRounds && ["prepare", "work", "rest"].contains(face.tint) ? face.tint : nil
+        let liveInk = roundsPhase.map { liveRoundsInk($0) }
         return VStack(spacing: idle ? 6 : 10) {
-            if liveRounds, let phase, let liveInk {
-                Text(roundsPhaseLabel(phase))
+            if liveRounds, let roundsPhase, let liveInk {
+                Text(roundsPhaseLabel(roundsPhase))
                     .font(Palette.display(compact ? 28 : 32))
                     .tracking(2)
                     .foregroundStyle(liveInk)
@@ -250,10 +262,11 @@ struct RootView: View {
                 stopwatchSession: stopwatchSession,
                 liveRounds: liveRounds,
                 liveInk: liveInk,
-                foreground: scenePhase == .active
+                foreground: scenePhase == .active,
+                face: face
             )
             if showDetail {
-                Text(display.detail)
+                Text(face.detail)
                     .font(Palette.ui(idle ? 18 : 20))
                     .foregroundStyle(Palette.ink.opacity(0.72))
             }
@@ -261,7 +274,7 @@ struct RootView: View {
         .frame(maxWidth: .infinity)
         .multilineTextAlignment(.center)
         .padding(.vertical, idle ? 12 : 8)
-        .animation(.easeInOut(duration: 0.25), value: display.tint)
+        .animation(.easeInOut(duration: 0.25), value: face.tint)
     }
 
     @ViewBuilder
@@ -271,18 +284,15 @@ struct RootView: View {
         stopwatchSession: Bool,
         liveRounds: Bool,
         liveInk: Color?,
-        foreground: Bool
+        foreground: Bool,
+        face: Face
     ) -> some View {
         let font = Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96)))
         let ink = liveInk ?? Palette.ink
-        let label = "\(display.phaseName) \(display.text)"
+        let label = "\(face.phaseName) \(face.text)"
         Group {
-            if idle {
-                Text(display.text)
-            } else if clock.runState == .running, foreground {
-                // Polled face tracks phase boundaries; Text(timerInterval:) can stick at 00:00
-                // after rangeEnd even while the session moves on.
-                Text(display.text)
+            if idle || (clock.runState == .running && foreground) {
+                Text(face.text)
             } else if clock.readout.usesTimer, clock.readout.rangeEnd > clock.readout.rangeStart {
                 Text(
                     timerInterval: clock.readout.rangeStart...clock.readout.rangeEnd,
@@ -301,11 +311,12 @@ struct RootView: View {
         .accessibilityLabel(label)
     }
 
-    private func shouldShowTimerDetail(for mode: TrainingMode) -> Bool {
-        guard !display.detail.isEmpty else { return false }
+    private func shouldShowTimerDetail(for mode: TrainingMode, face: Face? = nil) -> Bool {
+        let activeFace = face ?? display
+        guard !activeFace.detail.isEmpty else { return false }
         if sessionActive {
             guard mode == .sparring, clock.runState != .finished else { return false }
-            return display.tint == "work" || display.tint == "rest"
+            return activeFace.tint == "work" || activeFace.tint == "rest"
         }
         if mode == .stopwatch { return false }
         if mode == .countdown {

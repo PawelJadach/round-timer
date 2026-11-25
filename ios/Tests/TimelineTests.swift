@@ -46,6 +46,11 @@ expect(fresh.segments.map(\.kind) == [.work, .work], "no rest and no prepare")
 expect(fresh.snapshot(at: start.addingTimeInterval(10)).phase == .work && fresh.snapshot(at: start.addingTimeInterval(10)).round == 2, "second round starts on the boundary")
 expect(fresh.snapshot(at: start.addingTimeInterval(20)).isFinished, "finished exactly at the end")
 
+let rounds = SessionTimeline.tabata(prepare: 0, work: 10, rest: 5, rounds: 2, start: start)
+let boundary = rounds.snapshot(at: start.addingTimeInterval(10))
+expect(boundary.phase == .rest, "work-to-rest boundary lands on rest")
+expectClose(boundary.remaining, 5, "rest shows full segment at boundary")
+
 let countdown = SessionTimeline.countdown(seconds: 30, start: start)
 expect(countdown.segments.count == 1 && countdown.segments[0].kind == .countdown, "countdown is one segment")
 let countdownCues = countdown.cues.map(\.sound)
