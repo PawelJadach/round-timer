@@ -23,13 +23,9 @@ struct TrainingLiveActivity: Widget {
                         .foregroundStyle(liveAccentColor(context.state.tint))
                 }
                 DynamicIslandExpandedRegion(.center) {
-                    VStack(spacing: 2) {
-                        Text(context.state.phaseName)
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(liveAccentColor(context.state.tint))
-                        readout(context.state)
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
-                    }
+                    Text(context.state.phaseName)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(liveAccentColor(context.state.tint))
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text(context.state.detail)
@@ -41,9 +37,7 @@ struct TrainingLiveActivity: Widget {
                 Image(systemName: symbol(context.state.tint))
                     .foregroundStyle(liveAccentColor(context.state.tint))
             } compactTrailing: {
-                readout(context.state)
-                    .font(.caption.weight(.bold))
-                    .frame(maxWidth: 64)
+                EmptyView()
             } minimal: {
                 Image(systemName: symbol(context.state.tint))
                     .foregroundStyle(liveAccentColor(context.state.tint))
@@ -67,31 +61,8 @@ struct TrainingLiveActivity: Widget {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
-            Spacer(minLength: 8)
-            readout(state)
-                .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundStyle(liveForegroundColor(state.tint))
         }
         .padding(16)
-    }
-
-    private func readout(_ state: TrainingAttributes.ContentState) -> some View {
-        Group {
-            if state.usesTimer, state.rangeEnd > state.rangeStart {
-                Text(timerInterval: state.rangeStart...state.rangeEnd, countsDown: state.countsDown)
-                    .id(timerSegmentIdentity(state))
-            } else {
-                Text(state.frozenText)
-            }
-        }
-        .monospacedDigit()
-        .lineLimit(1)
-        .minimumScaleFactor(0.5)
-    }
-
-    private func timerSegmentIdentity(_ state: TrainingAttributes.ContentState) -> String {
-        guard state.usesTimer else { return "frozen|\(state.frozenText)" }
-        return "\(state.rangeStart.timeIntervalSince1970)|\(state.rangeEnd.timeIntervalSince1970)"
     }
 
     private func symbol(_ tint: String) -> String {

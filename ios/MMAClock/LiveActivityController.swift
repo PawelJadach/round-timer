@@ -115,12 +115,9 @@ final class LiveActivityController {
         }
     }
 
-    /// Do not mark content stale at `rangeEnd`: the timer reaches 00:00 there and the
-    /// system can freeze the readout until the next segment update, which hitches at
-    /// prepare/work/rest boundaries. A short grace window keeps ticks alive until the
-    /// app posts the next phase state.
+    /// Nudge the system to request a content refresh near segment boundaries (no on-screen timer).
     private func contentStaleDate(for state: TrainingAttributes.ContentState) -> Date? {
-        guard state.usesTimer, state.rangeEnd > state.rangeStart else { return nil }
-        return state.rangeEnd.addingTimeInterval(8)
+        guard state.rangeEnd > state.rangeStart else { return nil }
+        return state.rangeEnd.addingTimeInterval(1)
     }
 }
