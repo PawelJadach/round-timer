@@ -360,6 +360,12 @@ final class TrainingClock: ObservableObject {
         }
     }
 
+    func sessionSegmentIdentity(at date: Date) -> String {
+        guard runState == .running, mode != .stopwatch, let timeline else { return "idle" }
+        let snap = timeline.snapshot(at: date)
+        return "\(snap.tint)|\(snap.segmentStart.timeIntervalSince1970)|\(snap.segmentEnd.timeIntervalSince1970)"
+    }
+
     /// Face derived from wall-clock time for on-screen rendering (independent of poll/ticker).
     func sessionFace(at date: Date) -> Face {
         switch runState {
@@ -599,7 +605,7 @@ final class TrainingClock: ObservableObject {
             rangeEnd: state.rangeEnd,
             frozenText: state.frozenText
         )
-        if readout != next { readout = next }
+        readout = next
     }
 
     private func showActivity(at now: Date, force: Bool = false) {
@@ -708,18 +714,35 @@ final class TrainingClock: ObservableObject {
         scheduler.schedule(timeline.futureBoundaryCues(after: Date()))
     }
 
+    private var pollTimer: Timer?
+    private var uiSecondTimer: Timer?
+
     private func startTicker() {
         stopTicker()
         uiNow = Date()
+        let poll = Timer(timeInterval: 0.05, repeats: true) { [weak self] _ in
+            self?.poll(now: Date())
+        }
+        RunLoop.main.add(poll, forMode: .common)
+        pollTimer = poll
+
+        let secondPulse = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.uiNow = Date()
+        }
+        RunLoop.main.add(secondPulse, forMode: .common)
+        uiSecondTimer = secondPulse
+
         displayLink.onTick = { [weak self] now in
-            guard let self else { return }
-            self.uiNow = now
-            self.poll(now: now)
+            self?.uiNow = now
         }
         displayLink.start()
     }
 
     private func stopTicker() {
+        pollTimer?.invalidate()
+        pollTimer = nil
+        uiSecondTimer?.invalidate()
+        uiSecondTimer = nil
         displayLink.stop()
         displayLink.onTick = nil
     }

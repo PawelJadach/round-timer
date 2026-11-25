@@ -229,14 +229,23 @@ struct RootView: View {
         .accessibilityLabel(L10n.t("settings.title"))
     }
 
+    @ViewBuilder
     private func timerBlock(compact: Bool) -> some View {
         let idle = showSettings
         let live = sessionActive && clock.runState == .running && scenePhase == .active
-        let face = live ? clock.sessionFace(at: clock.uiNow) : display
-        return timerBlockContent(compact: compact, idle: idle, face: face)
+        if live {
+            let tick: TimeInterval = clock.mode == .stopwatch ? 0.05 : 1.0
+            TimelineView(.periodic(from: .now, by: tick)) { context in
+                let face = clock.sessionFace(at: context.date)
+                let segmentKey = clock.sessionSegmentIdentity(at: context.date)
+                timerBlockContent(compact: compact, idle: idle, face: face, segmentKey: segmentKey)
+            }
+        } else {
+            timerBlockContent(compact: compact, idle: idle, face: display, segmentKey: "static")
+        }
     }
 
-    private func timerBlockContent(compact: Bool, idle: Bool, face: Face) -> some View {
+    private func timerBlockContent(compact: Bool, idle: Bool, face: Face, segmentKey: String) -> some View {
         let previewMode = idle ? selected : clock.mode
         let stopwatchSession = previewMode == .stopwatch && idle
         let showDetail = shouldShowTimerDetail(for: previewMode, face: face)
@@ -257,8 +266,8 @@ struct RootView: View {
                 stopwatchSession: stopwatchSession,
                 liveRounds: liveRounds,
                 liveInk: liveInk,
-                foreground: scenePhase == .active,
-                face: face
+                face: face,
+                segmentKey: segmentKey
             )
             if showDetail {
                 Text(face.detail)
@@ -278,26 +287,16 @@ struct RootView: View {
         stopwatchSession: Bool,
         liveRounds: Bool,
         liveInk: Color?,
-        foreground: Bool,
-        face: Face
+        face: Face,
+        segmentKey: String
     ) -> some View {
         let font = Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96)))
         let ink = liveInk ?? Palette.ink
         let label = "\(face.phaseName) \(face.text)"
         Group {
-            if idle {
+            if idle || clock.runState == .running {
                 Text(face.text)
-            } else if clock.runState == .running,
-                      clock.readout.usesTimer,
-                      clock.readout.rangeEnd > clock.readout.rangeStart {
-                // System-driven countdown ticks every second while the app is open.
-                Text(
-                    timerInterval: clock.readout.rangeStart...clock.readout.rangeEnd,
-                    countsDown: clock.readout.countsDown
-                )
-                .id(clock.readout.segmentIdentity)
-            } else if clock.runState == .running {
-                Text(clock.sessionFace(at: clock.uiNow).text)
+                    .id(segmentKey)
             } else {
                 Text(clock.readout.frozenText)
             }
@@ -307,6 +306,7 @@ struct RootView: View {
         .lineLimit(1)
         .minimumScaleFactor(0.4)
         .foregroundStyle(ink)
+        .contentTransition(.numericText())
         .transaction { $0.animation = nil }
         .accessibilityLabel(label)
     }
