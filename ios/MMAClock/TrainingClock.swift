@@ -149,7 +149,12 @@ final class TrainingClock: ObservableObject {
 
     init() {
         player.onInterruptionBegan = { [weak self] in
-            self?.pause()
+            guard let self else { return }
+            // Phone calls and Siri briefly cut the audio session. Do not pause
+            // interval training here — that leaves the face on rest/work 0:00.
+            if self.runState == .running {
+                self.player.ensureRunning()
+            }
         }
         let defaults = UserDefaults.standard
         if defaults.object(forKey: Key.volume) != nil {
@@ -492,9 +497,12 @@ final class TrainingClock: ObservableObject {
         }
         guard let timeline else { return }
         player.ensureRunning()
-        let due = timeline.dueCues(after: lastPoll ?? now.addingTimeInterval(-0.01), through: now)
-        lastPoll = now
         let snap = timeline.snapshot(at: now)
+        let cueThrough = (!snap.isFinished && snap.remaining < 0.25)
+            ? max(now, snap.segmentEnd)
+            : now
+        let due = timeline.dueCues(after: lastPoll ?? now.addingTimeInterval(-0.01), through: cueThrough)
+        lastPoll = now
         for cue in due where cue.sound != .end {
             playIfFresh(cue, now: now)
         }
@@ -505,9 +513,13 @@ final class TrainingClock: ObservableObject {
             enterFinished(at: now)
             return
         }
-        publish(face(from: snap))
+        let next = face(from: snap)
+        let phaseChanged = next.tint != face.tint
+        publish(next)
         if let boundary = due.last(where: isPhaseBoundaryCue(_:)) {
             showActivity(at: max(boundary.date, now), force: true)
+        } else if phaseChanged || snap.remaining <= 1 {
+            showActivity(at: now, force: true)
         } else {
             showActivity(at: now)
         }
@@ -666,7 +678,10 @@ final class TrainingClock: ObservableObject {
 
         let snap = timeline?.snapshot(at: now) ?? .empty
         let running = runState == .running && !snap.isFinished
-        let end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
+        var end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
+        if running, snap.remaining < 1 {
+            end = max(end, now.addingTimeInterval(4))
+        }
         return TrainingAttributes.ContentState(
             phaseName: running ? snap.phaseName : AppLanguage.shared.text("phase.pause"),
             detail: snap.detail,

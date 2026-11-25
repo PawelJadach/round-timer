@@ -152,7 +152,12 @@ struct SessionTimeline {
             )
         }
 
-        let segment = segment(at: time)
+        var segment = segment(at: time)
+        if time >= segment.end,
+           let idx = segments.firstIndex(where: { $0.start == segment.start && $0.end == segment.end }),
+           idx + 1 < segments.count {
+            segment = segments[idx + 1]
+        }
         return ClockSnapshot(
             phase: segment.kind,
             remaining: max(0, segment.end.timeIntervalSince(time)),
@@ -187,7 +192,8 @@ struct SessionTimeline {
     }
 
     func dueCues(after: Date, through now: Date) -> [Cue] {
-        cues.filter { $0.date > after && $0.date <= now }.sorted { $0.date < $1.date }
+        let lower = after.addingTimeInterval(-0.001)
+        return cues.filter { $0.date > lower && $0.date <= now }.sorted { $0.date < $1.date }
     }
 
     mutating func refreshLocalizedCopy() {
