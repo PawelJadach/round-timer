@@ -95,6 +95,12 @@ final class TrainingClock: ObservableObject {
     }
 
     init() {
+        activities.onDismissed = { [weak self] in
+            guard let self else { return }
+            guard self.runState == .running || self.runState == .paused else { return }
+            self.activityKey = nil
+            self.showActivity(at: Date(), force: true)
+        }
         player.onInterruptionBegan = { [weak self] in
             self?.pause()
         }
@@ -490,6 +496,7 @@ final class TrainingClock: ObservableObject {
     private func showActivity(at now: Date, force: Bool = false) {
         let state = activityState(at: now)
         let key = [
+            state.tint,
             state.phaseName,
             state.detail,
             state.usesTimer ? "run" : "hold",

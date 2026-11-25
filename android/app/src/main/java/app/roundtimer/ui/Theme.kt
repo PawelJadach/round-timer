@@ -77,6 +77,14 @@ fun liveInk(phase: PhaseLabel): Color = when (phase) {
     else -> Ink
 }
 
+/** Accent color for the ongoing session notification during live rounds (matches in-app backdrop). */
+fun liveNotificationAccent(phase: PhaseLabel): Int = when (phase) {
+    PhaseLabel.PREPARE -> 0xFF000000.toInt()
+    PhaseLabel.WORK -> 0xFFE23A2B.toInt()
+    PhaseLabel.REST -> 0xFF298543.toInt()
+    else -> 0xFFE23A2B.toInt()
+}
+
 @Composable
 fun RoundTimerTheme(content: @Composable () -> Unit) {
     MaterialTheme(
