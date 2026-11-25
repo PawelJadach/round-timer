@@ -686,18 +686,18 @@ final class TrainingClock: ObservableObject {
 
     private func liveActivityState(at now: Date) -> TrainingAttributes.ContentState {
         if mode == .stopwatch {
-            let elapsed = stopwatch.elapsed(at: now)
-            let start = now.addingTimeInterval(-elapsed)
             let running = runState == .running
             return TrainingAttributes.ContentState(
                 phaseName: running ? AppLanguage.shared.text("phase.stopwatch") : AppLanguage.shared.text("phase.pause"),
-                detail: AppLanguage.shared.text("detail.stopwatch_idle"),
+                detail: laps.isEmpty
+                    ? AppLanguage.shared.text("detail.stopwatch_idle")
+                    : AppLanguage.shared.text("detail.lap_count \(laps.count)"),
                 tint: "stopwatch",
-                usesTimer: running,
+                usesTimer: false,
                 countsDown: false,
-                rangeStart: start,
-                rangeEnd: start.addingTimeInterval(86_400),
-                frozenText: ClockFormat.stopwatch(elapsed)
+                rangeStart: now,
+                rangeEnd: now.addingTimeInterval(86_400),
+                frozenText: ""
             )
         }
 
@@ -709,10 +709,10 @@ final class TrainingClock: ObservableObject {
                     : AppLanguage.shared.text("detail.finished_session"),
                 tint: "end",
                 usesTimer: false,
-                countsDown: true,
+                countsDown: false,
                 rangeStart: now,
                 rangeEnd: now.addingTimeInterval(1),
-                frozenText: "00:00"
+                frozenText: ""
             )
         }
 
@@ -723,11 +723,11 @@ final class TrainingClock: ObservableObject {
             phaseName: running ? snap.phaseName : AppLanguage.shared.text("phase.pause"),
             detail: snap.detail,
             tint: snap.tint,
-            usesTimer: running,
-            countsDown: true,
+            usesTimer: false,
+            countsDown: false,
             rangeStart: snap.segmentStart,
             rangeEnd: end,
-            frozenText: ClockFormat.remaining(snap.remaining)
+            frozenText: ""
         )
     }
 
