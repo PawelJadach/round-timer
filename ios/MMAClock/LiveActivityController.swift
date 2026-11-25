@@ -22,7 +22,6 @@ final class LiveActivityController {
         scrubInactiveReference()
 
         if let current = activity, isPresenting(current), self.title == title {
-            guard force || last != state else { return }
             last = state
             Task { @MainActor in
                 await current.update(ActivityContent(state: state, staleDate: contentStaleDate(for: state)))
