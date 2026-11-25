@@ -367,7 +367,7 @@ final class TrainingClock: ObservableObject {
 
     func sessionSegmentIdentity(at date: Date) -> String {
         guard runState == .running, mode != .stopwatch, let timeline else { return "idle" }
-        let snap = timeline.snapshot(at: date)
+        let snap = timeline.snapshotForDisplay(at: date)
         return "\(snap.tint)|\(snap.segmentStart.timeIntervalSince1970)|\(snap.segmentEnd.timeIntervalSince1970)"
     }
 
@@ -392,7 +392,7 @@ final class TrainingClock: ObservableObject {
                 )
             }
             guard let timeline else { return face }
-            let snap = timeline.snapshot(at: date)
+            let snap = timeline.snapshotForDisplay(at: date)
             if snap.isFinished {
                 let detail = mode == .countdown
                     ? AppLanguage.shared.text("detail.finished_countdown")
@@ -513,15 +513,22 @@ final class TrainingClock: ObservableObject {
             enterFinished(at: now)
             return
         }
-        let next = face(from: snap)
+        var displayAt = now
+        if let boundary = due.last(where: isPhaseBoundaryCue(_:)) {
+            displayAt = max(displayAt, boundary.date.addingTimeInterval(0.001))
+        } else if snap.remaining < 0.25 {
+            displayAt = max(displayAt, snap.segmentEnd.addingTimeInterval(0.001))
+        }
+        let displaySnap = timeline.snapshotForDisplay(at: displayAt)
+        let next = face(from: displaySnap)
         let phaseChanged = next.tint != face.tint
         publish(next)
         if let boundary = due.last(where: isPhaseBoundaryCue(_:)) {
-            showActivity(at: max(boundary.date, now), force: true)
-        } else if phaseChanged || snap.remaining <= 1 {
-            showActivity(at: now, force: true)
+            showActivity(at: displayAt, force: true)
+        } else if phaseChanged || displaySnap.remaining <= 1 {
+            showActivity(at: displayAt, force: true)
         } else {
-            showActivity(at: now)
+            showActivity(at: displayAt)
         }
     }
 
@@ -676,7 +683,7 @@ final class TrainingClock: ObservableObject {
             )
         }
 
-        let snap = timeline?.snapshot(at: now) ?? .empty
+        let snap = timeline?.snapshotForDisplay(at: now) ?? .empty
         let running = runState == .running && !snap.isFinished
         var end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
         if running, snap.remaining < 1 {

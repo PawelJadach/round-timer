@@ -169,6 +169,15 @@ struct SessionTimeline {
         )
     }
 
+    /// Wall-clock readout for UI and Live Activity — steps into the next segment once
+    /// the current one has reached 0:00 so work/rest do not stick at 00:00.
+    func snapshotForDisplay(at now: Date) -> ClockSnapshot {
+        let snap = snapshot(at: now)
+        guard !snap.isFinished else { return snap }
+        guard snap.remaining <= 0 else { return snap }
+        return snapshot(at: snap.segmentEnd.addingTimeInterval(0.001))
+    }
+
     mutating func pause(at now: Date) {
         guard pauseBegan == nil else { return }
         pauseBegan = now
