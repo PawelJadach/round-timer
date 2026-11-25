@@ -629,24 +629,13 @@ struct RootView: View {
     @ViewBuilder
     private var hints: some View {
         let showNotifications = clock.notificationStatus == .needsPrompt || clock.notificationStatus == .denied
-        if showNotifications || (showSettings && clock.liveActivitiesOff) {
-            VStack(spacing: 8) {
-            if showNotifications {
-                Button(clock.notificationStatus == .denied
-                       ? L10n.t("hint.notifications_denied")
-                       : L10n.t("hint.notifications_prompt")) {
-                    clock.requestNotifications()
-                }
-                .font(Palette.ui(13).weight(.semibold))
+        if showNotifications {
+            Button(clock.notificationStatus == .denied
+                   ? L10n.t("hint.notifications_denied")
+                   : L10n.t("hint.notifications_prompt")) {
+                clock.requestNotifications()
             }
-            if showSettings, clock.liveActivitiesOff {
-                Button(L10n.t("hint.live_activities")) {
-                    clock.openSettings()
-                }
-                .font(Palette.ui(13).weight(.semibold))
-                .multilineTextAlignment(.center)
-            }
-            }
+            .font(Palette.ui(13).weight(.semibold))
         }
     }
 }
