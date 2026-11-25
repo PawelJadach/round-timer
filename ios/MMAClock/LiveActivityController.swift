@@ -24,9 +24,8 @@ final class LiveActivityController {
         if let current = activity, isPresenting(current), self.title == title {
             guard last != state else { return }
             last = state
-            let stale = state.usesTimer ? state.rangeEnd : nil
             Task { @MainActor in
-                await current.update(ActivityContent(state: state, staleDate: stale))
+                await current.update(ActivityContent(state: state, staleDate: contentStaleDate(for: state)))
             }
             return
         }
@@ -45,7 +44,7 @@ final class LiveActivityController {
             do {
                 let created = try Activity.request(
                     attributes: TrainingAttributes(title: title),
-                    content: ActivityContent(state: state, staleDate: nil),
+                    content: ActivityContent(state: state, staleDate: contentStaleDate(for: state)),
                     pushType: nil
                 )
                 guard myToken == self.token else {
@@ -115,5 +114,14 @@ final class LiveActivityController {
         default:
             return false
         }
+    }
+
+    /// Do not mark content stale at `rangeEnd`: the timer reaches 00:00 there and the
+    /// system can freeze the readout until the next segment update, which hitches at
+    /// prepare/work/rest boundaries. A short grace window keeps ticks alive until the
+    /// app posts the next phase state.
+    private func contentStaleDate(for state: TrainingAttributes.ContentState) -> Date? {
+        guard state.usesTimer, state.rangeEnd > state.rangeStart else { return nil }
+        return state.rangeEnd.addingTimeInterval(8)
     }
 }

@@ -13,7 +13,6 @@ struct TrainingLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: TrainingAttributes.self) { context in
             lockScreen(context.state)
-                .id(liveActivityIdentity(context.state))
                 .activityBackgroundTint(liveBackgroundTint(context.state.tint))
                 .activitySystemActionForegroundColor(liveForegroundColor(context.state.tint))
         } dynamicIsland: { context in
@@ -80,6 +79,7 @@ struct TrainingLiveActivity: Widget {
         Group {
             if state.usesTimer, state.rangeEnd > state.rangeStart {
                 Text(timerInterval: state.rangeStart...state.rangeEnd, countsDown: state.countsDown)
+                    .id(timerSegmentIdentity(state))
             } else {
                 Text(state.frozenText)
             }
@@ -89,8 +89,9 @@ struct TrainingLiveActivity: Widget {
         .minimumScaleFactor(0.5)
     }
 
-    private func liveActivityIdentity(_ state: TrainingAttributes.ContentState) -> String {
-        "\(state.tint)|\(state.phaseName)"
+    private func timerSegmentIdentity(_ state: TrainingAttributes.ContentState) -> String {
+        guard state.usesTimer else { return "frozen|\(state.frozenText)" }
+        return "\(state.rangeStart.timeIntervalSince1970)|\(state.rangeEnd.timeIntervalSince1970)"
     }
 
     private func symbol(_ tint: String) -> String {

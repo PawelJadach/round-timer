@@ -244,13 +244,7 @@ struct RootView: View {
                     .tracking(2)
                     .foregroundStyle(liveInk)
             }
-            Text(display.text)
-                .font(Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96))))
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.4)
-                .foregroundStyle(liveInk ?? Palette.ink)
-                .accessibilityLabel("\(display.phaseName) \(display.text)")
+            clockReadout(compact: compact, idle: idle, stopwatchSession: stopwatchSession, liveRounds: liveRounds, liveInk: liveInk)
             if showDetail {
                 Text(display.detail)
                     .font(Palette.ui(idle ? 18 : 20))
@@ -261,6 +255,37 @@ struct RootView: View {
         .multilineTextAlignment(.center)
         .padding(.vertical, idle ? 12 : 8)
         .animation(.easeInOut(duration: 0.25), value: display.tint)
+    }
+
+    @ViewBuilder
+    private func clockReadout(
+        compact: Bool,
+        idle: Bool,
+        stopwatchSession: Bool,
+        liveRounds: Bool,
+        liveInk: Color?
+    ) -> some View {
+        let font = Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96)))
+        let ink = liveInk ?? Palette.ink
+        let label = "\(display.phaseName) \(display.text)"
+        Group {
+            if idle {
+                Text(display.text)
+            } else if clock.readout.usesTimer, clock.readout.rangeEnd > clock.readout.rangeStart {
+                Text(
+                    timerInterval: clock.readout.rangeStart...clock.readout.rangeEnd,
+                    countsDown: clock.readout.countsDown
+                )
+            } else {
+                Text(clock.readout.frozenText)
+            }
+        }
+        .font(font)
+        .monospacedDigit()
+        .lineLimit(1)
+        .minimumScaleFactor(0.4)
+        .foregroundStyle(ink)
+        .accessibilityLabel(label)
     }
 
     private func shouldShowTimerDetail(for mode: TrainingMode) -> Bool {
