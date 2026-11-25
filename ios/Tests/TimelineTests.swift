@@ -51,6 +51,11 @@ let boundary = rounds.snapshot(at: start.addingTimeInterval(10))
 expect(boundary.phase == .rest, "work-to-rest boundary lands on rest")
 expectClose(boundary.remaining, 5, "rest shows full segment at boundary")
 
+let interval = SessionTimeline.tabata(prepare: 0, work: 30, rest: 15, rounds: 10, start: start)
+let midWork = interval.snapshot(at: start.addingTimeInterval(20))
+expect(midWork.phase == .work && midWork.round == 1, "mid-work snapshot")
+expectClose(midWork.remaining, 10, "remaining moves during work")
+
 let countdown = SessionTimeline.countdown(seconds: 30, start: start)
 expect(countdown.segments.count == 1 && countdown.segments[0].kind == .countdown, "countdown is one segment")
 let countdownCues = countdown.cues.map(\.sound)

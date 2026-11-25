@@ -229,17 +229,11 @@ struct RootView: View {
         .accessibilityLabel(L10n.t("settings.title"))
     }
 
-    @ViewBuilder
     private func timerBlock(compact: Bool) -> some View {
         let idle = showSettings
-        let useLiveClock = sessionActive && clock.runState == .running && scenePhase == .active
-        if useLiveClock {
-            TimelineView(.periodic(from: .now, by: 0.2)) { context in
-                timerBlockContent(compact: compact, idle: idle, face: clock.sessionFace(at: context.date))
-            }
-        } else {
-            timerBlockContent(compact: compact, idle: idle, face: display)
-        }
+        let live = sessionActive && clock.runState == .running && scenePhase == .active
+        let face = live ? clock.sessionFace(at: clock.uiNow) : display
+        return timerBlockContent(compact: compact, idle: idle, face: face)
     }
 
     private func timerBlockContent(compact: Bool, idle: Bool, face: Face) -> some View {
@@ -255,6 +249,7 @@ struct RootView: View {
                     .font(Palette.display(compact ? 28 : 32))
                     .tracking(2)
                     .foregroundStyle(liveInk)
+                    .animation(.easeInOut(duration: 0.25), value: face.tint)
             }
             clockReadout(
                 compact: compact,
@@ -274,7 +269,6 @@ struct RootView: View {
         .frame(maxWidth: .infinity)
         .multilineTextAlignment(.center)
         .padding(.vertical, idle ? 12 : 8)
-        .animation(.easeInOut(duration: 0.25), value: face.tint)
     }
 
     @ViewBuilder
@@ -291,14 +285,19 @@ struct RootView: View {
         let ink = liveInk ?? Palette.ink
         let label = "\(face.phaseName) \(face.text)"
         Group {
-            if idle || (clock.runState == .running && foreground) {
+            if idle {
                 Text(face.text)
-            } else if clock.readout.usesTimer, clock.readout.rangeEnd > clock.readout.rangeStart {
+            } else if clock.runState == .running,
+                      clock.readout.usesTimer,
+                      clock.readout.rangeEnd > clock.readout.rangeStart {
+                // System-driven countdown ticks every second while the app is open.
                 Text(
                     timerInterval: clock.readout.rangeStart...clock.readout.rangeEnd,
                     countsDown: clock.readout.countsDown
                 )
                 .id(clock.readout.segmentIdentity)
+            } else if clock.runState == .running {
+                Text(clock.sessionFace(at: clock.uiNow).text)
             } else {
                 Text(clock.readout.frozenText)
             }
@@ -308,6 +307,7 @@ struct RootView: View {
         .lineLimit(1)
         .minimumScaleFactor(0.4)
         .foregroundStyle(ink)
+        .transaction { $0.animation = nil }
         .accessibilityLabel(label)
     }
 

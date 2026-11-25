@@ -127,6 +127,16 @@ struct SessionTimeline {
         return SessionTimeline(segments: segments, cues: makeCues(segments: segments), pauseBegan: nil)
     }
 
+    private func segment(at time: Date) -> Segment {
+        if let active = segments.first(where: { time >= $0.start && time < $0.end }) {
+            return active
+        }
+        if let upcoming = segments.first(where: { $0.end > time }) {
+            return upcoming
+        }
+        return segments[segments.count - 1]
+    }
+
     func snapshot(at now: Date) -> ClockSnapshot {
         let time = pauseBegan ?? now
         guard let last = segments.last else { return .empty }
@@ -142,12 +152,7 @@ struct SessionTimeline {
             )
         }
 
-        // Half-open segments: at an exact end instant, belong to the next segment (rest/work),
-        // not the first segment in the list (prepare).
-        let segment =
-            segments.first { time + 0.000_001 >= $0.start && time < $0.end }
-            ?? segments.last { time >= $0.start }
-            ?? segments[0]
+        let segment = segment(at: time)
         return ClockSnapshot(
             phase: segment.kind,
             remaining: max(0, segment.end.timeIntervalSince(time)),

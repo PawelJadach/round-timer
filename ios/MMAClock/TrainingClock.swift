@@ -1,7 +1,34 @@
 import Combine
 import Foundation
+import QuartzCore
 import UIKit
 import UserNotifications
+
+private final class DisplayLinkDriver: NSObject {
+    private var link: CADisplayLink?
+    var onTick: ((Date) -> Void)?
+
+    func start() {
+        stop()
+        let link = CADisplayLink(target: self, selector: #selector(step))
+        if #available(iOS 15.0, *) {
+            link.preferredFrameRateRange = CAFrameRateRange(minimum: 20, maximum: 60, preferred: 30)
+        }
+        link.add(to: .main, forMode: .common)
+        self.link = link
+    }
+
+    func stop() {
+        link?.invalidate()
+        link = nil
+    }
+
+    @objc private func step() {
+        onTick?(Date())
+    }
+
+    deinit { stop() }
+}
 
 enum TrainingMode: String, CaseIterable, Identifiable {
     case sparring
@@ -68,6 +95,8 @@ final class TrainingClock: ObservableObject {
     @Published private(set) var runState: RunState = .idle
     @Published private(set) var face = Face(text: "03:00", phaseName: "PRACA", detail: "Runda 1 z 5", tint: "work")
     @Published private(set) var readout = ClockReadout.frozen("03:00")
+    /// Bumps every display refresh so labels track wall time while digits use `Text(timerInterval:)`.
+    @Published private(set) var uiNow = Date()
     @Published private(set) var laps: [Lap] = []
     @Published var notificationStatus: AlertPermission = .unknown
     @Published var liveActivitiesOff = false
@@ -105,7 +134,7 @@ final class TrainingClock: ObservableObject {
     private var timeline: SessionTimeline?
     private var stopwatch = StopwatchState()
     private var lastPoll: Date?
-    private var ticker: Timer?
+    private let displayLink = DisplayLinkDriver()
     private var activityKey: String?
 
     private enum Key {
@@ -680,17 +709,19 @@ final class TrainingClock: ObservableObject {
     }
 
     private func startTicker() {
-        ticker?.invalidate()
-        let timer = Timer(timeInterval: 0.05, repeats: true) { [weak self] _ in
-            self?.poll()
+        stopTicker()
+        uiNow = Date()
+        displayLink.onTick = { [weak self] now in
+            guard let self else { return }
+            self.uiNow = now
+            self.poll(now: now)
         }
-        RunLoop.main.add(timer, forMode: .common)
-        ticker = timer
+        displayLink.start()
     }
 
     private func stopTicker() {
-        ticker?.invalidate()
-        ticker = nil
+        displayLink.stop()
+        displayLink.onTick = nil
     }
 
     private func tearDownAudio() {
