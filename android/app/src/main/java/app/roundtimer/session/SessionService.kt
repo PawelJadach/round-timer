@@ -21,6 +21,7 @@ import app.roundtimer.detailText
 import app.roundtimer.engine.Display
 import app.roundtimer.engine.RunState
 import app.roundtimer.phaseText
+import app.roundtimer.ui.liveNotificationAccent
 import app.roundtimer.withAppLocale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,6 +52,13 @@ class SessionService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_NOTIFICATION_DISMISSED) {
+            val repository = repository()
+            if (repository.wantsForeground()) {
+                render(repository.state.value)
+            }
+            return START_STICKY
+        }
         val repository = repository()
         if (repository.wantsForeground()) stopping = false
         val notification = buildNotification(repository.state.value)
@@ -78,8 +86,13 @@ class SessionService : Service() {
     fun render(state: Display) {
         if (stopping) return
         updatePlayback(state)
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.notify(NOTIFICATION_ID, buildNotification(state))
+        val notification = buildNotification(state)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            @Suppress("DEPRECATION")
+            startForeground(NOTIFICATION_ID, notification)
+        }
     }
 
     fun shutdown() {
@@ -104,6 +117,16 @@ class SessionService : Service() {
 
     private fun repository(): SessionRepository = (application as RoundTimerApp).repository
 
+    private fun sessionActive(state: Display): Boolean =
+        state.runState == RunState.RUNNING || state.runState == RunState.PAUSED
+
+    private fun dismissPendingIntent(): PendingIntent = PendingIntent.getService(
+        this,
+        DISMISS_REQUEST_CODE,
+        Intent(this, SessionService::class.java).setAction(ACTION_NOTIFICATION_DISMISSED),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
     private fun buildNotification(state: Display): Notification {
         val localized = withAppLocale()
         val manager = getSystemService(NotificationManager::class.java)
@@ -125,30 +148,41 @@ class SessionService : Service() {
         val phase = localized.phaseText(state.face.phase)
         val detail = localized.detailText(state.face.detail)
         val session = mediaSession
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        val active = sessionActive(state)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(phase)
             .setContentText("${state.face.text} · $detail")
-            .setOngoing(state.runState == RunState.RUNNING || state.runState == RunState.PAUSED)
+            .setOngoing(active)
+            .setAutoCancel(false)
             .setOnlyAlertOnce(true)
             .setSilent(true)
-            .setColor(0xFFFF4E2E.toInt())
+            .setColor(liveNotificationAccent(state.face.phase))
             .setContentIntent(open)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(session?.sessionToken),
             )
-            .build()
+        if (active) {
+            builder
+                .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+                .setDeleteIntent(dismissPendingIntent())
+        }
+        return builder.build()
     }
 
     private fun updatePlayback(state: Display) {
-        val playing = state.runState == RunState.RUNNING
-        val playback = if (playing) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+        val active = sessionActive(state)
+        val playback = if (active) {
+            PlaybackStateCompat.STATE_PLAYING
+        } else {
+            PlaybackStateCompat.STATE_STOPPED
+        }
         mediaSession?.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(0)
-                .setState(playback, 0L, if (playing) 1f else 0f)
+                .setState(playback, 0L, if (active) 1f else 0f)
                 .build(),
         )
         val localized = withAppLocale()
@@ -161,7 +195,9 @@ class SessionService : Service() {
     }
 
     companion object {
+        private const val ACTION_NOTIFICATION_DISMISSED = "app.roundtimer.action.NOTIFICATION_DISMISSED"
         private const val CHANNEL_ID = "round_timer_session"
         private const val NOTIFICATION_ID = 42
+        private const val DISMISS_REQUEST_CODE = 1
     }
 }
