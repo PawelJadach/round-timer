@@ -134,12 +134,13 @@ struct RootView: View {
                 language.syncWithSystemIfNeeded()
                 clock.catchUp()
                 clock.refreshCapabilities()
-            case .inactive:
+            case .inactive, .background:
                 if clock.runState == .running || clock.runState == .paused {
                     clock.syncPresentation()
                 }
-            case .background:
-                clock.prepareForBackground()
+                if phase == .background {
+                    clock.prepareForBackground()
+                }
             @unknown default:
                 break
             }
