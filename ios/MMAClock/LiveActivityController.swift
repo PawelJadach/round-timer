@@ -8,30 +8,25 @@ final class LiveActivityController {
     private var token = 0
     private var monitor: Task<Void, Never>?
     private var pendingCreate = false
-    var onDismissed: (() -> Void)?
+    private var userDismissed = false
 
     var areEnabled: Bool {
         ActivityAuthorizationInfo().areActivitiesEnabled
     }
 
-    var isVisibleOnSystem: Bool {
-        Activity<TrainingAttributes>.activities.contains { isPresenting($0) }
-    }
-
-    var shouldReassertAfterDismissal: Bool {
-        !pendingCreate && !isVisibleOnSystem
+    func beginSession() {
+        userDismissed = false
     }
 
     func show(title: String, state: TrainingAttributes.ContentState) {
-        guard areEnabled else { return }
+        guard areEnabled, !userDismissed else { return }
         scrubInactiveReference()
 
         if let current = activity, isPresenting(current), self.title == title {
             guard last != state else { return }
             last = state
-            let stale = state.usesTimer ? state.rangeEnd : nil
             Task { @MainActor in
-                await current.update(ActivityContent(state: state, staleDate: stale))
+                await current.update(ActivityContent(state: state, staleDate: contentStaleDate(for: state)))
             }
             return
         }
@@ -39,20 +34,10 @@ final class LiveActivityController {
         requestActivity(title: title, state: state)
     }
 
-    /// Called when the user swipes the Live Activity away during an active session.
-    func restoreAfterUserDismissal(title: String, state: TrainingAttributes.ContentState) {
-        guard areEnabled else { return }
-        monitor?.cancel()
-        monitor = nil
-        activity = nil
-        self.title = nil
-        last = nil
-        requestActivity(title: title, state: state)
-    }
-
     func stop() {
         token += 1
         pendingCreate = false
+        userDismissed = false
         monitor?.cancel()
         monitor = nil
         let existing = Activity<TrainingAttributes>.activities
@@ -67,6 +52,7 @@ final class LiveActivityController {
     }
 
     private func requestActivity(title: String, state: TrainingAttributes.ContentState) {
+        guard !userDismissed else { return }
         token += 1
         let myToken = token
         self.title = title
@@ -86,7 +72,7 @@ final class LiveActivityController {
             do {
                 let created = try Activity.request(
                     attributes: TrainingAttributes(title: title),
-                    content: ActivityContent(state: state, staleDate: nil),
+                    content: ActivityContent(state: state, staleDate: contentStaleDate(for: state)),
                     pushType: nil
                 )
                 guard myToken == self.token else {
@@ -94,7 +80,7 @@ final class LiveActivityController {
                     return
                 }
                 self.activity = created
-                self.observeDismissal(created)
+                observeDismissal(created)
             } catch {
                 print("MMA Clock: Live Activity: \(error.localizedDescription)")
                 self.activity = nil
@@ -106,24 +92,25 @@ final class LiveActivityController {
         monitor?.cancel()
         monitor = Task { @MainActor in
             if activity.activityState == .dismissed {
-                handleDismissal(of: activity)
+                markUserDismissed()
                 return
             }
             for await state in activity.activityStateUpdates {
                 guard !Task.isCancelled else { return }
                 guard state == .dismissed else { continue }
-                handleDismissal(of: activity)
+                markUserDismissed()
                 return
             }
         }
     }
 
-    private func handleDismissal(of activity: Activity<TrainingAttributes>) {
-        guard self.activity?.id == activity.id else { return }
-        self.activity = nil
-        self.title = nil
+    private func markUserDismissed() {
+        userDismissed = true
+        monitor?.cancel()
+        monitor = nil
+        activity = nil
+        title = nil
         last = nil
-        onDismissed?()
     }
 
     private func scrubInactiveReference() {
@@ -139,5 +126,14 @@ final class LiveActivityController {
         default:
             return false
         }
+    }
+
+    /// Do not mark content stale at `rangeEnd`: the timer reaches 00:00 there and the
+    /// system can freeze the readout until the next segment update, which hitches at
+    /// prepare/work/rest boundaries. A short grace window keeps ticks alive until the
+    /// app posts the next phase state.
+    private func contentStaleDate(for state: TrainingAttributes.ContentState) -> Date? {
+        guard state.usesTimer, state.rangeEnd > state.rangeStart else { return nil }
+        return state.rangeEnd.addingTimeInterval(8)
     }
 }

@@ -114,11 +114,6 @@ final class TrainingClock: ObservableObject {
     }
 
     init() {
-        activities.onDismissed = { [weak self] in
-            Task { @MainActor in
-                self?.restoreLiveActivityAfterDismissal()
-            }
-        }
         player.onInterruptionBegan = { [weak self] in
             self?.pause()
         }
@@ -224,6 +219,7 @@ final class TrainingClock: ObservableObject {
         tearDownAudio()
         self.mode = mode
         activityKey = nil
+        activities.beginSession()
         let now = Date()
 
         switch mode {
@@ -442,7 +438,18 @@ final class TrainingClock: ObservableObject {
             return
         }
         publish(face(from: snap))
-        showActivity(at: now)
+        if let boundary = due.last(where: isPhaseBoundaryCue(_:)) {
+            showActivity(at: max(boundary.date, now), force: true)
+        } else {
+            showActivity(at: now)
+        }
+    }
+
+    private func isPhaseBoundaryCue(_ cue: Cue) -> Bool {
+        switch cue.sound {
+        case .work, .rest, .prepare: return true
+        case .tick, .end: return false
+        }
     }
 
     private func playIfFresh(_ cue: Cue, now: Date) {
@@ -525,10 +532,6 @@ final class TrainingClock: ObservableObject {
     }
 
     private func showActivity(at now: Date, force: Bool = false) {
-        if sessionKeepsLiveActivity(), activities.shouldReassertAfterDismissal {
-            restoreLiveActivityAfterDismissal(at: now)
-            return
-        }
         let state = activityState(at: now)
         let key = [
             state.tint,
@@ -536,22 +539,13 @@ final class TrainingClock: ObservableObject {
             state.detail,
             state.usesTimer ? "run" : "hold",
             state.countsDown ? "down" : "up",
+            String(Int(state.rangeStart.timeIntervalSince1970)),
             String(Int(state.rangeEnd.timeIntervalSince1970)),
             state.usesTimer ? "" : state.frozenText
         ].joined(separator: "|")
         if !force, key == activityKey { return }
         activityKey = key
         activities.show(title: mode.title, state: state)
-    }
-
-    private func sessionKeepsLiveActivity() -> Bool {
-        runState == .running || runState == .paused
-    }
-
-    private func restoreLiveActivityAfterDismissal(at now: Date = Date()) {
-        guard sessionKeepsLiveActivity() else { return }
-        activityKey = nil
-        activities.restoreAfterUserDismissal(title: mode.title, state: activityState(at: now))
     }
 
     private func activityState(at now: Date) -> TrainingAttributes.ContentState {
