@@ -95,11 +95,6 @@ final class TrainingClock: ObservableObject {
     }
 
     init() {
-        activities.onDismissed = { [weak self] in
-            Task { @MainActor in
-                self?.restoreLiveActivityAfterDismissal()
-            }
-        }
         player.onInterruptionBegan = { [weak self] in
             self?.pause()
         }
@@ -205,6 +200,7 @@ final class TrainingClock: ObservableObject {
         tearDownAudio()
         self.mode = mode
         activityKey = nil
+        activities.beginSession()
         let now = Date()
 
         switch mode {
@@ -493,10 +489,6 @@ final class TrainingClock: ObservableObject {
     }
 
     private func showActivity(at now: Date, force: Bool = false) {
-        if sessionKeepsLiveActivity(), activities.shouldReassertAfterDismissal {
-            restoreLiveActivityAfterDismissal(at: now)
-            return
-        }
         let state = activityState(at: now)
         let key = [
             state.tint,
@@ -510,16 +502,6 @@ final class TrainingClock: ObservableObject {
         if !force, key == activityKey { return }
         activityKey = key
         activities.show(title: mode.title, state: state)
-    }
-
-    private func sessionKeepsLiveActivity() -> Bool {
-        runState == .running || runState == .paused
-    }
-
-    private func restoreLiveActivityAfterDismissal(at now: Date = Date()) {
-        guard sessionKeepsLiveActivity() else { return }
-        activityKey = nil
-        activities.restoreAfterUserDismissal(title: mode.title, state: activityState(at: now))
     }
 
     private func activityState(at now: Date) -> TrainingAttributes.ContentState {
