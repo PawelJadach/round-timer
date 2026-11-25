@@ -7,7 +7,6 @@ final class LiveActivityController {
     private var last: TrainingAttributes.ContentState?
     private var token = 0
     private var monitor: Task<Void, Never>?
-    private var pendingCreate = false
     private var userDismissed = false
 
     var areEnabled: Bool {
@@ -31,39 +30,12 @@ final class LiveActivityController {
             return
         }
 
-        requestActivity(title: title, state: state)
-    }
-
-    func stop() {
-        token += 1
-        pendingCreate = false
-        userDismissed = false
-        monitor?.cancel()
-        monitor = nil
-        let existing = Activity<TrainingAttributes>.activities
-        activity = nil
-        title = nil
-        last = nil
-        Task { @MainActor in
-            for activity in existing {
-                await activity.end(nil, dismissalPolicy: .immediate)
-            }
-        }
-    }
-
-    private func requestActivity(title: String, state: TrainingAttributes.ContentState) {
         guard !userDismissed else { return }
         token += 1
         let myToken = token
         self.title = title
         last = state
-        pendingCreate = true
         Task { @MainActor in
-            defer {
-                if myToken == self.token {
-                    self.pendingCreate = false
-                }
-            }
             guard myToken == self.token else { return }
             for existing in Activity<TrainingAttributes>.activities {
                 await existing.end(nil, dismissalPolicy: .immediate)
@@ -84,6 +56,22 @@ final class LiveActivityController {
             } catch {
                 print("MMA Clock: Live Activity: \(error.localizedDescription)")
                 self.activity = nil
+            }
+        }
+    }
+
+    func stop() {
+        token += 1
+        userDismissed = false
+        monitor?.cancel()
+        monitor = nil
+        let existing = Activity<TrainingAttributes>.activities
+        activity = nil
+        title = nil
+        last = nil
+        Task { @MainActor in
+            for activity in existing {
+                await activity.end(nil, dismissalPolicy: .immediate)
             }
         }
     }
