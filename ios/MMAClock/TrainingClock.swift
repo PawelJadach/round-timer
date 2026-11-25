@@ -40,10 +40,29 @@ struct Face: Equatable {
     var tint: String
 }
 
+struct ClockReadout: Equatable {
+    var usesTimer: Bool
+    var countsDown: Bool
+    var rangeStart: Date
+    var rangeEnd: Date
+    var frozenText: String
+
+    static func frozen(_ text: String) -> ClockReadout {
+        ClockReadout(
+            usesTimer: false,
+            countsDown: true,
+            rangeStart: .distantPast,
+            rangeEnd: .distantPast,
+            frozenText: text
+        )
+    }
+}
+
 final class TrainingClock: ObservableObject {
     @Published private(set) var mode: TrainingMode = .sparring
     @Published private(set) var runState: RunState = .idle
     @Published private(set) var face = Face(text: "03:00", phaseName: "PRACA", detail: "Runda 1 z 5", tint: "work")
+    @Published private(set) var readout = ClockReadout.frozen("03:00")
     @Published private(set) var laps: [Lap] = []
     @Published var notificationStatus: AlertPermission = .unknown
     @Published var liveActivitiesOff = false
@@ -488,8 +507,21 @@ final class TrainingClock: ObservableObject {
         )
     }
 
-    private func publish(_ next: Face) {
+    private func publish(_ next: Face, at now: Date = Date()) {
         if face != next { face = next }
+        refreshReadout(at: now)
+    }
+
+    private func refreshReadout(at now: Date) {
+        let state = activityState(at: now)
+        let next = ClockReadout(
+            usesTimer: state.usesTimer,
+            countsDown: state.countsDown,
+            rangeStart: state.rangeStart,
+            rangeEnd: state.rangeEnd,
+            frozenText: state.frozenText
+        )
+        if readout != next { readout = next }
     }
 
     private func showActivity(at now: Date, force: Bool = false) {
