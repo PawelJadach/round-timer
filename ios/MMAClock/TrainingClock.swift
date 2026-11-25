@@ -407,28 +407,17 @@ final class TrainingClock: ObservableObject {
         guard runState == .running else { return }
         player.cancelScheduled(after: Date().addingTimeInterval(0.05))
         let now = Date()
-        syncPresentation(at: now)
+        activityKey = nil
+        uiNow = now
         if mode == .stopwatch {
             publishStopwatch(at: now)
+            showActivity(at: now, force: true)
             startTicker()
             return
         }
-        let gap = lastPoll.map { now.timeIntervalSince($0) } ?? 0
-        if gap > 2 {
-            lastPoll = now
-            guard let timeline else { return }
-            let snap = timeline.snapshot(at: now)
-            if snap.isFinished {
-                enterFinished(at: now)
-            } else {
-                publish(face(from: snap))
-                showActivity(at: now, force: true)
-                startTicker()
-            }
-        } else {
-            poll(now: now)
-            startTicker()
-        }
+        poll(now: now)
+        guard runState == .running else { return }
+        startTicker()
     }
 
     func refreshCapabilities() {
@@ -473,7 +462,6 @@ final class TrainingClock: ObservableObject {
     /// Notifications stay the backup only when that session could not be armed.
     func prepareForBackground() {
         syncPresentation(at: Date())
-        stopTicker()
         guard runState == .running, mode != .stopwatch else { return }
         player.ensureRunning()
         guard soundEnabled, let timeline else { return }
@@ -635,22 +623,13 @@ final class TrainingClock: ObservableObject {
         activityKey = nil
         switch runState {
         case .running:
-            if mode == .stopwatch {
-                publishStopwatch(at: now)
-            } else if let timeline {
-                let snap = timeline.snapshot(at: now)
-                if snap.isFinished {
-                    enterFinished(at: now)
-                    return
-                }
-                publish(face(from: snap), at: now)
-            }
+            poll(now: now)
         case .paused:
             refreshReadout(at: now)
+            showActivity(at: now, force: true)
         default:
             break
         }
-        showActivity(at: now, force: true)
     }
 
     private func activityState(at now: Date) -> TrainingAttributes.ContentState {
