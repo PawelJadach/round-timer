@@ -153,9 +153,9 @@ struct SessionTimeline {
         }
 
         var segment = segment(at: time)
-        if time >= segment.end,
-           let idx = segments.firstIndex(where: { $0.start == segment.start && $0.end == segment.end }),
-           idx + 1 < segments.count {
+        while time >= segment.end,
+              let idx = segments.firstIndex(where: { $0.start == segment.start && $0.end == segment.end }),
+              idx + 1 < segments.count {
             segment = segments[idx + 1]
         }
         return ClockSnapshot(
@@ -167,15 +167,6 @@ struct SessionTimeline {
             segmentEnd: segment.end,
             isFinished: false
         )
-    }
-
-    /// Wall-clock readout for UI and Live Activity — steps into the next segment once
-    /// the current one has reached 0:00 so work/rest do not stick at 00:00.
-    func snapshotForDisplay(at now: Date) -> ClockSnapshot {
-        let snap = snapshot(at: now)
-        guard !snap.isFinished else { return snap }
-        guard snap.remaining <= 0 else { return snap }
-        return snapshot(at: snap.segmentEnd.addingTimeInterval(0.001))
     }
 
     mutating func pause(at now: Date) {
