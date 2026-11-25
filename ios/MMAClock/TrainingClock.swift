@@ -331,6 +331,43 @@ final class TrainingClock: ObservableObject {
         }
     }
 
+    /// Face derived from wall-clock time for on-screen rendering (independent of poll/ticker).
+    func sessionFace(at date: Date) -> Face {
+        switch runState {
+        case .idle:
+            return previewFace(for: mode)
+        case .paused:
+            return face
+        case .finished:
+            return face
+        case .running:
+            if mode == .stopwatch {
+                return Face(
+                    text: ClockFormat.stopwatch(stopwatch.elapsed(at: date)),
+                    phaseName: AppLanguage.shared.text("phase.stopwatch"),
+                    detail: laps.isEmpty
+                        ? AppLanguage.shared.text("detail.stopwatch_idle")
+                        : AppLanguage.shared.text("detail.lap_count \(laps.count)"),
+                    tint: "stopwatch"
+                )
+            }
+            guard let timeline else { return face }
+            let snap = timeline.snapshot(at: date)
+            if snap.isFinished {
+                let detail = mode == .countdown
+                    ? AppLanguage.shared.text("detail.finished_countdown")
+                    : AppLanguage.shared.text("detail.finished_session")
+                return Face(
+                    text: "00:00",
+                    phaseName: AppLanguage.shared.text("phase.end"),
+                    detail: detail,
+                    tint: "end"
+                )
+            }
+            return face(from: snap)
+        }
+    }
+
     func catchUp() {
         guard runState == .running else { return }
         player.cancelScheduled(after: Date().addingTimeInterval(0.05))
@@ -520,7 +557,7 @@ final class TrainingClock: ObservableObject {
     }
 
     private func publish(_ next: Face, at now: Date = Date()) {
-        if face != next { face = next }
+        face = next
         refreshReadout(at: now)
     }
 

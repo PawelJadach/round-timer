@@ -142,7 +142,12 @@ struct SessionTimeline {
             )
         }
 
-        let segment = segments.first { time >= $0.start && time < $0.end } ?? segments[0]
+        // Half-open segments: at an exact end instant, belong to the next segment (rest/work),
+        // not the first segment in the list (prepare).
+        let segment =
+            segments.first { time + 0.000_001 >= $0.start && time < $0.end }
+            ?? segments.last { time >= $0.start }
+            ?? segments[0]
         return ClockSnapshot(
             phase: segment.kind,
             remaining: max(0, segment.end.timeIntervalSince(time)),
