@@ -129,12 +129,19 @@ struct RootView: View {
             clock.relocalize()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
+            switch phase {
+            case .active:
                 language.syncWithSystemIfNeeded()
                 clock.catchUp()
                 clock.refreshCapabilities()
-            } else if phase == .background {
+            case .inactive:
+                if clock.runState == .running || clock.runState == .paused {
+                    clock.syncPresentation()
+                }
+            case .background:
                 clock.prepareForBackground()
+            @unknown default:
+                break
             }
         }
     }
@@ -232,7 +239,8 @@ struct RootView: View {
     @ViewBuilder
     private func timerBlock(compact: Bool) -> some View {
         let idle = showSettings
-        let live = sessionActive && clock.runState == .running && scenePhase == .active
+        let live = sessionActive && clock.runState == .running
+            && (scenePhase == .active || scenePhase == .inactive)
         if live {
             let tick: TimeInterval = clock.mode == .stopwatch ? 0.05 : 1.0
             TimelineView(.periodic(from: .now, by: tick)) { context in

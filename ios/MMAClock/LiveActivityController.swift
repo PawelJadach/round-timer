@@ -17,12 +17,12 @@ final class LiveActivityController {
         userDismissed = false
     }
 
-    func show(title: String, state: TrainingAttributes.ContentState) {
+    func show(title: String, state: TrainingAttributes.ContentState, force: Bool = false) {
         guard areEnabled, !userDismissed else { return }
         scrubInactiveReference()
 
         if let current = activity, isPresenting(current), self.title == title {
-            guard last != state else { return }
+            guard force || last != state else { return }
             last = state
             Task { @MainActor in
                 await current.update(ActivityContent(state: state, staleDate: contentStaleDate(for: state)))
