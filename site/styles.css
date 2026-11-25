@@ -426,6 +426,10 @@ h2 {
   text-align: left;
 }
 
+a.badge {
+  text-decoration: none;
+}
+
 .store-mark {
   width: 1.15rem;
   height: 1.4rem;
