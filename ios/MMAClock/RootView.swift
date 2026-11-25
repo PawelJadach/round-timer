@@ -241,7 +241,6 @@ struct RootView: View {
     private func timerBlock(compact: Bool) -> some View {
         let idle = showSettings
         let live = sessionActive && clock.runState == .running
-            && (scenePhase == .active || scenePhase == .inactive)
         if live {
             let tick: TimeInterval = clock.mode == .stopwatch ? 0.05 : 1.0
             TimelineView(.periodic(from: .now, by: tick)) { context in
