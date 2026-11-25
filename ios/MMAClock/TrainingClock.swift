@@ -407,6 +407,7 @@ final class TrainingClock: ObservableObject {
         guard runState == .running else { return }
         player.cancelScheduled(after: Date().addingTimeInterval(0.05))
         let now = Date()
+        syncPresentation(at: now)
         if mode == .stopwatch {
             publishStopwatch(at: now)
             startTicker()
@@ -471,6 +472,8 @@ final class TrainingClock: ObservableObject {
     /// Keeps the playback session alive and arms cue sounds on the audio clock.
     /// Notifications stay the backup only when that session could not be armed.
     func prepareForBackground() {
+        syncPresentation(at: Date())
+        stopTicker()
         guard runState == .running, mode != .stopwatch else { return }
         player.ensureRunning()
         guard soundEnabled, let timeline else { return }
@@ -622,7 +625,32 @@ final class TrainingClock: ObservableObject {
         ].joined(separator: "|")
         if !force, key == activityKey { return }
         activityKey = key
-        activities.show(title: mode.title, state: state)
+        activities.show(title: mode.title, state: state, force: force)
+    }
+
+    /// Refreshes on-screen state and Live Activity from wall clock (e.g. before suspend).
+    func syncPresentation(at now: Date = Date()) {
+        uiNow = now
+        guard runState == .running || runState == .paused else { return }
+        activityKey = nil
+        switch runState {
+        case .running:
+            if mode == .stopwatch {
+                publishStopwatch(at: now)
+            } else if let timeline {
+                let snap = timeline.snapshot(at: now)
+                if snap.isFinished {
+                    enterFinished(at: now)
+                    return
+                }
+                publish(face(from: snap), at: now)
+            }
+        case .paused:
+            refreshReadout(at: now)
+        default:
+            break
+        }
+        showActivity(at: now, force: true)
     }
 
     private func activityState(at now: Date) -> TrainingAttributes.ContentState {
