@@ -56,6 +56,11 @@ struct ClockReadout: Equatable {
             frozenText: text
         )
     }
+
+    var segmentIdentity: String {
+        guard usesTimer else { return "frozen|\(frozenText)" }
+        return "\(rangeStart.timeIntervalSince1970)|\(rangeEnd.timeIntervalSince1970)"
+    }
 }
 
 final class TrainingClock: ObservableObject {

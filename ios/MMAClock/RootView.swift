@@ -244,7 +244,14 @@ struct RootView: View {
                     .tracking(2)
                     .foregroundStyle(liveInk)
             }
-            clockReadout(compact: compact, idle: idle, stopwatchSession: stopwatchSession, liveRounds: liveRounds, liveInk: liveInk)
+            clockReadout(
+                compact: compact,
+                idle: idle,
+                stopwatchSession: stopwatchSession,
+                liveRounds: liveRounds,
+                liveInk: liveInk,
+                foreground: scenePhase == .active
+            )
             if showDetail {
                 Text(display.detail)
                     .font(Palette.ui(idle ? 18 : 20))
@@ -263,7 +270,8 @@ struct RootView: View {
         idle: Bool,
         stopwatchSession: Bool,
         liveRounds: Bool,
-        liveInk: Color?
+        liveInk: Color?,
+        foreground: Bool
     ) -> some View {
         let font = Palette.display(stopwatchSession ? 96 : (liveRounds ? 104 : (idle ? 84 : 96)))
         let ink = liveInk ?? Palette.ink
@@ -271,11 +279,16 @@ struct RootView: View {
         Group {
             if idle {
                 Text(display.text)
+            } else if clock.runState == .running, foreground {
+                // Polled face tracks phase boundaries; Text(timerInterval:) can stick at 00:00
+                // after rangeEnd even while the session moves on.
+                Text(display.text)
             } else if clock.readout.usesTimer, clock.readout.rangeEnd > clock.readout.rangeStart {
                 Text(
                     timerInterval: clock.readout.rangeStart...clock.readout.rangeEnd,
                     countsDown: clock.readout.countsDown
                 )
+                .id(clock.readout.segmentIdentity)
             } else {
                 Text(clock.readout.frozenText)
             }
