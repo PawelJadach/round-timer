@@ -135,7 +135,6 @@ final class TrainingClock: ObservableObject {
     private var stopwatch = StopwatchState()
     private var lastPoll: Date?
     private let displayLink = DisplayLinkDriver()
-    private var activityKey: String?
 
     private enum Key {
         static let prepare = "mmaclock.prepare"
@@ -257,7 +256,6 @@ final class TrainingClock: ObservableObject {
         guard canStart(mode) else { return }
         tearDownAudio()
         self.mode = mode
-        activityKey = nil
         activities.beginSession()
         let now = Date()
 
@@ -350,7 +348,6 @@ final class TrainingClock: ObservableObject {
         stopwatch.reset()
         laps = []
         lastPoll = nil
-        activityKey = nil
         runState = .idle
         UIApplication.shared.isIdleTimerDisabled = false
     }
@@ -412,7 +409,6 @@ final class TrainingClock: ObservableObject {
         guard runState == .running else { return }
         player.cancelScheduled(after: Date().addingTimeInterval(0.05))
         let now = Date()
-        activityKey = nil
         uiNow = now
         if mode == .stopwatch {
             publishStopwatch(at: now)
@@ -520,16 +516,8 @@ final class TrainingClock: ObservableObject {
             displayAt = max(displayAt, snap.segmentEnd.addingTimeInterval(0.001))
         }
         let displaySnap = timeline.snapshotForDisplay(at: displayAt)
-        let next = face(from: displaySnap)
-        let phaseChanged = next.tint != face.tint
-        publish(next)
-        if let boundary = due.last(where: isPhaseBoundaryCue(_:)) {
-            showActivity(at: displayAt, force: true)
-        } else if phaseChanged || displaySnap.remaining <= 1 {
-            showActivity(at: displayAt, force: true)
-        } else {
-            showActivity(at: displayAt)
-        }
+        publish(face(from: displaySnap))
+        showLiveActivity(at: Date())
     }
 
     private func isPhaseBoundaryCue(_ cue: Cue) -> Bool {
@@ -619,27 +607,18 @@ final class TrainingClock: ObservableObject {
     }
 
     private func showActivity(at now: Date, force: Bool = false) {
-        let state = activityState(at: now)
-        let key = [
-            state.tint,
-            state.phaseName,
-            state.detail,
-            state.usesTimer ? "run" : "hold",
-            state.countsDown ? "down" : "up",
-            String(Int(state.rangeStart.timeIntervalSince1970)),
-            String(Int(state.rangeEnd.timeIntervalSince1970)),
-            state.usesTimer ? "" : state.frozenText
-        ].joined(separator: "|")
-        if !force, key == activityKey { return }
-        activityKey = key
-        activities.show(title: mode.title, state: state, force: force)
+        showLiveActivity(at: now)
+    }
+
+    /// Live Activity only — wall-clock phase/remaining; never dedupe updates.
+    private func showLiveActivity(at now: Date) {
+        activities.show(title: mode.title, state: liveActivityState(at: now), force: true)
     }
 
     /// Refreshes on-screen state and Live Activity from wall clock (e.g. before suspend).
     func syncPresentation(at now: Date = Date()) {
         uiNow = now
         guard runState == .running || runState == .paused else { return }
-        activityKey = nil
         switch runState {
         case .running:
             poll(now: now)
@@ -685,10 +664,61 @@ final class TrainingClock: ObservableObject {
 
         let snap = timeline?.snapshotForDisplay(at: now) ?? .empty
         let running = runState == .running && !snap.isFinished
-        var end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
-        if running, snap.remaining < 1 {
-            end = max(end, now.addingTimeInterval(4))
+        let end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
+        return TrainingAttributes.ContentState(
+            phaseName: running ? snap.phaseName : AppLanguage.shared.text("phase.pause"),
+            detail: snap.detail,
+            tint: snap.tint,
+            usesTimer: running,
+            countsDown: true,
+            rangeStart: snap.segmentStart,
+            rangeEnd: end,
+            frozenText: ClockFormat.remaining(snap.remaining)
+        )
+    }
+
+    private func liveActivitySnapshot(at now: Date) -> ClockSnapshot {
+        guard let timeline else { return .empty }
+        let snap = timeline.snapshot(at: now)
+        guard !snap.isFinished, snap.remaining <= 0 else { return snap }
+        return timeline.snapshot(at: snap.segmentEnd.addingTimeInterval(0.001))
+    }
+
+    private func liveActivityState(at now: Date) -> TrainingAttributes.ContentState {
+        if mode == .stopwatch {
+            let elapsed = stopwatch.elapsed(at: now)
+            let start = now.addingTimeInterval(-elapsed)
+            let running = runState == .running
+            return TrainingAttributes.ContentState(
+                phaseName: running ? AppLanguage.shared.text("phase.stopwatch") : AppLanguage.shared.text("phase.pause"),
+                detail: AppLanguage.shared.text("detail.stopwatch_idle"),
+                tint: "stopwatch",
+                usesTimer: running,
+                countsDown: false,
+                rangeStart: start,
+                rangeEnd: start.addingTimeInterval(86_400),
+                frozenText: ClockFormat.stopwatch(elapsed)
+            )
         }
+
+        if runState == .finished {
+            return TrainingAttributes.ContentState(
+                phaseName: AppLanguage.shared.text("phase.end"),
+                detail: mode == .countdown
+                    ? AppLanguage.shared.text("detail.finished_countdown")
+                    : AppLanguage.shared.text("detail.finished_session"),
+                tint: "end",
+                usesTimer: false,
+                countsDown: true,
+                rangeStart: now,
+                rangeEnd: now.addingTimeInterval(1),
+                frozenText: "00:00"
+            )
+        }
+
+        let snap = liveActivitySnapshot(at: now)
+        let running = runState == .running && !snap.isFinished
+        let end = max(snap.segmentEnd, snap.segmentStart.addingTimeInterval(0.5))
         return TrainingAttributes.ContentState(
             phaseName: running ? snap.phaseName : AppLanguage.shared.text("phase.pause"),
             detail: snap.detail,
